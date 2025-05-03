@@ -1,0 +1,16 @@
+<!-- src/watchlist/templates/_watchlist_container.html -->
+
+<div id="watchlist-container">
+  <!-- Render Controls Bar with current state -->
+  {% if request.endpoint not in ['settings.show_settings', 'main.about'] %}
+  {% include '_controls_bar.html' with context %}
+  {% endif %}
+
+  <!-- Render Watchlist Area with current items -->
+  <div id="watchlist-area" class="bg-base-100 p-4 md:p-6 rounded-lg shadow min-h-[400px]">
+    <!-- Render the actual items list -->
+    <div id="watchlist-content">
+      {% include '_watchlist_items.html' with context %}
+    </div>
+  </div>
+</div>

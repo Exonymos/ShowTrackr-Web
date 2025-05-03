@@ -1,0 +1,112 @@
+/* src/watchlist/static/css/input.css */
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: cupcake --default, dracula --prefersdark, light, dark, bumblebee, synthwave, emerald, halloween, corporate, forest, retro, black, valentine, luxury, garden, business, lofi, night, pastel, coffee, fantasy, dim, wireframe, sunset, cmyk, abyss, autumn, acid, lemonade, winter, nord, caramellatte, silk;
+}
+
+/* Inter Variable Font */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../font/Inter-VariableFont_opsz\,wght.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../font/Inter-Italic-VariableFont_opsz\,wght.ttf") format('truetype');
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.content-wrapper {
+  flex: 1;
+}
+
+/* Style for generated placeholder */
+.poster-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  text-align: center;
+  aspect-ratio: 2 / 3;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  font-size: 0.7rem;
+  border-radius: 0.25rem;
+  user-select: none;
+  border: 1px solid hsl(var(--bc) / 0.1);
+  max-height: 9rem;
+}
+
+/* Poster Image specific styles */
+.poster-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 9rem;
+  object-fit: cover;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px hsl(var(--bc) / 0.1);
+  cursor: pointer;
+}
+
+/* Poster Hover Tooltip Styles */
+#poster-hover-tooltip {
+  position: absolute;
+  z-index: 9999;
+  background-color: hsl(var(--b1));
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  display: none;
+  pointer-events: none;
+  max-width: 250px;
+}
+
+#poster-hover-tooltip img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.25rem;
+}
+
+/* Ensure icons are vertically aligned */
+.icon-link svg,
+.action-icon svg {
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* Subtle focus ring for page input */
+.page-input:focus {
+  outline: 2px solid hsl(var(--p)/.5);
+  outline-offset: 2px;
+}
+
+/* Style for global loading spinner */
+#htmx-indicator {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
+}
+
+.htmx-request #htmx-indicator {
+  opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+  opacity: 1
+}

@@ -1,0 +1,64 @@
+<!-- src/watchlist/templates/_sort_dropdown.html -->
+{% set base_url = url_for('main.load_watchlist') %}
+{% set filter_params = {
+'filter_status': current_filter_status,
+'filter_type': current_filter_type,
+'filter_years': current_filter_years,
+'filter_rating_min': current_filter_rating_min if current_filter_rating_min is not none else '',
+'filter_rating_max': current_filter_rating_max if current_filter_rating_max is not none else '',
+'search': current_search
+} %}
+
+<!-- SVG Definitions -->
+{% set svg_asc = '<svg viewBox="0 0 24 24" class="icon line-color w-4 h-4 ml-auto" fill="none" stroke="currentColor"
+  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="m2 8 4-4 4 4" />
+  <path d="M6 4v15" />
+  <path d="M20 7h-5m5 5h-7m7 5H10" />
+</svg>' %}
+{% set svg_desc = '<svg viewBox="0 0 24 24" class="icon flat-color w-4 h-4 ml-auto" fill="currentColor">
+  <path
+    d="M10.71 14.29a1 1 0 0 0-1.42 0L7 16.59V4a1 1 0 0 0-2 0v12.59l-2.29-2.3a1 1 0 0 0-1.42 1.42l4 4a1 1 0 0 0 1.42 0l4-4a1 1 0 0 0 0-1.42M20 17h-5a1 1 0 0 1 0-2h5a1 1 0 0 1 0 2m0-5h-7a1 1 0 0 1 0-2h7a1 1 0 0 1 0 2m0-5H10a1 1 0 0 1 0-2h10a1 1 0 0 1 0 2" />
+</svg>' %}
+{% set svg_default_hint = svg_desc %}
+
+<!-- Helper macro for sort links -->
+{% macro sort_link(sort_key, display_name, icon_path) %}
+{% set is_active = current_sort == sort_key %}
+<!-- Determine next order: If active, toggle; if inactive, set to default desc -->
+{% set next_order = 'asc' if is_active and current_order == 'desc' else 'desc' %}
+{% set sort_params = filter_params.copy() %}
+{% set _ = sort_params.update({'sort': sort_key, 'order': next_order}) %}
+<a role="menuitem"
+  class="flex items-center gap-2 p-2 rounded hover:bg-base-200 {{ 'bg-base-300 font-semibold' if is_active else '' }}"
+  href="#" hx-get="{{ base_url }}?{{ sort_params | urlencode }}" hx-target="#watchlist-content" hx-swap="innerHTML"
+  hx-indicator="#htmx-indicator" hx-push-url="true">
+  <span>{{ display_name }}</span>
+  <!-- Indicator icon (Asc/Desc/Default) -->
+  {% if is_active %}
+  {{ svg_desc | safe if current_order == 'desc' else svg_asc | safe }}
+  {% else %}
+  {% endif %}
+</a>
+{% endmacro %}
+
+<div class="dropdown dropdown-end">
+  <!-- Main Sort Button -->
+  <button tabindex="0" role="button" class="btn btn-sm m-1">
+    <!-- Main Sort Icon SVG -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1 fill-current" viewBox="0 0 24 24">
+      <path
+        d="M12.216 9.048a.45.45 0 0 0 0-.624L8.784 4.968a.45.45 0 0 0-.624 0L4.728 8.424a.45.45 0 0 0 0 .624l.624.624a.45.45 0 0 0 .624 0l1.08-1.08c.168-.168.504-.048.504.216v6.336c0 .24.216.456.456.456h.888c.24 0 .456-.24.456-.456V8.808c0-.264.336-.384.504-.216l1.08 1.08a.45.45 0 0 0 .624 0zm6.576 5.976-.624-.6a.45.45 0 0 0-.624 0l-1.08 1.08c-.168.168-.504.048-.504-.216V8.904a.47.47 0 0 0-.456-.456h-.888c-.24 0-.456.24-.456.456v6.336c0 .264-.336.384-.504.216l-1.08-1.08a.45.45 0 0 0-.624 0l-.624.648a.45.45 0 0 0 0 .624l3.432 3.432a.45.45 0 0 0 .624 0l3.432-3.432c.168-.168.168-.48-.024-.624" />
+    </svg>
+    Sort
+  </button>
+  <ul tabindex="0"
+    class="dropdown-content z-[10] menu p-2 shadow bg-base-100 rounded-box w-52 border border-base-300 text-sm">
+    <!-- Using macro to generate links -->
+    <li>{{ sort_link('date_watched', 'Date Watched') }}</li>
+    <li>{{ sort_link('date_added', 'Date Added') }}</li>
+    <li>{{ sort_link('title', 'Title') }}</li>
+    <li>{{ sort_link('year', 'Release Year') }}</li>
+    <li>{{ sort_link('rating', 'Rating') }}</li>
+  </ul>
+</div>

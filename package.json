@@ -1,0 +1,33 @@
+{
+  "name": "showtrackr",
+  "version": "0.2.0",
+  "description": "A personal, locally run web application for tracking movies and TV shows using Flask, HTMX, and SQLite.",
+  "homepage": "https://github.com/exonymos/showtrackr",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i ./src/watchlist/static/css/input.css -o ./src/watchlist/static/css/output.css -m --optimize",
+    "watch:css": "npx @tailwindcss/cli -i ./src/watchlist/static/css/input.css -o ./src/watchlist/static/css/output.css -w"
+  },
+  "keywords": [
+    "flask",
+    "htmx",
+    "sqlite",
+    "webapp",
+    "movies",
+    "tv shows",
+    "tracking",
+    "personal",
+    "media",
+    "watchlist",
+    "local"
+  ],
+  "author": "Exonymos",
+  "license": "GPL-3.0-only",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.5",
+    "autoprefixer": "^10.4.21",
+    "daisyui": "^5.0.35",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.5"
+  }
+}

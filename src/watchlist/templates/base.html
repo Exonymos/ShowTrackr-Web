@@ -1,0 +1,187 @@
+<!-- src/watchlist/templates/base.html -->
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ current_theme }}">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}ShowTrackr - Media Watchlist{% endblock %}</title>
+  <meta name="description" content="ShowTrackr - Track your shows and movies with ease!">
+  <meta name="author" content="Exonymos">
+  <meta name="keywords" content="watchlist, movies, shows, tracking, media, entertainment">
+  <!-- Favicon -->
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
+  <!-- Local CSS -->
+  <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
+  <!-- HTMX -->
+  <script src="{{ url_for('static', filename='js/htmx.min.js') }}" defer></script>
+</head>
+
+<body class="bg-base-200">
+
+  <!-- Header -->
+  <header class="bg-neutral text-neutral-content shadow sticky top-0 z-1000">
+    <div class="navbar max-w-7xl mx-auto px-4">
+      <div class="navbar-start">
+        <a href="{{ url_for('main.index') }}" class="btn btn-ghost text-xl normal-case">
+          <!-- Clapperboard Icon -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-1 fill-current">
+            <path fill="none" d="M0 0h24v24H0z" />
+            <path
+              d="M17.998 7l2.31-4h.7c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V3.993A1 1 0 0 1 2.992 3h3.006l-2.31 4h2.31l2.31-4h3.69l-2.31 4h2.31l2.31-4h3.69l-2.31 4h2.31z" />
+          </svg>
+          ShowTrackr
+        </a>
+      </div>
+      <div class="navbar-end">
+        <a href="{{ url_for('settings.show_settings') }}" class="btn btn-ghost btn-circle" aria-label="Settings">
+          <!-- Settings Icon SVG -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.646.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.24-.438.613-.43.992a6.759 6.759 0 0 1 0 1.257c-.008.379.137.753.43.992l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.6 6.6 0 0 1-.22.128c-.333.184-.582.496-.646.87l-.213 1.28c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.646-.87-.074-.04-.147-.083-.22-.127a6.689 6.689 0 0 1-1.075-.124l-1.217.456a1.125 1.125 0 0 1-1.37-.49l-1.296-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.759 6.759 0 0 1 0-1.257c.008-.379-.137-.753-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.184.582-.496.646-.87l.213-1.281Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Welcome Section -->
+  <section class="bg-gradient-to-b from-base-300 to-base-200 text-base-content py-8 shadow-md">
+    <div class="max-w-5xl mx-auto text-center px-4">
+      <h2 class="text-3xl font-bold mb-2">Welcome to ShowTrackr!</h2>
+      <p class="mb-4">Track your shows and movies with ease!</p>
+      <div class="flex flex-wrap justify-center items-center gap-4 mt-6 mb-4">
+        <button class="btn btn-primary btn-md" hx-get="{{ url_for('items.add_item_form') }}" hx-target="#modal-content"
+          hx-swap="innerHTML" onclick="resetFormDirtyFlag(); add_item_modal.showModal()"
+          aria-label="Add new watchlist item">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            class="w-5 h-5 mr-1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          Add Item
+        </button>
+
+        <!-- Theme Selector -->
+        <form hx-post="{{ url_for('settings.set_theme') }}" hx-target="body" hx-swap="none"
+          class="flex items-center gap-2" title="Change website theme">
+          <label for="theme_select_welcome" class="sr-only">Select Theme</label>
+          <select id="theme_select_welcome" name="theme" class="select select-bordered select-sm"
+            aria-label="Select Theme" onchange="this.form.requestSubmit()">
+            {% set valid_themes = ['cupcake', 'dracula', 'light', 'dark', 'bumblebee', 'synthwave', 'emerald',
+            'halloween', 'corporate', 'forest', 'retro', 'black', 'valentine', 'luxury', 'garden', 'business', 'lofi',
+            'night', 'pastel', 'coffee', 'fantasy', 'dim', 'wireframe', 'sunset', 'cmyk', 'abyss', 'autumn', 'acid',
+            'lemonade', 'winter', 'nord', 'caramellatte', 'silk'] %}
+            {% for theme_option in valid_themes %}
+            <option value="{{ theme_option }}" {{ 'selected' if theme_option==current_theme else '' }}>
+              {{ theme_option.title() }}
+            </option>
+            {% endfor %}
+          </select>
+          <span class="htmx-indicator loading loading-ring loading-xs"></span>
+        </form>
+      </div>
+      <p class="text-sm opacity-70 mt-2">You can adjust more options on the <a
+          href="{{ url_for('settings.show_settings') }}" class="link link-hover">Settings</a> page.</p>
+    </div>
+  </section>
+
+  <!-- Main Content Area -->
+  <main class="content-wrapper bg-gradient-to-b from-base-200 via-base-200 to-base-300 py-8 px-4">
+    <div class="max-w-7xl mx-auto">
+      <!-- Include Controls Bar Partial -->
+      <!-- Hide on Settings and About pages -->
+      {% if request.endpoint not in ['settings.show_settings', 'main.about'] %}
+      {% include '_controls_bar.html' with context %}
+      {% endif %}
+
+      {% block content %}
+      {% endblock %}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer bg-neutral text-neutral-content p-8">
+    <div class="max-w-7xl mx-auto w-full flex flex-wrap justify-between items-center">
+      <aside class="flex items-center gap-4">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 md:w-12 md:h-12 fill-current">
+          <path fill="none" d="M0 0h24v24H0z" />
+          <path
+            d="M17.998 7l2.31-4h.7c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V3.993A1 1 0 0 1 2.992 3h3.006l-2.31 4h2.31l2.31-4h3.69l-2.31 4h2.31l2.31-4h3.69l-2.31 4h2.31z" />
+        </svg>
+        <div>
+          <p class="font-bold text-lg">ShowTrackr</p>
+          <p class="text-sm md:text-base">Track your shows and movies with ease!</p>
+          <p class="text-xs mt-1 md:mt-2 opacity-70">Created by
+            <a href="https://github.com/exonymos" target="_blank" rel="noopener noreferrer" class="link link-hover">
+              Exonymos
+            </a>
+          </p>
+        </div>
+      </aside>
+      <nav class="flex flex-col items-end gap-2">
+        <h6 class="footer-title opacity-70 text-right">Links</h6>
+        <!-- GitHub Links -->
+        <div class="grid grid-flow-col gap-4">
+          <a href="https://www.github.com/exonymos/showtrackr-web" target="_blank" rel="noopener noreferrer"
+            class="tooltip" data-tip="Project Repository">
+            <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current">
+              <title>GitHub</title>
+              <path
+                d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+            </svg>
+          </a>
+          <!-- About Link -->
+          <a href="{{ url_for('main.about') }}" class="tooltip" data-tip="About this project">
+            <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 fill-current">
+              <title>Info</title>
+              <path
+                d="M12 24a12 12 0 1 0 0 -24 12 12 0 1 0 0 24m-1.875 -8.25h1.125v-3h-1.125c-0.623 0 -1.125 -0.502 -1.125 -1.125s0.502 -1.125 1.125 -1.125h2.25c0.623 0 1.125 0.502 1.125 1.125v4.125h0.375c0.623 0 1.125 0.502 1.125 1.125s-0.502 1.125 -1.125 1.125h-3.75c-0.623 0 -1.125 -0.502 -1.125 -1.125s0.502 -1.125 1.125 -1.125m1.875 -9.75a1.5 1.5 0 1 1 0 3 1.5 1.5 0 1 1 0 -3" />
+            </svg>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Add Item Modal -->
+  <dialog id="add_item_modal" class="modal">
+    <div class="modal-box w-11/12 max-w-3xl">
+      <form method="dialog" id="modal-control-form">
+        <button id="modal-close-button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" type="button"
+          onclick="checkUnsavedChangesAndCloseModal()">✕</button>
+      </form>
+      <h3 class="font-bold text-lg mb-4" id="modal-title">Add New Watchlist Item</h3>
+      <div id="modal-content">
+        <!-- Add/Edit item form will be loaded here by HTMX -->
+        <div class="text-center p-8">
+          <span class="loading loading-ring loading-lg"></span>
+          <p>Loading form...</p>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button type="button" onclick="checkUnsavedChangesAndCloseModal()">close</button>
+    </form>
+  </dialog>
+
+  <!-- Toast Container placeholder -->
+  <div id="toast-container" class="toast toast-bottom toast-end z-[99]"></div>
+
+  <!-- Poster Hover Tooltip Placeholder -->
+  <div id="poster-hover-tooltip"></div>
+
+  <!-- Global HTMX Indicator -->
+  <div id="htmx-indicator" class="htmx-indicator fixed bottom-4 right-4 z-[100]">
+    <span class="loading loading-bars loading-lg bg-primary"></span>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+
+  <!-- Toast Container placeholder -->
+  <div id="toast-container" class="toast toast-bottom toast-end z-[99]"></div>
+</body>
+
+</html>

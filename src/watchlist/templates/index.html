@@ -1,0 +1,17 @@
+<!-- src/watchlist/templates/index.html -->
+{% extends "base.html" %}
+
+{% block title %}ShowTrackr{% endblock %}
+
+{% block content %}
+<div id="watchlist-area" class="bg-base-100 p-4 md:p-6 rounded-lg shadow min-h-[400px]">
+  <div id="watchlist-content" hx-get="{{ url_for('main.load_watchlist') }}"
+    hx-trigger="load delay:50ms, loadWatchlist from:body" hx-swap="innerHTML">
+    <!-- Initial Loading State -->
+    <div class="text-center text-base-content opacity-60 text-xl py-20">
+      <span class="loading loading-bars loading-lg"></span>
+      <p>Loading watchlist...</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

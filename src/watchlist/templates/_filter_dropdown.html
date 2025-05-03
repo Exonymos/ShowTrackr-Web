@@ -1,0 +1,112 @@
+<!-- src/watchlist/templates/_filter_dropdown.html -->
+<div class="dropdown dropdown-bottom">
+  <button tabindex="0" role="button" class="btn btn-sm m-1">
+    <!-- Filter Icon SVG -->
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+      class="w-4 h-4 mr-1">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M5,4V6.64a1,1,0,0,0,.23.64l4.54,5.44a1,1,0,0,1,.23.64V21l4-2V13.36a1,1,0,0,1,.23-.64l4.54-5.44A1,1,0,0,0,19,6.64V4a1,1,0,0,0-1-1H6A1,1,0,0,0,5,4Z" />
+    </svg>
+    Filters
+    <!-- Indicator if filters are active -->
+    {% set filters_active = current_filter_status != 'all' or current_filter_type != 'all' or current_filter_years or
+    current_filter_rating_min is not none or current_filter_rating_max is not none %}
+    {% if filters_active %}
+    <span class="indicator-item badge badge-secondary badge-xs ml-1 p-1"></span>
+    {% endif %}
+  </button>
+  <div tabindex="0" id="filter-dropdown-content"
+    class="dropdown-content z-[10] card card-compact w-80 md:w-96 p-4 shadow bg-base-100 border border-base-300">
+    <form id="filter-form" hx-get="{{ url_for('main.load_watchlist') }}" hx-include="[name^='filter_']"
+      hx-target="#watchlist-content" hx-swap="innerHTML" hx-indicator="#htmx-indicator"
+      hx-trigger="applyFilters from:body">
+
+      <!-- Status Filter -->
+      <fieldset class="mb-4">
+        <legend class="text-sm font-medium mb-2">Status</legend>
+        <div class="flex gap-4">
+          <label class="label cursor-pointer gap-1">
+            <input type="radio" name="filter_status" value="all" class="radio radio-sm" {{ 'checked' if
+              current_filter_status=='all' }}>
+            <span class="label-text text-xs">All</span>
+          </label>
+          <label class="label cursor-pointer gap-1">
+            <input type="radio" name="filter_status" value="Watched" class="radio radio-sm" {{ 'checked' if
+              current_filter_status=='Watched' }}>
+            <span class="label-text text-xs">Watched</span>
+          </label>
+          <label class="label cursor-pointer gap-1">
+            <input type="radio" name="filter_status" value="Plan to Watch" class="radio radio-sm" {{ 'checked' if
+              current_filter_status=='Plan to Watch' }}>
+            <span class="label-text text-xs">Plan to Watch</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Type Filter -->
+      <fieldset class="mb-4">
+        <legend class="text-sm font-medium mb-2">Type</legend>
+        <div class="flex gap-4">
+          <label class="label cursor-pointer gap-1">
+            <input type="radio" name="filter_type" value="all" class="radio radio-sm" {{ 'checked' if
+              current_filter_type=='all' }}>
+            <span class="label-text text-xs">All</span>
+          </label>
+          <label class="label cursor-pointer gap-1">
+            <input type="radio" name="filter_type" value="movie" class="radio radio-sm" {{ 'checked' if
+              current_filter_type=='movie' }}>
+            <span class="label-text text-xs">Movies</span>
+          </label>
+          <label class="label cursor-pointer gap-1">
+            <input type="radio" name="filter_type" value="tv" class="radio radio-sm" {{ 'checked' if
+              current_filter_type=='tv' }}>
+            <span class="label-text text-xs">TV Shows</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Year Filter -->
+      <fieldset class="mb-4">
+        <legend class="text-sm font-medium mb-2">Release Year</legend>
+        {% if distinct_years %}
+        <div class="max-h-32 overflow-y-auto grid grid-cols-3 gap-1 pr-2 text-xs border border-base-300 rounded p-1">
+          {% for year in distinct_years %}
+          <label class="label cursor-pointer gap-1 justify-start py-0.5">
+            <input type="checkbox" name="filter_years" value="{{ year }}" class="checkbox checkbox-xs" {{ 'checked' if
+              year in current_filter_years }}>
+            <span class="label-text">{{ year }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-xs opacity-60">No years available to filter.</p>
+        {% endif %}
+      </fieldset>
+
+      <!-- Rating Filter -->
+      <fieldset class="mb-4">
+        <legend class="text-sm font-medium mb-2">Rating Range</legend>
+        <div class="flex items-center gap-2 text-xs">
+          <input type="number" name="filter_rating_min" min="1" max="10"
+            value="{{ current_filter_rating_min if current_filter_rating_min is not none else '' }}" placeholder="Min"
+            class="input input-bordered input-xs w-16">
+          <span>to</span>
+          <input type="number" name="filter_rating_max" min="1" max="10"
+            value="{{ current_filter_rating_max if current_filter_rating_max is not none else '' }}" placeholder="Max"
+            class="input input-bordered input-xs w-16">
+        </div>
+      </fieldset>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" id="reset-filters-btn" class="btn btn-xs btn-ghost" onclick="resetFilters();"
+          hx-indicator="#htmx-indicator">
+          Reset
+        </button>
+        <button id="apply-filters-btn" type="button" class="btn btn-xs btn-primary"
+          onclick="htmx.trigger('#filter-form', 'applyFilters', {})">
+          Apply</button>
+      </div>
+    </form>
+  </div>
+</div>

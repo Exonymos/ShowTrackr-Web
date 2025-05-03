@@ -1,0 +1,109 @@
+<!-- src/watchlist/templates/settings.html -->
+{% extends "base.html" %}
+
+{% block title %}ShowTrackr - Settings{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <h1 class="text-3xl font-bold mb-6 text-center">Settings</h1>
+
+  <div class="bg-base-100 p-6 rounded-lg shadow space-y-8">
+    <!-- Theme Selector -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4">Theme Selector</h2>
+      <p class="mb-4">Choose your preferred visual theme.</p>
+
+      <form hx-post="{{ url_for('settings.set_theme') }}" hx-target="body" hx-swap="none"
+        class="flex flex-wrap gap-4 items-center">
+        <div class="form-control w-full max-w-xs">
+          <select name="theme" class="select select-bordered" aria-label="Select Theme">
+            {% for theme_option in valid_themes %}
+            <option value="{{ theme_option }}" {{ 'selected' if theme_option==current_theme else '' }}>
+              {{ theme_option.title() }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          <!-- Checkmark Icon SVG -->
+          <svg viewBox="0 0 200 200" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5 mr-1 fill-current inline-block">
+            <title />
+            <path
+              d="M177.6,80.43a10,10,0,1,0-19.5,4.5,60.76,60.76,0,0,1-6,44.5c-16.5,28.5-53.5,38.5-82,22-28.5-16-38.5-53-22-81.5s53.5-38.5,82-22a9.86,9.86,0,1,0,10-17c-38.5-22.5-87-9.5-109.5,29a80.19,80.19,0,1,0,147,20.5Zm-109.5,11a10.12,10.12,0,0,0-11,17l40,25a10.08,10.08,0,0,0,5.5,1.5,10.44,10.44,0,0,0,8-4l52.5-67.5c3.5-4.5,2.5-10.5-2-14s-10.5-2.5-14,2l-47,60Z" />
+          </svg>
+          Apply Theme
+        </button>
+      </form>
+    </section>
+
+    <!-- Pagination Size Setting -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4">Watchlist Display</h2>
+      <p class="mb-4 text-sm opacity-80">Control how many items appear on each page of your watchlist.</p>
+
+      <form hx-post="{{ url_for('settings.set_pagination_size') }}" hx-target="#pagination-feedback" hx-swap="innerHTML"
+        class="flex flex-wrap gap-4 items-center">
+        <div class="form-control w-full max-w-xs">
+          <label class="label" for="pagination_size_select">
+            <span class="label-text">Items Per Page:</span>
+          </label>
+          <select id="pagination_size_select" name="pagination_size" class="select select-bordered"
+            aria-label="Select Items Per Page">
+            {% for size_option in valid_pagination_sizes %}
+            <option value="{{ size_option }}" {{ 'selected' if size_option==current_pagination_size else '' }}>
+              {{ size_option }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-secondary self-end">
+          <!-- Checkmark Icon SVG -->
+          <svg viewBox="0 0 200 200" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5 mr-1 fill-current inline-block">
+            <title />
+            <path
+              d="M177.6,80.43a10,10,0,1,0-19.5,4.5,60.76,60.76,0,0,1-6,44.5c-16.5,28.5-53.5,38.5-82,22-28.5-16-38.5-53-22-81.5s53.5-38.5,82-22a9.86,9.86,0,1,0,10-17c-38.5-22.5-87-9.5-109.5,29a80.19,80.19,0,1,0,147,20.5Zm-109.5,11a10.12,10.12,0,0,0-11,17l40,25a10.08,10.08,0,0,0,5.5,1.5,10.44,10.44,0,0,0,8-4l52.5-67.5c3.5-4.5,2.5-10.5-2-14s-10.5-2.5-14,2l-47,60Z" />
+          </svg>
+          <span class="inline-block align-middle">Apply Size</span>
+        </button>
+      </form>
+      <div id="pagination-feedback" class="mt-2 text-sm"></div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Watchlist Management -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4">Database Management</h2>
+      <p class="text-base-content opacity-70 italic mb-4">(Planned Feature - Not implemented yet)</p>
+
+      <div class="space-y-4 opacity-50">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Export Database</span>
+          </label>
+          <button class="btn btn-outline btn-disabled w-full max-w-xs block" disabled>Download database.db</button>
+          <div class="label">
+            <span class="label-text-alt text-xs">Download a backup of your current watchlist data.</span>
+          </div>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Import Database</span>
+          </label>
+          <input type="file" class="file-input file-input-bordered w-full max-w-xs block" disabled />
+          <div class="label">
+            <span class="label-text-alt text-xs text-warning">Warning: Importing will overwrite your current
+              data.</span>
+          </div>
+          <button class="btn btn-secondary btn-disabled mt-2 w-full max-w-xs block" disabled>Upload and Import</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

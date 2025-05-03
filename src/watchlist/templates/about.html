@@ -1,0 +1,159 @@
+<!-- src/watchlist/templates/about.html -->
+{% extends "base.html" %}
+
+{% block title %}ShowTrackr - About{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <h1 class="text-3xl font-bold mb-6 text-center">About ShowTrackr</h1>
+
+  <div role="tablist" class="tabs tabs-lift tabs-lg">
+    <!-- Tab 1: About -->
+    <input type="radio" name="about_tabs" role="tab" class="tab" aria-label="About" checked />
+    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+      <h2 class="text-xl font-semibold mb-4">What is ShowTrackr?</h2>
+      <p class="mb-3">
+        ShowTrackr is a simple, personal, locally-run web application designed to help you keep track of movies and TV
+        shows you want to watch or have already watched.
+        It focuses on manual entry, giving you full control over your watchlist data without relying on external
+        services for core functionality.
+      </p>
+      <p class="mb-3">
+        This project was created by <a href="https://github.com/exonymos" target="_blank" rel="noopener noreferrer"
+          class="link link-primary">Exonymos</a> as a free and private alternative to cloud-based watchlist managers.
+      </p>
+      <p class="mb-4">
+        Current Version: <span class="font-semibold">{{ version }}</span>
+        (<a href="https://github.com/exonymos/showtrackr-web/releases" target="_blank" rel="noopener noreferrer"
+          class="link link-secondary text-sm">View Releases</a>)
+      </p>
+
+      <h3 class="text-lg font-semibold mb-2 mt-6">Core Features</h3>
+      <ul class="list-disc list-inside space-y-1 text-sm mb-4">
+        <li>Manually add Movies and TV Shows</li>
+        <li>Track title, type, year, status, rating, dates, external IDs, notes, etc.</li>
+        <li>View your watchlist with pagination</li>
+        <li>Filter by Status, Type, Year, and Rating</li>
+        <li>Sort by various criteria (Date Watched/Added, Title, Year, Rating)</li>
+        <li>Edit all details of your entries</li>
+        <li>Delete entries</li>
+        <li>Theme selection for personalized appearance</li>
+        <li>Locally stored data using SQLite</li>
+      </ul>
+
+      <h3 class="text-lg font-semibold mb-2 mt-6">Technology Credits</h3>
+      <p class="text-sm mb-3">ShowTrackr is built with these amazing open-source technologies:</p>
+      <ul class="list-disc list-inside space-y-1 text-xs">
+        <li><a href="https://flask.palletsprojects.com/" target="_blank" rel="noopener noreferrer"
+            class="link">Flask</a> (Backend Framework)</li>
+        <li><a href="https://htmx.org/" target="_blank" rel="noopener noreferrer" class="link">HTMX</a> (Frontend
+          Interactivity)</li>
+        <li><a href="https://www.sqlite.org/" target="_blank" rel="noopener noreferrer" class="link">SQLite</a>
+          (Database)</li>
+        <li><a href="https://sqlalchemy.org/" target="_blank" rel="noopener noreferrer" class="link">SQLAlchemy</a> / <a
+            href="https://flask-sqlalchemy.palletsprojects.com/" target="_blank" rel="noopener noreferrer"
+            class="link">Flask-SQLAlchemy</a> (ORM)</li>
+        <li><a href="https://alembic.sqlalchemy.org/" target="_blank" rel="noopener noreferrer" class="link">Alembic</a>
+          / <a href="https://flask-migrate.readthedocs.io/" target="_blank" rel="noopener noreferrer"
+            class="link">Flask-Migrate</a> (Database Migrations)</li>
+        <li><a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="link">Tailwind CSS</a>
+          (Styling)</li>
+        <li><a href="https://daisyui.com/" target="_blank" rel="noopener noreferrer" class="link">DaisyUI</a> (UI
+          Components & Themes)</li>
+        <li><a href="https://simpleicons.org/" target="_blank" rel="noopener noreferrer" class="link">Simple Icons</a>
+          (Some SVG Icons)</li>
+      </ul>
+      <p class="text-xs mt-4 opacity-70">Licensed under the <a href="https://opensource.org/licenses/gpl-3.0/"
+          target="_blank" rel="noopener noreferrer" class="link link-hover">GPL-3.0 License</a>.</p>
+
+    </div>
+
+    <!-- Tab 2: Changelog -->
+    <input type="radio" name="about_tabs" role="tab" class="tab" aria-label="Changelog" />
+    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+      <h2 class="text-xl font-semibold mb-4">Changelog</h2>
+      <ul class="timeline timeline-snap-icon max-md:timeline-compact timeline-vertical">
+        <!-- v0.2.0 -->
+        <li>
+          <div class="timeline-middle">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5 text-primary">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="timeline-start md:text-end mb-10">
+            <time class="font-mono italic text-sm opacity-80">30 Apr 2025</time>
+            <div class="text-lg font-black">v0.2.0</div>
+            <div class="text-sm">
+              Added "Date Watched" field and display logic (Month/Day grouping). Added comprehensive Filtering (Status,
+              Type, Year Checkboxes, Rating Range) and Sorting (Date Watched/Added, Title, Year, Rating) via dropdown
+              controls. Sorting includes Asc/Desc toggle and places items without data last. Implemented dynamic list
+              updates using HTMX and Out-of-Band swaps for controls UI refresh. Added About page with tabs (About,
+              Changelog, Feedback). Fixed page reload issues when filters/sorts are active. Fixed sort logic
+              (case-insensitive title, nulls last). Fixed filter apply/reset button behavior and alignment issues.
+            </div>
+          </div>
+          <hr />
+        </li>
+        <!-- v0.1.1 -->
+        <li>
+          <hr />
+          <div class="timeline-middle">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="timeline-end mb-10">
+            <time class="font-mono italic text-sm opacity-80">25 Apr 2025</time>
+            <div class="text-lg font-black">v0.1.1</div>
+            <div class="text-sm">
+              Implemented visual star-based rating display and poster hover previews. Added icons for quick links and
+              actions. Added user setting for
+              pagination size and direct page input. Created custom 404/500 error pages. Implemented unsaved changes
+              warning for add/edit modal. Refined layout colors, fonts, and added favicon. Updated footer design. Moved
+              theme selector to welcome section for easier access. Fixed initial HTMX trigger bug and improved modal
+              closure reliability.
+            </div>
+          </div>
+          <hr />
+        </li>
+        <!-- v0.1.0 -->
+        <li>
+          <hr />
+          <div class="timeline-middle">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="timeline-start md:text-end mb-10">
+            <time class="font-mono italic text-sm opacity-80">18 Apr 2025</time>
+            <div class="text-lg font-black">v0.1.0</div>
+            <div class="text-sm">
+              Project setup with Flask, SQLAlchemy, Migrate, HTMX, Tailwind/DaisyUI. Core features implemented: Add,
+              View (List), Edit, Delete watchlist items via modal forms. Basic database model created. Basic pagination
+              added. Theme switching available in Settings. Local SQLite database storage configured. Initial layout
+              based on user specification. Runner scripts (.py, .bat, .sh) and README included.
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tab 3: Feedback -->
+    <input type="radio" name="about_tabs" role="tab" class="tab" aria-label="Feedback" />
+    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+      <h2 class="text-xl font-semibold mb-4">Feedback</h2>
+      <p>Feedback options are not yet implemented.</p>
+      <p class="mt-2 text-sm">If you encounter issues or have suggestions, please consider opening an issue on the
+        project's <a href="https://github.com/exonymos/showtrackr-web/issues" target="_blank" rel="noopener noreferrer"
+          class="link link-primary">GitHub repository</a>.</p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
