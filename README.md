@@ -21,6 +21,7 @@ ShowTrackr is a simple, personal, locally-run web application designed to help y
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
   - [Key Features](#key-features)
+  - [Previews](#previews)
   - [Getting Started](#getting-started)
     - [Quick Start](#quick-start)
     - [Detailed Setup](#detailed-setup)
@@ -35,7 +36,7 @@ ShowTrackr provides a private, free, and straightforward way to manage your medi
 
 It uses a modern web stack (Python/Flask backend, HTMX for dynamic frontend updates without page reloads) and is styled with Tailwind CSS and DaisyUI for a clean and themeable interface. Data is stored locally in a simple SQLite database file.
 
-➡️ **Learn more about [Features](./docs/features.md)**
+➡️ **Learn more about [Features](https://github.com/Exonymos/ShowTrackr-Web/wiki/Features)**
 
 <p align="right">(<a href="#showtrackr">back to top</a>)</p>
 
@@ -49,6 +50,14 @@ It uses a modern web stack (Python/Flask backend, HTMX for dynamic frontend upda
 - **Editing & Deleting:** Full control over your entries via a modal interface.
 - **Themeable:** Choose from various DaisyUI themes.
 - **Local First:** All data stays on your machine in `data/database.db`.
+
+<p align="right">(<a href="#showtrackr">back to top</a>)</p>
+
+## Previews
+
+![ShowTrackr Preview](https://raw.githubusercontent.com/Exonymos/ShowTrackr-Web/refs/heads/main/previews/home_cupcake_1.png "Home Page - Cupcake Theme")
+
+More previews are available in the [Previews folder](./previews/).
 
 <p align="right">(<a href="#showtrackr">back to top</a>)</p>
 
@@ -69,7 +78,7 @@ For users familiar with Python and virtual environments:
 
 For detailed step-by-step instructions covering Python installation, virtual environments, dependencies, and configuration, please see:
 
-➡️ **[Detailed Setup Guide](./docs/setup.md)**
+➡️ **[Detailed Setup Guide](https://github.com/Exonymos/ShowTrackr-Web/wiki/Setup)**
 
 <p align="right">(<a href="#showtrackr">back to top</a>)</p>
 
@@ -77,7 +86,7 @@ For detailed step-by-step instructions covering Python installation, virtual env
 
 Once set up, run the application using the provided scripts. They handle activating the environment (if needed), applying database migrations, and starting the web server.
 
-➡️ **[Running the Application Guide](./docs/running.md)**
+➡️ **[Running the Application Guide](https://github.com/Exonymos/ShowTrackr-Web/wiki/Running)**
 
 Access the application by opening `http://127.0.0.1:5000` (or the address shown in your terminal) in your web browser.
 
