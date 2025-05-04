@@ -173,4 +173,9 @@ def index():
 @main_bp.route("/about")
 def about():
     """Renders the About page."""
-    return render_template("about.html", version=config.APP_VERSION)
+    return render_template(
+        "about.html",
+        version=config.APP_VERSION,
+        feedback_url=config.GOOGLE_APPS_SCRIPT_FEEDBACK_URL,
+        sheet_url=config.GOOGLE_SHEET_PUBLIC_URL,
+    )

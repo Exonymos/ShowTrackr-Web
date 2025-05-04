@@ -48,10 +48,10 @@ def create_app():
     # Configuration from config.py and .env
     app.config.from_object(config)  # Load defaults from config.py
     app.config.from_mapping(
-         SECRET_KEY=os.environ.get("SECRET_KEY", "dev-secret-key-insecure"),
-         SQLALCHEMY_DATABASE_URI=f"sqlite:///{DATA_DIR / 'database.db'}",
-         # Override DEBUG from .env if present
-         DEBUG=os.environ.get("FLASK_DEBUG", "False").lower() == "true",
+        SECRET_KEY=os.environ.get("SECRET_KEY", "dev-secret-key-insecure"),
+        SQLALCHEMY_DATABASE_URI=f"sqlite:///{DATA_DIR / 'database.db'}",
+        # Override DEBUG from .env if present
+        DEBUG=os.environ.get("FLASK_DEBUG", "False").lower() == "true",
     )
 
     # Initialize Extensions with App Context
@@ -73,7 +73,12 @@ def create_app():
     def inject_global_vars():
         """Injects validated theme and app version into templates."""
         theme = get_validated_theme(session)
-        return dict(current_theme=theme, app_version=config.APP_VERSION)
+        return dict(
+            current_theme=theme,
+            app_version=config.APP_VERSION,
+            feedback_url=config.GOOGLE_APPS_SCRIPT_FEEDBACK_URL,
+            sheet_url=config.GOOGLE_SHEET_PUBLIC_URL,
+        )
 
     # Error Handlers
     @app.errorhandler(404)

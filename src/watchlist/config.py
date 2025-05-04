@@ -24,6 +24,12 @@ NULL_SORT_PLACEHOLDER = {
     "rating_desc": -1,
 }
 
+# Feedback Configuration
+GOOGLE_APPS_SCRIPT_FEEDBACK_URL = os.environ.get(
+    "GOOGLE_APPS_SCRIPT_FEEDBACK_URL", None
+)
+GOOGLE_SHEET_PUBLIC_URL = os.environ.get("GOOGLE_SHEET_PUBLIC_URL", None)
+
 # UI / Theme Configuration
 DEFAULT_THEME = "cupcake"
 VALID_THEMES = [

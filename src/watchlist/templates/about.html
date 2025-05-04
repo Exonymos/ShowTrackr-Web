@@ -76,7 +76,8 @@
         <!-- v0.2.0 -->
         <li>
           <div class="timeline-middle">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+              class="h-5 w-5 text-primary">
               <path fill-rule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
                 clip-rule="evenodd" />
@@ -145,13 +146,88 @@
     </div>
 
     <!-- Tab 3: Feedback -->
-    <input type="radio" name="about_tabs" role="tab" class="tab" aria-label="Feedback" />
-    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
-      <h2 class="text-xl font-semibold mb-4">Feedback</h2>
-      <p>Feedback options are not yet implemented.</p>
-      <p class="mt-2 text-sm">If you encounter issues or have suggestions, please consider opening an issue on the
-        project's <a href="https://github.com/exonymos/showtrackr-web/issues" target="_blank" rel="noopener noreferrer"
-          class="link link-primary">GitHub repository</a>.</p>
+    <input type="radio" name="about_tabs" role="tab" class="tab" aria-label="Feedback" id="tab-feedback" />
+    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6" aria-labelledby="tab-feedback">
+      <h2 class="text-xl font-semibold mb-4">Share Your Feedback</h2>
+
+      {% if feedback_url %}
+      <p class="text-sm mb-2">
+        We value your input! Whether it's a bug report, a feature suggestion, comments, or general thoughts on how to
+        improve
+        ShowTrackr, please let us know.
+      </p>
+      <p class="text-xs opacity-80 mb-6">
+        Examples: "Can you add X feature?", "I found a bug when...", "I love this app, but it would be great if..."
+      </p>
+
+      <form id="feedback-form" class="space-y-4" data-feedback-url="{{ feedback_url }}">
+
+        <input type="hidden" name="app_version" value="{{ app_version }}">
+
+        <!-- Name Input -->
+        <div class="form-control w-full">
+          <label class="label" for="feedback-name">
+            <span class="label-text">Name</span>
+          </label>
+          <input type="text" id="feedback-name" name="name" placeholder="Your name or alias"
+            class="input input-bordered w-full" />
+        </div>
+
+        <!-- Feedback Textarea -->
+        <div class="form-control w-full">
+          <label class="label" for="feedback-text">
+            <span class="label-text">Your Feedback</span>
+            <span class="label-text-alt text-error">*</span>
+          </label>
+          <textarea id="feedback-text" name="feedback" class="textarea textarea-bordered h-32 w-full"
+            placeholder="Describe the bug, suggest an improvement, or share your thoughts..." required></textarea>
+        </div>
+
+        <!-- Send Info Checkbox -->
+        <div class="form-control pt-2">
+          <label class="label cursor-pointer justify-start gap-2">
+            <input type="checkbox" id="feedback-send-info" name="send_info" checked="checked"
+              class="checkbox checkbox-sm checkbox-primary" />
+            <span class="label-text text-sm">Send basic browser & OS info with feedback</span>
+          </label>
+          <p class="text-xs opacity-70 mt-1">
+            This helps with debugging issues (e.g., "Chrome 124 on Windows 10"). No personal or identifying data beyond
+            your User Agent string is collected. Uncheck if you prefer not to send this.
+          </p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex flex-col gap-4 mt-6">
+          <button id="feedback-submit-btn" type="submit" class="btn btn-primary w-full">
+            <span class="inline-block align-middle">Submit Feedback</span>
+            <span class="loading loading-ring loading-xs hidden ml-2" id="feedback-loading"></span>
+          </button>
+          <div id="feedback-status" class="text-sm text-center"></div>
+        </div>
+      </form>
+
+      <div class="divider my-6"></div>
+
+      <!-- Public Sheet Link -->
+      <p class="text-xs opacity-80 text-center">
+        Submissions are added to a public Google Sheet.
+        {% if sheet_url %}
+        <a href="{{ sheet_url }}" target="_blank" rel="noopener noreferrer" class="link link-secondary">View the
+          feedback sheet here.</a>
+        {% else %}
+        (Public sheet link not configured).
+        {% endif %}
+      </p>
+
+      {% else %}
+      <div class="alert alert-warning shadow-lg">
+        Feedback submission is not configured.
+      </div>
+      <p class="mt-4 text-sm">If you encounter issues or have suggestions, please consider opening an issue directly on
+        the <a href="https://github.com/exonymos/showtrackr-web/issues" target="_blank" rel="noopener noreferrer"
+          class="link">project's GitHub repository</a>.</p>
+      {% endif %}
+
     </div>
   </div>
 

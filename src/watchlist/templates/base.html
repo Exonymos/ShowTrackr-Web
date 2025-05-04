@@ -18,7 +18,7 @@
   <script src="{{ url_for('static', filename='js/htmx.min.js') }}" defer></script>
 </head>
 
-<body class="bg-base-200">
+<body class="bg-base-200" data-feedback-url="{{ feedback_url }}" data-sheet-url="{{ sheet_url }}">
 
   <!-- Header -->
   <header class="bg-neutral text-neutral-content shadow sticky top-0 z-1000">

@@ -224,6 +224,10 @@ FLASK_DEBUG=True
 
 # Database URL
 DATABASE_URL=sqlite:///../data/database.db
+
+# Feedback URL
+GOOGLE_APPS_SCRIPT_FEEDBACK_URL='https://script.google.com/macros/s/AKfycbwgakVifq4XkMRUMYvcRuR3083z6tn4cmjx7kwQCn5zNBwGJxEObKf5zGTI5an0A2rwvQ/exec'
+GOOGLE_SHEET_PUBLIC_URL='https://docs.google.com/spreadsheets/d/1OW1PQTpdOcJK3bWLHsjkNuHZBkXp_RpLMel4IlDMrLg/edit?usp=sharing'
 """
         try:
             with open(ENV_FILE, "w", encoding="utf-8") as f:

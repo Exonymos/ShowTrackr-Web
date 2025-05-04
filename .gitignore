@@ -36,3 +36,5 @@ pnpm-debug.log*
 n-*.md
 tempCodeRunnerFile.py
 docs/
+releases/
+ex_data/

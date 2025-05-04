@@ -167,6 +167,88 @@ document.body.addEventListener("htmx:afterSwap", function (event) {
   }
 });
 
+// Feedback Form Submission
+const feedbackForm = document.getElementById('feedback-form');
+const feedbackSubmitBtn = document.getElementById('feedback-submit-btn');
+const feedbackStatusEl = document.getElementById('feedback-status');
+
+if (feedbackForm && feedbackSubmitBtn) {
+  const FEEDBACK_SCRIPT_URL = feedbackForm.dataset.feedbackUrl || document.body.dataset.feedbackUrl;
+  const APP_VERSION = feedbackForm.querySelector('input[name="app_version"]')?.value || 'unknown';
+
+  feedbackForm.addEventListener('submit', async (event) => {
+      event.preventDefault(); 
+
+      if (!FEEDBACK_SCRIPT_URL) {
+           showToast("Feedback submission URL is not configured.", "error");
+           return;
+      }
+
+      const feedbackInput = document.getElementById('feedback-text');
+      const submitButtonText = feedbackSubmitBtn.querySelector('span:not(.loading)');
+      const submitButtonSpinner = feedbackSubmitBtn.querySelector('.loading');
+
+      const feedbackText = feedbackInput.value.trim();
+      if (!feedbackText) {
+          showToast("Feedback cannot be empty.", "warning");
+          feedbackInput.focus();
+          return;
+      }
+
+      // Disable button and show spinner
+      feedbackSubmitBtn.disabled = true;
+      submitButtonText.classList.add('hidden');
+      submitButtonSpinner.classList.remove('hidden');
+      if(feedbackStatusEl) feedbackStatusEl.textContent = 'Submitting...'; 
+
+      // Create FormData
+      const formData = new FormData(feedbackForm); 
+      const sendInfoCheckbox = document.getElementById('feedback-send-info');
+      formData.set('sendInfo', sendInfoCheckbox.checked);
+
+      if (sendInfoCheckbox.checked) {
+           // Include userAgent if checked
+           formData.set('userAgent', navigator.userAgent || 'N/A');
+      } else {
+           // Ensure user agent isn't sent if unchecked
+           formData.delete('userAgent');
+      }
+
+      try {
+          const response = await fetch(FEEDBACK_SCRIPT_URL, {
+              method: 'POST',
+              body: formData,
+          });
+
+          if (!response.ok) {
+               // Basic error handling for network issues
+               throw new Error(`HTTP error ${response.status}`);
+          }
+
+          const resultText = await response.text(); 
+
+          if (resultText.toLowerCase().includes('success')) {
+              showToast('Feedback submitted successfully!', 'success');
+              feedbackForm.reset(); 
+              if(feedbackStatusEl) feedbackStatusEl.textContent = ''; 
+          } else {
+               showToast(resultText || 'Failed to submit feedback.', 'error');
+               if(feedbackStatusEl) feedbackStatusEl.textContent = resultText || 'Submission failed.';
+          }
+
+      } catch (error) {
+          console.error('Feedback submission error:', error);
+          showToast(`Error submitting feedback: ${error.message}`, 'error');
+           if(feedbackStatusEl) feedbackStatusEl.textContent = 'Error. Please try again.';
+      } finally {
+          // Re-enable button and hide spinner
+          feedbackSubmitBtn.disabled = false;
+          submitButtonText.classList.remove('hidden');
+          submitButtonSpinner.classList.add('hidden');
+      }
+  });
+}
+
 // Toast Notifications
 function showToast(message, type = "info") {
   const toastContainer =
