@@ -214,6 +214,7 @@ def main():
         print(f"Creating .env file at: {ENV_FILE}")
         secret_key = secrets.token_hex(24)
         env_content = f"""# Flask Secret Key (Required)
+# Generate one using: python -c 'import secrets; print(secrets.token_hex(16))'
 SECRET_KEY='{secret_key}'
 
 # Flask App Configuration
@@ -227,7 +228,7 @@ DATABASE_URL=sqlite:///../data/database.db
 
 # Feedback URL
 GOOGLE_APPS_SCRIPT_FEEDBACK_URL='https://script.google.com/macros/s/AKfycbwgakVifq4XkMRUMYvcRuR3083z6tn4cmjx7kwQCn5zNBwGJxEObKf5zGTI5an0A2rwvQ/exec'
-GOOGLE_SHEET_PUBLIC_URL='https://docs.google.com/spreadsheets/d/1OW1PQTpdOcJK3bWLHsjkNuHZBkXp_RpLMel4IlDMrLg/edit?usp=sharing'
+GOOGLE_SHEET_PUBLIC_URL='https://docs.google.com/spreadsheets/d/1OW1PQTpdOcJK3bWLHsjkNuHZBkXp_RpLMel4IlDMrLg'
 """
         try:
             with open(ENV_FILE, "w", encoding="utf-8") as f:

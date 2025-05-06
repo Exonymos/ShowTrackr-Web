@@ -5,6 +5,23 @@
   <!-- Filter Dropdown -->
   {% include '_filter_dropdown.html' with context %}
 
+  <!-- Search Bar -->
+  <div class="flex-grow max-w-md mx-auto">
+    <label class="input input-bordered input-sm flex items-center gap-2 w-full has-[:focus-visible]:input-primary">
+      <svg class="h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.3-4.3"></path>
+      </svg>
+      <input type="search" id="search-input" name="search" class="grow text-sm" placeholder="Search by title..."
+        value="{{ current_search if current_search else '' }}" hx-get="{{ url_for('main.load_watchlist') }}"
+        hx-trigger="keyup changed delay:500ms, search" hx-target="#watchlist-content" hx-swap="innerHTML"
+        hx-indicator="#htmx-indicator" {# Include current filter and sort params when searching #}
+        hx-include="[name^='filter_'], [name='sort'], [name='order'], #search-input" hx-preserve="true" {# Preserve
+        input value across swaps #} />
+    </label>
+  </div>
+
   <!-- Sort Dropdown -->
   {% include '_sort_dropdown.html' with context %}
 
