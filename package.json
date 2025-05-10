@@ -1,6 +1,6 @@
 {
   "name": "showtrackr",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A personal, locally run web application for tracking movies and TV shows using Flask, HTMX, and SQLite.",
   "homepage": "https://github.com/exonymos/showtrackr",
   "main": "index.js",
