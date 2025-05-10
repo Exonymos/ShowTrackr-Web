@@ -4,15 +4,30 @@
 {% block title %}ShowTrackr - Settings{% endblock %}
 
 {% block content %}
+
 <div class="max-w-4xl mx-auto">
   <h1 class="text-3xl font-bold mb-6 text-center">Settings</h1>
 
-  <div class="bg-base-100 p-6 rounded-lg shadow space-y-8">
-    <!-- Theme Selector -->
-    <section>
-      <h2 class="text-xl font-semibold mb-4">Theme Selector</h2>
-      <p class="mb-4">Choose your preferred visual theme.</p>
+  <!-- Flash Messages Area -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="mb-4 space-y-2">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category if category != 'message' else 'info' }} shadow-md text-sm">
+      <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
 
+  <div role="tablist" class="tabs tabs-lift tabs-lg">
+    <!-- Tab 1: Styling -->
+    <input type="radio" name="setting_tabs" role="tab" class="tab" aria-label="Styling" checked />
+    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+      <!-- Theme Selector -->
+      <h2 class="text-lg font-medium mb-4">Theme Selector</h2>
+      <p class="mb-4 text-sm opacity-80">Choose your preferred theme for the application.</p>
       <form hx-post="{{ url_for('settings.set_theme') }}" hx-target="body" hx-swap="none"
         class="flex flex-wrap gap-4 items-center">
         <div class="form-control w-full max-w-xs">
@@ -36,19 +51,14 @@
           Apply Theme
         </button>
       </form>
-    </section>
 
-    <!-- Pagination Size Setting -->
-    <section>
-      <h2 class="text-xl font-semibold mb-4">Watchlist Display</h2>
+      <!-- Pagination Size Setting -->
+      <h2 class="text-lg font-medium mb-4 mt-4">Pagination Size</h2>
       <p class="mb-4 text-sm opacity-80">Control how many items appear on each page of your watchlist.</p>
 
       <form hx-post="{{ url_for('settings.set_pagination_size') }}" hx-target="#pagination-feedback" hx-swap="innerHTML"
         class="flex flex-wrap gap-4 items-center">
         <div class="form-control w-full max-w-xs">
-          <label class="label" for="pagination_size_select">
-            <span class="label-text">Items Per Page:</span>
-          </label>
           <select id="pagination_size_select" name="pagination_size" class="select select-bordered"
             aria-label="Select Items Per Page">
             {% for size_option in valid_pagination_sizes %}
@@ -71,39 +81,72 @@
         </button>
       </form>
       <div id="pagination-feedback" class="mt-2 text-sm"></div>
-    </section>
+    </div>
 
-    <div class="divider"></div>
+    <!-- Tab 2: Database Management -->
+    <input type="radio" name="setting_tabs" role="tab" class="tab" aria-label="Database" />
+    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+      <h2 class="text-xl font-bold mb-4">Database Management</h2>
+      <p class="text-sm opacity-80 mb-4">Backup your watchlist data or restore from a previous backup.</p>
 
-    <!-- Watchlist Management -->
-    <section>
-      <h2 class="text-xl font-semibold mb-4">Database Management</h2>
-      <p class="text-base-content opacity-70 italic mb-4">(Planned Feature - Not implemented yet)</p>
+      <!-- Export Section -->
+      <section class="mb-8">
+        <h3 class="text-lg font-medium mb-2">Export Data</h3>
+        <form action="{{ url_for('settings.export_data_json') }}" method="GET">
+          <button type="submit" class="btn btn-primary flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            <span>Export Watchlist</span>
+          </button>
+        </form>
+        <p class="text-xs opacity-70 mt-2">
+          Download a JSON file containing all your watchlist items.<br>
+          This file can be used for backup or to import into another ShowTrackr instance.
+        </p>
+      </section>
 
-      <div class="space-y-4 opacity-50">
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Export Database</span>
-          </label>
-          <button class="btn btn-outline btn-disabled w-full max-w-xs block" disabled>Download database.db</button>
-          <div class="label">
-            <span class="label-text-alt text-xs">Download a backup of your current watchlist data.</span>
+      <!-- Import Section -->
+      <section>
+        <h3 class="text-lg font-medium mb-2 mt-4">Import Data</h3>
+        <form action="{{ url_for('settings.import_data_json') }}" method="POST" enctype="multipart/form-data"
+          id="import-form">
+          <div class="form-control mb-3">
+            <input type="file" name="backup_file" id="backup_file_input"
+              class="file-input file-input-bordered file-input-sm max-w-xs" accept=".json" required />
           </div>
-        </div>
+          <button type="submit" class="btn btn-secondary flex items-center gap-2 mb-2"
+            onclick="return confirmImport();">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+            </svg>
+            <span>Import Watchlist</span>
+          </button>
+        </form>
+        <p class="text-xs opacity-70 mb-1">
+          Upload a previously exported ShowTrackr JSON backup file.
+        </p>
+        <span class="text-xs text-warning"><strong>WARNING:</strong> Importing will <strong class="underline">DELETE
+            ALL</strong> current
+          watchlist data and replace it with the backup. This action cannot be undone.</span>
+      </section>
 
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Import Database</span>
-          </label>
-          <input type="file" class="file-input file-input-bordered w-full max-w-xs block" disabled />
-          <div class="label">
-            <span class="label-text-alt text-xs text-warning">Warning: Importing will overwrite your current
-              data.</span>
-          </div>
-          <button class="btn btn-secondary btn-disabled mt-2 w-full max-w-xs block" disabled>Upload and Import</button>
-        </div>
-      </div>
-    </section>
+    </div>
   </div>
 </div>
+<!-- Script -->
+<script>
+  function confirmImport() {
+    const fileInput = document.getElementById('backup_file_input');
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+      showToast('Please select a backup file to import.', 'warning');
+      return false; // Prevent form submission
+    }
+    return confirm("ARE YOU ABSOLUTELY SURE?\n\nThis will DELETE ALL your current watchlist data and replace it with the content from the backup file. This action cannot be undone.");
+  }
+</script>
 {% endblock %}

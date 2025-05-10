@@ -16,9 +16,7 @@
       <input type="search" id="search-input" name="search" class="grow text-sm" placeholder="Search by title..."
         value="{{ current_search if current_search else '' }}" hx-get="{{ url_for('main.load_watchlist') }}"
         hx-trigger="keyup changed delay:500ms, search" hx-target="#watchlist-content" hx-swap="innerHTML"
-        hx-indicator="#htmx-indicator" {# Include current filter and sort params when searching #}
-        hx-include="[name^='filter_'], [name='sort'], [name='order'], #search-input" hx-preserve="true" {# Preserve
-        input value across swaps #} />
+        hx-indicator="#htmx-indicator" hx-preserve="true" />
     </label>
   </div>
 
