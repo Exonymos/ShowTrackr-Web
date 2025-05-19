@@ -136,7 +136,11 @@ ALLOWED_EXTENSIONS = {"json"}
 
 
 def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[0] != ""
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
 
 
 @settings_bp.route("/import_data", methods=["POST"])
@@ -173,17 +177,50 @@ def import_data_json():
                     )
                     continue
 
+                # rating and year validation
+                raw_rating = raw_item.get("rating")
+                item_rating = None
+                if raw_rating is not None:
+                    try:
+                        item_rating_int = int(raw_rating)
+                        if 1 <= item_rating_int <= 10:
+                            item_rating = item_rating_int
+                        else:
+                            current_app.logger.warning(
+                                f"Rating {raw_rating} out of range for item '{raw_item.get('title', 'N/A')}'. Setting to None."
+                            )
+                    except ValueError:
+                        current_app.logger.warning(
+                            f"Invalid rating format '{raw_rating}' for item '{raw_item.get('title', 'N/A')}'. Setting to None."
+                        )
+
+                raw_year = raw_item.get("year")
+                item_year = None
+                if raw_year is not None:
+                    try:
+                        item_year_int = int(raw_year)
+                        if 1800 <= item_year_int <= 2050:
+                            item_year = item_year_int
+                        else:
+                            current_app.logger.warning(
+                                f"Year {raw_year} out of range for item '{raw_item.get('title', 'N/A')}'. Setting to None."
+                            )
+                    except ValueError:
+                        current_app.logger.warning(
+                            f"Invalid year format '{raw_year}' for item '{raw_item.get('title', 'N/A')}'. Setting to None."
+                        )
+
                 new_item = WatchlistItem(
                     title=raw_item.get("title"),
                     type=raw_item.get("type"),
-                    year=raw_item.get("year"),
+                    year=item_year,
                     tmdb_id=raw_item.get("tmdb_id"),
                     imdb_id=raw_item.get("imdb_id"),
                     boxd_id=raw_item.get("boxd_id"),
                     overview=raw_item.get("overview"),
                     poster_url=raw_item.get("poster_url"),
                     status=raw_item.get("status", "Watched"),
-                    rating=raw_item.get("rating"),
+                    rating=item_rating,
                     notes=raw_item.get("notes"),
                 )
 

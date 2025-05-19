@@ -10,12 +10,24 @@ from flask import (
     current_app,
     session,
 )
+import unicodedata
 from ..models import WatchlistItem
 from .. import db, htmx
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import date, datetime
 
 items_bp = Blueprint("items", __name__)
+
+
+def safe_header_value(value):
+    # Normalize and encode to latin-1
+    if value is None:
+        return ""
+    return (
+        unicodedata.normalize("NFKD", str(value))
+        .encode("latin-1", "replace")
+        .decode("latin-1")
+    )
 
 
 @items_bp.route("/items/add/form", methods=["GET"])
@@ -54,15 +66,29 @@ def save_item():
         # Update fields from form
         item.title = request.form.get("title", "").strip()
         item.type = request.form.get("type")
-        # Handle empty year string
+        # Stricter year validation
         year_str = request.form.get("year", "").strip()
-        item.year = int(year_str) if year_str.isdigit() else None
+        if year_str:  # If a year string is provided
+            if year_str.isdigit():
+                item.year = int(year_str)
+                if not (1800 <= item.year <= 2050):
+                    error_messages.append("Year must be between 1800 and 2050.")
+            else:
+                error_messages.append("Year must be a valid number.")
+                item.year = None
+        else:
+            item.year = None
         item.overview = request.form.get("overview", "").strip() or None
         item.poster_url = request.form.get("poster_url", "").strip() or None
         item.status = request.form.get("status")
         # Handle empty rating string
         rating_str = request.form.get("rating", "").strip()
-        item.rating = int(rating_str) if rating_str.isdigit() else None
+        if rating_str.isdigit():
+            item.rating = int(rating_str)
+            if not (1 <= item.rating <= 10):
+                error_messages.append("Rating must be between 1 and 10.")
+        else:
+            item.rating = None
         item.notes = request.form.get("notes", "").strip() or None
         item.tmdb_id = request.form.get("tmdb_id", "").strip() or None
         item.imdb_id = request.form.get("imdb_id", "").strip() or None
@@ -121,9 +147,12 @@ def save_item():
         db.session.commit()
 
         resp = make_response("", 200)
+        resp = make_response("", 200)
         resp.headers["HX-Trigger"] = "loadWatchlist"
         resp.headers["X-Close-Modal"] = "true"
-        resp.headers["X-HX-Alert"] = f"Item '{item.title}' saved successfully!"
+        resp.headers["X-HX-Alert"] = safe_header_value(
+            f"Item '{item.title}' saved successfully!"
+        )
         resp.headers["X-HX-Alert-Type"] = "success"
         return resp
 
@@ -179,7 +208,9 @@ def delete_item(item_id):
 
             resp = make_response("", 200)
             resp.headers["HX-Trigger"] = "loadWatchlist"
-            resp.headers["X-HX-Alert"] = f"Item '{item_title}' deleted successfully!"
+            resp.headers["X-HX-Alert"] = safe_header_value(
+                f"Item '{item_title}' deleted successfully!"
+            )
             resp.headers["X-HX-Alert-Type"] = "success"
             resp.headers["X-Close-Modal"] = "true"
             return resp

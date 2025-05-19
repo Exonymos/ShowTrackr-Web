@@ -28,11 +28,11 @@ htmx = HTMX()
 
 # Theme Validation
 def get_validated_theme(session_data) -> str:
-    """Gets the theme from session, validates it, and returns a valid theme."""
+    """Gets the theme from session, validates it, and ensures session is updated."""
     theme = session_data.get("theme", config.DEFAULT_THEME)
     if theme not in config.VALID_THEMES:
         theme = config.DEFAULT_THEME
-        session_data["theme"] = theme
+    session_data["theme"] = theme
     return theme
 
 

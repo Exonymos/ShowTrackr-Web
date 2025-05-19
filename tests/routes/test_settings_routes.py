@@ -1,11 +1,13 @@
 # tests/routes/test_settings_routes.py
 import pytest
-from flask import url_for, session
+from flask import url_for, session, get_flashed_messages
 from src.watchlist import config
 from src.watchlist.models import WatchlistItem
 from src.watchlist import db as main_db
+from src.watchlist.routes.settings import allowed_file
 import json
 import io
+from tests.conftest import add_test_item
 
 
 def test_settings_page_loads(client):
@@ -151,6 +153,100 @@ def test_export_data_json(client, db_session):
     db_session.commit()
 
 
+def test_import_data_json_replace_existing(client, db_session, app):
+    """Test importing data with replace_existing set to True."""
+    # Add initial items
+    add_test_item(db_session, title="Old Movie 1", type="movie")
+    add_test_item(db_session, title="Old Show 1", type="tv")
+    assert WatchlistItem.query.count() == 2
+
+    # New data to import
+    new_data = [{"title": "New Imported Movie", "type": "movie", "year": 2024}]
+    json_string = json.dumps(new_data)
+    bytes_io = io.BytesIO(json_string.encode("utf-8"))
+    data_payload = {"backup_file": (bytes_io, "replace_backup.json")}
+
+    with app.test_request_context():
+        response = client.post(
+            url_for("settings.import_data_json"),
+            data=data_payload,
+            content_type="multipart/form-data",
+            follow_redirects=True,  # To capture flash messages on the redirected page
+        )
+
+    assert response.status_code == 200
+    assert b"1 items imported successfully." in response.data  # Check flash message
+
+    # Verify database state
+    items_after_import = WatchlistItem.query.all()
+    assert len(items_after_import) == 1
+    assert items_after_import[0].title == "New Imported Movie"
+    assert WatchlistItem.query.filter_by(title="Old Movie 1").count() == 0
+
+
+def test_import_data_json_empty_array(client, db_session, app):
+    """Test importing an empty JSON array."""
+    WatchlistItem.query.delete()
+    db_session.commit()
+
+    add_test_item(db_session, title="Movie To Be Deleted", type="movie")
+    db_session.commit()
+    assert WatchlistItem.query.count() == 1
+
+    empty_data = []
+    json_string = json.dumps(empty_data)
+    bytes_io = io.BytesIO(json_string.encode("utf-8"))
+    data_payload = {"backup_file": (bytes_io, "empty_backup.json")}
+
+    with app.test_request_context():
+        response = client.post(
+            url_for("settings.import_data_json"),
+            data=data_payload,
+            content_type="multipart/form-data",
+            follow_redirects=True,
+        )
+    assert response.status_code == 200
+    assert b"0 items imported successfully." in response.data
+    assert WatchlistItem.query.count() == 0
+
+
+def test_import_data_json_invalid_data_types(client, db_session, app):
+    """Test importing data with invalid types for rating and year."""
+    WatchlistItem.query.delete()
+    main_db.session.commit()
+
+    # Rating is a string, year is a string that's not a number
+    invalid_type_data = [
+        {"title": "Valid Title 1", "type": "movie", "year": "2020", "rating": 8},
+        {"title": "Invalid Rating Type", "type": "tv", "rating": "high"},
+        {"title": "Invalid Year Type", "type": "movie", "year": "twentytwenty"},
+    ]
+    json_string = json.dumps(invalid_type_data)
+    bytes_io = io.BytesIO(json_string.encode("utf-8"))
+    data_payload = {"backup_file": (bytes_io, "invalid_types.json")}
+
+    with app.test_request_context():
+        response = client.post(
+            url_for("settings.import_data_json"),
+            data=data_payload,
+            content_type="multipart/form-data",
+            follow_redirects=True,
+        )
+
+    assert response.status_code == 200
+    assert b"3 items imported successfully." in response.data
+
+    items = WatchlistItem.query.order_by(WatchlistItem.title).all()
+    assert len(items) == 3
+    assert items[0].title == "Invalid Rating Type"
+    assert items[0].rating is None
+    assert items[1].title == "Invalid Year Type"
+    assert items[1].year is None
+    assert items[2].title == "Valid Title 1"
+    assert items[2].year == 2020
+    assert items[2].rating == 8
+
+
 def test_import_data_json_success(client, db_session, app):
     """Test importing data from a valid JSON file."""
     # Ensure database is initially empty for this test or has known state
@@ -281,3 +377,13 @@ def test_import_no_file_selected(client, app):
         )
     assert response.status_code == 200
     assert b"No file part in the request" in response.data
+
+
+def test_allowed_file_helper():
+    """Test the allowed_file helper function."""
+    assert allowed_file("backup.json") is True
+    assert allowed_file("backup.JSON") is True
+    assert allowed_file("backup.txt") is False
+    assert allowed_file("backupjson") is False
+    assert allowed_file(".json") is False
+    assert allowed_file("noextension") is False
