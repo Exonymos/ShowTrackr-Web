@@ -1,6 +1,7 @@
 # .gitignore
 # Python
 __pycache__/
+.pytest_cache/
 *.pyc
 *.pyo
 *.pyd
@@ -35,7 +36,7 @@ pnpm-debug.log*
 # Miscellaneous
 n-*.md
 tempCodeRunnerFile.py
-docs/
 releases/
-ex_data/
-testing/
+misc/
+*.zip
+ShowTrackr-Web-v*/

@@ -21,7 +21,7 @@ Thank you for considering contributing to ShowTrackr! We appreciate your help in
 
 ## Development Setup
 
-Follow the [Detailed Setup Guide](./docs/setup.md) to get your local development environment running.
+Follow the Detailed [Setup Guide](./docs/setup.md) and [Run Guide](./docs/running.md) to get your local development environment running.
 
 ## Questions?
 

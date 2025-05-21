@@ -1,8 +1,8 @@
 {
   "name": "showtrackr",
-  "version": "0.2.1",
+  "version": "0.2.1-dev",
   "description": "A personal, locally run web application for tracking movies and TV shows using Flask, HTMX, and SQLite.",
-  "homepage": "https://github.com/exonymos/showtrackr",
+  "homepage": "https://github.com/exonymos/ShowTrackr-Web",
   "main": "index.js",
   "scripts": {
     "build:css": "npx @tailwindcss/cli -i ./src/watchlist/static/css/input.css -o ./src/watchlist/static/css/output.css -m --optimize",

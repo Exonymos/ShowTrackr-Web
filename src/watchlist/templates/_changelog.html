@@ -1,0 +1,120 @@
+<!-- src/watchlist/templates/_changelog.html -->
+
+<!-- v0.3.0 -->
+<li>
+  <div class="timeline-middle">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5 text-primary">
+      <path fill-rule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+        clip-rule="evenodd" />
+    </svg>
+  </div>
+  <div class="timeline-start md:text-end mb-10">
+    <time class="font-mono italic text-sm opacity-80">21 May 2025</time>
+    <div class="text-lg font-black">v0.3.0</div>
+    <div class="text-sm">
+      Added the ability to export and import your watchlist as a backup file (JSON) from the Settings page.
+      Improved error messages and validation for settings and data import. Lots of new tests to make sure things
+      work right. Upgraded to the latest Flask and other libraries. Fixed issues with importing bad data and
+      made the app more reliable overall.
+    </div>
+  </div>
+  <hr />
+</li>
+<!-- v0.2.1 -->
+<li>
+  <hr />
+  <div class="timeline-middle">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+      <path fill-rule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+        clip-rule="evenodd" />
+    </svg>
+  </div>
+  <div class="timeline-end mb-10">
+    <time class="font-mono italic text-sm opacity-80">09 May 2025</time>
+    <div class="text-lg font-black">v0.2.1</div>
+    <div class="text-sm">
+      Added a fully functional feedback form with validation and submission logic. Integrated feedback
+      submission
+      to a public
+      Google Sheets. Added feedback status display and loading indicators. Improved feedback form layout and
+      accessibility. Added feedback submission confirmation message. Added search functionality to the watchlist
+      page. Search movies and TV shows by title. Added shortcut to focus on the search input field. Added a
+      quick
+      clear
+      button to clear the search input.
+    </div>
+  </div>
+  <hr />
+</li>
+<!-- v0.2.0 -->
+<li>
+  <hr />
+  <div class="timeline-middle">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+      <path fill-rule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+        clip-rule="evenodd" />
+    </svg>
+  </div>
+  <div class="timeline-start md:text-end mb-10">
+    <time class="font-mono italic text-sm opacity-80">30 Apr 2025</time>
+    <div class="text-lg font-black">v0.2.0</div>
+    <div class="text-sm">
+      Added "Date Watched" field and display logic (Month/Day grouping). Added comprehensive Filtering (Status,
+      Type, Year Checkboxes, Rating Range) and Sorting (Date Watched/Added, Title, Year, Rating) via dropdown
+      controls. Sorting includes Asc/Desc toggle and places items without data last. Implemented dynamic list
+      updates using HTMX and Out-of-Band swaps for controls UI refresh. Added About page with tabs (About,
+      Changelog, Feedback). Fixed page reload issues when filters/sorts are active. Fixed sort logic
+      (case-insensitive title, nulls last). Fixed filter apply/reset button behavior and alignment issues.
+      Refactored code for better readability and maintainability.
+    </div>
+  </div>
+  <hr />
+</li>
+<!-- v0.1.1 -->
+<li>
+  <hr />
+  <div class="timeline-middle">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+      <path fill-rule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+        clip-rule="evenodd" />
+    </svg>
+  </div>
+  <div class="timeline-end mb-10">
+    <time class="font-mono italic text-sm opacity-80">25 Apr 2025</time>
+    <div class="text-lg font-black">v0.1.1</div>
+    <div class="text-sm">
+      Implemented visual star-based rating display and poster hover previews. Added icons for quick links and
+      actions. Added user setting for
+      pagination size and direct page input. Created custom 404/500 error pages. Implemented unsaved changes
+      warning for add/edit modal. Refined layout colors, fonts, and added favicon. Updated footer design. Moved
+      theme selector to welcome section for easier access. Fixed initial HTMX trigger bug and improved modal
+      closure reliability.
+    </div>
+  </div>
+  <hr />
+</li>
+<!-- v0.1.0 -->
+<li>
+  <hr />
+  <div class="timeline-middle">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+      <path fill-rule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+        clip-rule="evenodd" />
+    </svg>
+  </div>
+  <div class="timeline-start md:text-end mb-10">
+    <time class="font-mono italic text-sm opacity-80">18 Apr 2025</time>
+    <div class="text-lg font-black">v0.1.0</div>
+    <div class="text-sm">
+      Project setup with Flask, SQLAlchemy, Migrate, HTMX, Tailwind/DaisyUI. Core features implemented: Add,
+      View (List), Edit, Delete watchlist items via modal forms. Basic database model created. Basic pagination
+      added. Theme switching available in Settings. Local SQLite database storage configured. Initial layout
+      based on user specification. Runner scripts (.py, .bat, .sh) and README included.
+    </div>
+  </div>
+</li>
