@@ -9,13 +9,6 @@ call .\.venv\Scripts\activate || (
 echo Setting environment variables...
 set FLASK_APP=src/watchlist
 
-echo Ensuring database is up-to-date...
-flask db upgrade || (
-    echo ERROR: Database migration failed.
-    pause
-    exit /b 1
-)
-
 echo Starting Flask application...
 python run.py
 

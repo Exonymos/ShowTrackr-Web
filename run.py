@@ -9,7 +9,7 @@ import platform
 project_root = Path(__file__).parent.resolve()
 os.chdir(project_root)
 
-# --- Virtual Environment Check (More Robust) ---
+# --- Virtual Environment Check  ---
 # Check if the Python executable being used is from the expected venv path
 expected_venv_path = project_root / ".venv"
 is_windows = platform.system() == "Windows"
@@ -29,90 +29,180 @@ except OSError:
     current_executable = Path(sys.executable)
 
 
-if current_executable != expected_executable:
-    print("--- WARNING ---")
-    print("It looks like the virtual environment (.venv) is not activated,")
-    print("or you are running this script with a different Python interpreter.")
-    print(f"Expected venv: {expected_venv_path}")
-    print(f"Current Python: {sys.executable}")
-    print("\nPlease activate the environment first:")
-    if is_windows:
-        print(f"> .\\.venv\\Scripts\\activate")
-        print("Or run setup.bat / run.bat")
-    else:
-        print(f"$ source ./.venv/bin/activate")
-        print("Or run setup.sh / run.sh")
-    print("------------")
-    # Decide whether to exit or continue
-    # sys.exit("Exiting due to inactive venv.")
-    print("Continuing, but dependency issues or unexpected behavior may occur.")
-    print("------------")
-
-
-print("Ensuring database migrations are up-to-date...")
 try:
-    # Use sys.executable to ensure we're using the python from the (potentially) activated venv
-    subprocess.run(
-        [sys.executable, "-m", "flask", "db", "upgrade"],
-        check=True,
-        cwd=project_root,
-        capture_output=True,
-    )  # Capture output
-    print("Database migrations checked/applied successfully.")
-except subprocess.CalledProcessError as e:
-    print(f"Error running database migrations: {e}", file=sys.stderr)
-    print(f"Stderr: {e.stderr.decode()}", file=sys.stderr)
-    print(
-        "Please check your database configuration and migration files.", file=sys.stderr
+    from rich.console import Console
+    from rich.progress import (
+        Progress,
+        SpinnerColumn,
+        TextColumn,
+        BarColumn,
+        TimeElapsedColumn,
     )
-    sys.exit(1)  # Exit if migrations fail
-except FileNotFoundError:
-    print(
-        "Error: 'flask' command not found. Is Flask installed and the venv activated?",
-        file=sys.stderr,
-    )
-    sys.exit(1)
+    from rich.traceback import install as rich_traceback_install
+
+    console = Console()
+    rich_traceback_install(show_locals=True, suppress=[])
+    logger = None  # Do not override root logger
+except ImportError:
+    # Fallback to standard print/logging
+    console = None
+    logger = None
+
+# --- Virtual Environment Warning ---
+if current_executable != expected_executable:
+    if console:
+        console.rule("[bold yellow]Virtual Environment Warning")
+        console.print(
+            f":warning: [yellow]It looks like the virtual environment (.venv) is not activated, or you are running this script with a different Python interpreter.[/yellow]"
+        )
+        console.print(f"[bold]Expected venv:[/] [cyan]{expected_venv_path}[/]")
+        console.print(f"[bold]Current Python:[/] [magenta]{sys.executable}[/]")
+        console.print("\n[bold]Please activate the environment first:[/]")
+        if is_windows:
+            console.print("[green]> .\\.venv\\Scripts\\activate[/]")
+            console.print("Or run setup.bat / run.bat")
+        else:
+            console.print("[green]$ source ./.venv/bin/activate[/]")
+            console.print("Or run setup.sh / run.sh")
+        console.print(
+            "[yellow]Continuing, but dependency issues or unexpected behavior may occur.[/yellow]"
+        )
+        console.rule()
+    else:
+        print("--- WARNING ---")
+        print("It looks like the virtual environment (.venv) is not activated,")
+        print("or you are running this script with a different Python interpreter.")
+        print(f"Expected venv: {expected_venv_path}")
+        print(f"Current Python: {sys.executable}")
+        print("\nPlease activate the environment first:")
+        if is_windows:
+            print(f"> .\\.venv\\Scripts\\activate")
+            print("Or run setup.bat / run.bat")
+        else:
+            print(f"$ source ./.venv/bin/activate")
+            print("Or run setup.sh / run.sh")
+        print("------------")
+        print("Continuing, but dependency issues or unexpected behavior may occur.")
+        print("------------")
+
+# --- Database Migration Progress ---
+if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+    if console:
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TimeElapsedColumn(),
+            console=console,
+        ) as progress:
+            task = progress.add_task(
+                "Ensuring database migrations are up-to-date...", total=None
+            )
+            try:
+                result = subprocess.run(
+                    [sys.executable, "-m", "flask", "db", "upgrade"],
+                    check=True,
+                    cwd=project_root,
+                    capture_output=True,
+                )
+                progress.update(
+                    task,
+                    description="Database migrations checked/applied successfully.",
+                )
+                progress.stop_task(task)
+                console.print(
+                    "[green]Database migrations checked/applied successfully.[/green]"
+                )
+            except subprocess.CalledProcessError as e:
+                progress.stop_task(task)
+                console.print(f"[bold red]Error running database migrations:[/] {e}")
+                console.print(f"[red]Stderr:[/] {e.stderr.decode()}")
+                console.print(
+                    "[yellow]Please check your database configuration and migration files.[/]"
+                )
+                sys.exit(1)
+            except FileNotFoundError:
+                progress.stop_task(task)
+                console.print(
+                    "[bold red]Error: 'flask' command not found. Is Flask installed and the venv activated?"
+                )
+                sys.exit(1)
+    else:
+        print("Ensuring database migrations are up-to-date...")
+        try:
+            subprocess.run(
+                [sys.executable, "-m", "flask", "db", "upgrade"],
+                check=True,
+                cwd=project_root,
+                capture_output=True,
+            )
+            print("Database migrations checked/applied successfully.")
+        except subprocess.CalledProcessError as e:
+            print(f"Error running database migrations: {e}", file=sys.stderr)
+            print(f"Stderr: {e.stderr.decode()}", file=sys.stderr)
+            print(
+                "Please check your database configuration and migration files.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        except FileNotFoundError:
+            print(
+                "Error: 'flask' command not found. Is Flask installed and the venv activated?",
+                file=sys.stderr,
+            )
+            sys.exit(1)
 
 # --- Start Development Server ---
-print("Starting Flask development server...")
-print("Access at: http://127.0.0.1:5000")
-print("Press CTRL+C to quit.")
-print("---")
-
 try:
-    # Add src to path to allow direct import
     src_path = project_root / "src"
     sys.path.insert(0, str(src_path))
-
     from watchlist import create_app
 
     app = create_app()
-
-    # Use Flask's run command via subprocess for better integration with Flask-Migrate context
-    # and standard Flask behavior, rather than app.run() directly here.
-    # The run.bat/run.sh scripts will execute this python run.py script.
-    # app.run() is generally for the simplest cases or when not using the cli.
-
-    # We let run.bat/run.sh call this script, which prepares things,
-    # then they can call `flask run` if preferred, or we can keep `app.run` here.
-    # Keeping app.run() for simplicity as originally designed for this script.
-    app.run(host="127.0.0.1", port=5000)  # debug=True is handled by .env via create_app
-
+    if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+        if console:
+            console.print("[green]Flask development server started![/green]")
+            console.print("[bold]Access at:[/] [cyan]http://127.0.0.1:5000[/]")
+            console.print("[bold]Press CTRL+C to quit.[/]")
+        else:
+            print("Flask development server started!")
+            print("Access at: http://127.0.0.1:5000")
+            print("Press CTRL+C to quit.")
+    app.run(host="127.0.0.1", port=5000)
+    # will test for flask run
 except ImportError as e:
-    print(f"Error importing application: {e}", file=sys.stderr)
-    print(
-        "Ensure all dependencies are installed (`pip install -r requirements.txt`)",
-        file=sys.stderr,
-    )
-    print("Try running the setup script (setup.bat or setup.sh).", file=sys.stderr)
+    if console:
+        console.print(f"[bold red]Error importing application:[/] {e}")
+        console.print(
+            "[yellow]Ensure all dependencies are installed (`pip install -r requirements.txt`)"
+        )
+        console.print("Try running the setup script (setup.bat or setup.sh).")
+    else:
+        print(f"Error importing application: {e}", file=sys.stderr)
+        print(
+            "Ensure all dependencies are installed (`pip install -r requirements.txt`)",
+            file=sys.stderr,
+        )
+        print("Try running the setup script (setup.bat or setup.sh).", file=sys.stderr)
     sys.exit(1)
+except KeyboardInterrupt:
+    if console:
+        console.print("[yellow]\nServer stopped by user (Ctrl+C). Goodbye![/yellow]")
+    else:
+        print("\nServer stopped by user (Ctrl+C). Goodbye!")
+    sys.exit(0)
 except Exception as e:
-    # Catch potential port binding errors etc.
-    print(
-        f"An error occurred while trying to run the Flask application: {e}",
-        file=sys.stderr,
-    )
-    import traceback
+    if console:
+        console.print(
+            f"[bold red]An error occurred while trying to run the Flask application:[/] {e}"
+        )
+        console.print_exception()
+    else:
+        print(
+            f"An error occurred while trying to run the Flask application: {e}",
+            file=sys.stderr,
+        )
+        import traceback
 
-    traceback.print_exc()  # Print full traceback for debugging
+        traceback.print_exc()
     sys.exit(1)

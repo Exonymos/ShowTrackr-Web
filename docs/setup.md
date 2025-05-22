@@ -5,10 +5,16 @@ This guide provides detailed instructions for setting up the ShowTrackr applicat
 ## Prerequisites
 
 1.  **Python:** You need Python installed. Version 3.13 or newer is recommended.
-    - **Check Installation:** Open your terminal or command prompt and type `python --version` or `python3 --version`.
-    - **Download:** If you don't have Python or need a newer version, download it from the official website: [python.org/downloads/](https://www.python.org/downloads/)
-    - **Installation Note:** During installation (especially on Windows), ensure you check the box that says **"Add Python X.Y to PATH"**.
-2.  **Git (Optional):** Required only if you want to clone the repository directly. You can download the code as a ZIP file otherwise. [Git Download](https://git-scm.com/downloads)
+
+- **Check Installation:** Open your terminal or command prompt and type `python --version` or `python3 --version`.
+- **Download:** If you don't have Python or need a newer version, download it from the official website: [python.org/downloads/](https://www.python.org/downloads/)
+- **Installation Note:** During installation (especially on Windows), ensure you check the box that says **"Add Python X.Y to PATH"**.
+
+2.  **pip:** Python package manager. It comes bundled with Python installations. You can check if it's installed by running `pip --version` or `pip3 --version` in your terminal. If it's not installed, you can install it by following the instructions on the [pip installation page](https://pip.pypa.io/en/stable/installation/).
+
+3.  **venv:** Python virtual environment module. The setup script will attempt to install it if missing. You may need to install it manually if you encounter issues.
+
+4.  **Git (Optional):** Required only if you want to clone the repository directly. You can download the code as a ZIP file otherwise. [Git Download](https://git-scm.com/downloads)
 
 ## Getting the Code
 
@@ -17,20 +23,29 @@ Choose one of the following methods:
 **Method A: Downloading ZIP**
 
 1.  Go to the GitHub repository: [github.com/Exonymos/ShowTrackr-Web](https://github.com/Exonymos/ShowTrackr-Web)
+
 2.  Click the green "<> Code" button.
+
 3.  Select "Download ZIP".
+
 4.  Extract the downloaded ZIP file to a location of your choice.
+
 5.  Open your terminal or command prompt and navigate into the extracted folder (e.g., `cd path/to/ShowTrackr-Web-main`).
 
 **Method B: Using Git (for latest updates)**
 
 1.  Open your terminal or command prompt.
+
 2.  Navigate to the directory where you want to store the project.
+
 3.  Clone the repository:
+
     ```bash
     git clone https://github.com/Exonymos/ShowTrackr-Web.git
     ```
+
 4.  Change into the project directory:
+
     ```bash
     cd ShowTrackr-Web
     ```
@@ -44,11 +59,14 @@ These steps assume you are in the project's root directory (`ShowTrackr-Web`) in
 The project includes convenience scripts to automate the setup process (creating the virtual environment and installing requirements):
 
 - **Linux/macOS:**
+
   ```bash
   chmod +x setup.sh  # Make executable (only need to do once)
   ./setup.sh
   ```
+
 - **Windows:**
+
   ```bash
   .\setup.bat
   ```
@@ -94,7 +112,7 @@ This command reads the `requirements.txt` file and installs all the necessary Py
 
 The application needs a secret key for security. This is stored in a `.env` file within the `data/` directory.
 
-- **Navigate to `data/`:** If the `data` directory doesn't exist, create it (`mkdir data`).
+- **Navigate to `data/`:** If the `data` directory doesn't exist, create it.
 - **Create `.env`:** Create a file named exactly `.env` (note the leading dot) inside the `data/` directory.
 - **Add Content:** Copy and paste the following into the `.env` file:
 
@@ -112,27 +130,37 @@ The application needs a secret key for security. This is stored in a `.env` file
   ```
 
 - **Generate Secret Key:** Replace `'YOUR_SUPER_SECRET_KEY_HERE'` with a strong, random key. You can generate one using Python in your terminal:
+
   ```bash
   python -c "import secrets; print(secrets.token_hex(24))"
   ```
-  Copy the output and paste it between the single quotes for `SECRET_KEY=`.
-- **Security:** The `.gitignore` file is configured to prevent the `data/` directory (including `.env` and your database) from being accidentally committed to Git. **Never share your `.env` file or commit it to version control.**
 
----
+  Copy the output and paste it between the single quotes for `SECRET_KEY=`. It should look something like this:
+
+  ```dotenv
+  SECRET_KEY='a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6'
+  ```
+
+- **Security:** The `.gitignore` file is configured to prevent the `data/` directory (including `.env` and your database) from being accidentally committed to Git. **Never share your `.env` file or commit it to version control.**
 
 **4. Initialize the Database (First Time Only)**
 
 If this is your first time setting up the project, you need to initialize the database and create the tables:
 
 - **If the `migrations/` folder does not exist, run:**
+
   ```bash
   flask db init
   ```
+
 - **Create the initial migration:**
+
   ```bash
   flask db migrate -m "Initial migration"
   ```
+
 - **Apply the migration to create the tables:**
+
   ```bash
   flask db upgrade
   ```

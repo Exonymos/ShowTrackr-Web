@@ -7,18 +7,28 @@ This guide explains how to run the ShowTrackr application after you have success
 The project provides convenient scripts to start the application. These scripts handle activating the virtual environment, ensuring database migrations are up-to-date, and launching the Flask development server.
 
 1.  **Open your Terminal:**
+
     - **Windows:** Open Command Prompt or PowerShell.
     - **Linux:** Open your preferred terminal application.
+
 2.  **Navigate to Project Directory:** Change your current directory to the root of the ShowTrackr project (e.g., `cd path/to/ShowTrackr-Web`).
+
 3.  **Execute the Run Script:**
+
     - **Windows:**
+
       ```batch
-      .\run.bat
+      run.bat
+
       ```
-    - **Linux (e.g., Ubuntu):**
+
+    - **Linux:**
+
       ```bash
       bash run.sh
+
       ```
+
       (If you haven't already, you might need to make it executable first: `chmod +x run.sh`, then you can run `./run.sh`)
 
 The script will output messages indicating its progress:

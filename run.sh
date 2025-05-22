@@ -9,16 +9,10 @@ source ./.venv/bin/activate || {
 echo "Setting FLASK_APP environment variable..."
 export FLASK_APP=src/watchlist
 
-echo "Ensuring database is up-to-date..."
-flask db upgrade || {
-    echo "ERROR: Database migration failed. Check logs/database." >&2
-    exit 1
-}
-
-echo ""
+echo "Starting Flask application..."
 python run.py
 
 echo ""
 echo "Application stopped."
-read -p "Press Enter to close terminal..." 
+read -p "Press Enter to close terminal..."
 exit 0

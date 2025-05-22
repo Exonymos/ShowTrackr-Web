@@ -1,10 +1,9 @@
 # setup.py
-import os
-import subprocess
 import sys
+import os
 import platform
-import venv
 import secrets
+import subprocess
 from pathlib import Path
 
 # --- Configuration ---
@@ -22,20 +21,20 @@ PYTHON_MIN_VERSION = (3, 10)  # Require Python 3.10+
 
 def check_python_version():
     """Checks if the current Python version meets the minimum requirement."""
-    print(
-        f"--- Checking Python Version ({'.'.join(map(str, PYTHON_MIN_VERSION))}+ required)..."
+    console.print(
+        f"Checking Python Version ({'.'.join(map(str, PYTHON_MIN_VERSION))}+ required)..."
     )
     if sys.version_info < PYTHON_MIN_VERSION:
-        print(
+        console_stderr.print(
             f"ERROR: Python version {sys.version.split()[0]} is too old.",
-            file=sys.stderr,
+            style="bold red",
         )
-        print(
+        console_stderr.print(
             f"Please install Python {'.'.join(map(str, PYTHON_MIN_VERSION))} or newer.",
-            file=sys.stderr,
+            style="yellow",
         )
         return False
-    print(f"Python version {sys.version.split()[0]} found. OK.")
+    console.print(f"Python version {sys.version.split()[0]} found. OK.")
     return True
 
 
@@ -66,7 +65,7 @@ def run_command(
     """Runs a command using subprocess, handling errors."""
     try:
         command_str = [str(part) for part in command]
-        print(f"Running: {' '.join(command_str)}")
+        console.print(f"Running: {' '.join(command_str)}")
         result = subprocess.run(
             command_str,
             capture_output=capture,
@@ -77,238 +76,354 @@ def run_command(
             encoding="utf-8",
         )
         if capture:
-            print(result.stdout)
+            console.print(result.stdout)
         if result.stderr and check:
-            print(result.stderr, file=sys.stderr)
+            console_stderr.print(result.stderr)
         return True, result
     except FileNotFoundError:
-        print(f"ERROR: Command not found: {command[0]}", file=sys.stderr)
-        print(
+        console_stderr.print(
+            f"ERROR: Command not found: {command[0]}",
+            style="bold red",
+        )
+        console_stderr.print(
             "Please ensure the required program is installed and in your PATH.",
-            file=sys.stderr,
+            style="yellow",
         )
         return False, None
     except subprocess.CalledProcessError as e:
-        print(f"ERROR: {msg_on_fail}", file=sys.stderr)
-        print(f"Command: {' '.join(e.cmd)}", file=sys.stderr)
-        print(f"Return Code: {e.returncode}", file=sys.stderr)
+        console_stderr.print(
+            f"ERROR: {msg_on_fail}",
+            style="bold red",
+        )
         if e.stdout:
-            print(f"Output:\n{e.stdout}", file=sys.stderr)
+            console_stderr.print(e.stdout, style="red")
         if e.stderr:
-            print(f"Error Output:\n{e.stderr}", file=sys.stderr)
+            console_stderr.print(e.stderr, style="red")
         return False, e
     except Exception as e:
-        print(
-            f"ERROR: An unexpected error occurred running command: {command}",
-            file=sys.stderr,
-        )
-        print(e, file=sys.stderr)
+        console_stderr.print(f"ERROR: {msg_on_fail} ({e})", style="bold red")
         return False, e
 
 
 def check_npm():
     """Checks if npm is installed and available."""
-    print("--- Checking for Node.js/npm...")
+    console.print("Checking for Node.js/npm...")
     success, _ = run_command(
         ["npm", "--version"], capture=True, check=False
     )  # Don't exit if npm not found
     if success:
-        print("Node.js/npm found.")
+        console.print("Node.js/npm found.")
         return True
     else:
-        print("WARNING: npm (Node.js) not found or command failed.")
-        print("If you plan to modify CSS/JS, install Node.js from nodejs.org.")
-        print("Skipping npm-related steps.")
+        console_stderr.print("WARNING: npm (Node.js) not found or command failed.")
+        console_stderr.print(
+            "If you plan to modify CSS/JS, install Node.js from nodejs.org."
+        )
+        console_stderr.print("Skipping npm-related steps.")
         return False
+
+
+def run_with_progress(description, func, *args, **kwargs):
+    """Run a function with a Rich progress bar."""
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TimeElapsedColumn(),
+        console=console,
+    ) as progress:
+        task = progress.add_task(description, total=None)
+        try:
+            result = func(*args, **kwargs)
+            progress.update(task, description=f"{description} [green]done![/green]")
+            progress.stop_task(task)
+            return result
+        except Exception as e:
+            progress.stop_task(task)
+            raise
+
+
+def ensure_rich():
+    try:
+        from rich.console import Console
+
+        return True
+    except ImportError:
+        print(
+            "[!] 'rich' not found. Attempting to install rich into the virtual environment..."
+        )
+        # Find the rich version from requirements.txt
+        import re
+
+        rich_version = None
+        try:
+            with open("requirements.txt", "r", encoding="utf-8") as f:
+                for line in f:
+                    m = re.match(r"rich([<>=!~]+[\d\w\.]*)?", line.strip())
+                    if m:
+                        rich_version = line.strip()
+                        break
+        except Exception:
+            pass
+        # Determine venv pip path
+        venv_dir = Path(__file__).parent / ".venv"
+        if platform.system() == "Windows":
+            pip_path = venv_dir / "Scripts" / "pip.exe"
+        else:
+            pip_path = venv_dir / "bin" / "pip"
+        # If venv pip doesn't exist, fallback to system pip
+        pip_cmd = (
+            [str(pip_path)] if pip_path.exists() else [sys.executable, "-m", "pip"]
+        )
+        pip_cmd += ["install"]
+        if rich_version:
+            pip_cmd.append(rich_version)
+        else:
+            pip_cmd.append("rich")
+        try:
+            subprocess.check_call(pip_cmd)
+            from rich.console import Console
+
+            return True
+        except Exception as e:
+            print(
+                f"[!] Failed to install 'rich'. Setup will continue with plain output. Error: {e}"
+            )
+            return False
+
+
+if not ensure_rich():
+    # Fallback: define dummy console objects that use print
+    class DummyConsole:
+        def print(self, *args, **kwargs):
+            print(*args)
+
+        def rule(self, *args, **kwargs):
+            print("-" * 60)
+
+        def print_exception(self, *args, **kwargs):
+            import traceback
+
+            traceback.print_exc()
+
+    console = DummyConsole()
+    console_stderr = DummyConsole()
+    logger = None
+else:
+    from rich.console import Console
+    from rich.progress import (
+        Progress,
+        SpinnerColumn,
+        TextColumn,
+        BarColumn,
+        TimeElapsedColumn,
+    )
+    from rich.traceback import install as rich_traceback_install
+    from rich.logging import RichHandler
+    import logging
+
+    console = Console()
+    console_stderr = Console(stderr=True)
+    rich_traceback_install(show_locals=True, suppress=[])
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(message)s",
+        datefmt="[%X]",
+        handlers=[
+            RichHandler(
+                rich_tracebacks=True, show_time=True, show_level=True, show_path=False
+            )
+        ],
+    )
+    logger = logging.getLogger("rich")
 
 
 # --- Main Setup Logic ---
 def main():
-    print("--- Starting ShowTrackr Setup ---")
-    os.chdir(PROJECT_ROOT)  # Ensure we are in the correct directory
+    import time
+
+    start_time = time.perf_counter()
+    console.rule("[bold cyan]ShowTrackr Setup")
+    console.print("[bold]Starting ShowTrackr Setup...[/bold]")
+    os.chdir(PROJECT_ROOT)
 
     if not check_python_version():
-        return False  # Stop if Python version is too low
+        return False
 
     # 1. Setup Virtual Environment
-    print("\n--- Setting up Virtual Environment ---")
+    console.print("\n[bold]Setting up Virtual Environment...[/bold]")
     if VENV_DIR.exists() and (VENV_DIR / "pyvenv.cfg").exists():
-        print(f"Virtual environment already exists at: {VENV_DIR}")
+        console.print(
+            f"[yellow]Virtual environment already exists at: {VENV_DIR}[/yellow]"
+        )
     else:
-        print(f"Creating virtual environment at: {VENV_DIR}...")
-        try:
+
+        def create_venv():
+            import venv
+
             venv.create(VENV_DIR, with_pip=True)
-            print("Virtual environment created successfully.")
+
+        try:
+            run_with_progress("Creating virtual environment", create_venv)
+            console.print("[green]Virtual environment created successfully.[/green]")
         except Exception as e:
-            print(f"ERROR: Failed to create virtual environment: {e}", file=sys.stderr)
+            console_stderr.print(
+                f"[bold red]ERROR: Failed to create virtual environment: {e}[/bold red]"
+            )
             return False
 
-    # Get paths within the venv
     python_exe, pip_exe, flask_exe = get_venv_paths()
-
-    # Verify executables exist
     if not python_exe.exists() or not pip_exe.exists():
-        print(
-            f"ERROR: Could not find python/pip executables in {VENV_DIR}.",
-            file=sys.stderr,
+        console_stderr.print(
+            f"[bold red]ERROR: Could not find python/pip executables in {VENV_DIR}.[/bold red]"
         )
-        print(
-            "Virtual environment might be corrupted. Try deleting the .venv folder and running setup again.",
-            file=sys.stderr,
+        console_stderr.print(
+            "[yellow]Try deleting the .venv folder and running setup again.[/yellow]"
         )
         return False
-    print("Virtual environment paths located.")
+    console.print("[green]Virtual environment paths located.[/green]")
 
     # 2. Install Python Dependencies
-    print("\n--- Installing Python Dependencies ---")
+    console.print("\n[bold]Installing Python Dependencies...[/bold]")
     if not REQUIREMENTS_FILE.exists():
-        print(f"ERROR: {REQUIREMENTS_FILE} not found!", file=sys.stderr)
+        console_stderr.print(
+            f"[bold red]ERROR: {REQUIREMENTS_FILE} not found![/bold red]"
+        )
         return False
 
-    success, _ = run_command(
-        [python_exe, "-m", "pip", "install", "-r", REQUIREMENTS_FILE],
-        msg_on_fail="Failed to install Python dependencies.",
-    )
-    if not success:
+    def pip_install():
+        subprocess.run(
+            [python_exe, "-m", "pip", "install", "-r", REQUIREMENTS_FILE], check=True
+        )
+
+    try:
+        run_with_progress("Installing Python dependencies", pip_install)
+        console.print("[green]Python dependencies installed successfully.[/green]")
+    except Exception as e:
+        console_stderr.print(
+            f"[bold red]Failed to install Python dependencies: {e}[/bold red]"
+        )
         return False
-    print("Python dependencies installed successfully.")
 
     # 3. Install Node Dependencies & Build Assets
-    print("\n--- Setting up Frontend Assets (Node.js/npm) ---")
+    console.print("\n[bold]Setting up Frontend Assets (Node.js/npm)...[/bold]")
     npm_available = check_npm()
-    if PACKAGE_JSON_FILE.exists():
-        if npm_available:
-            # Install Node dependencies
-            success, _ = run_command(
-                ["npm", "install"], msg_on_fail="npm install failed."
-            )
-            if not success:
-                return False
-            print("Node dependencies installed successfully.")
+    if PACKAGE_JSON_FILE.exists() and npm_available:
 
-            # Build assets
-            print("Building frontend assets (CSS/JS)...")
-            success, _ = run_command(
-                ["npm", "run", "build:css"], msg_on_fail="npm run build:css failed."
+        def npm_install():
+            subprocess.run(["npm", "install"], check=True)
+
+        try:
+            run_with_progress("Installing npm packages", npm_install)
+            console.print(
+                "[green]Node.js/npm dependencies installed successfully.[/green]"
             )
-            if not success:
-                return False
-            print("Frontend assets built successfully.")
-        else:
-            print("package.json found, but npm not available. Skipping Node steps.")
-            print("App might not display correctly without built assets.")
+        except Exception as e:
+            console_stderr.print(f"[yellow]WARNING: npm install failed: {e}[/yellow]")
+    elif PACKAGE_JSON_FILE.exists():
+        console_stderr.print("[yellow]npm not found. Skipping Node.js steps.[/yellow]")
     else:
-        print(
-            "package.json not found. Skipping Node steps (assuming CDN or no build needed)."
+        console.print(
+            "[yellow]package.json not found. Skipping Node steps (assuming CDN or no build needed).[/yellow]"
         )
 
     # 4. Setup Configuration (.env)
-    print("\n--- Setting up Configuration ---")
+    console.print("\n[bold]Setting up Configuration...[/bold]")
     if not DATA_DIR.exists():
-        print(f"Creating data directory: {DATA_DIR}")
         DATA_DIR.mkdir(parents=True, exist_ok=True)
-
+        console.print(f"[green]Created data directory: {DATA_DIR}[/green]")
     if ENV_FILE.exists():
-        print(f".env file already exists at: {ENV_FILE}")
+        console.print(f"[yellow].env file already exists at: {ENV_FILE}[/yellow]")
     else:
-        print(f"Creating .env file at: {ENV_FILE}")
         secret_key = secrets.token_hex(24)
         env_content = f"""# Flask Secret Key (Required)
-# Generate one using: python -c 'import secrets; print(secrets.token_hex(16))'
 SECRET_KEY='{secret_key}'
-
-# Flask App Configuration
 FLASK_APP=src/watchlist
-
-# Flask Debug Mode (Set to False for production!)
 FLASK_DEBUG=True
-
-# Database URL
 DATABASE_URL=sqlite:///../data/database.db
-
-# Feedback URL
 GOOGLE_APPS_SCRIPT_FEEDBACK_URL='https://script.google.com/macros/s/AKfycbwgakVifq4XkMRUMYvcRuR3083z6tn4cmjx7kwQCn5zNBwGJxEObKf5zGTI5an0A2rwvQ/exec'
 GOOGLE_SHEET_PUBLIC_URL='https://docs.google.com/spreadsheets/d/1OW1PQTpdOcJK3bWLHsjkNuHZBkXp_RpLMel4IlDMrLg'
 """
         try:
             with open(ENV_FILE, "w", encoding="utf-8") as f:
                 f.write(env_content)
-            print("Generated .env file with a new SECRET_KEY.")
+            console.print(f"[green]Created .env file at: {ENV_FILE}[/green]")
         except IOError as e:
-            print(f"ERROR: Could not write .env file: {e}", file=sys.stderr)
+            console_stderr.print(
+                f"[bold red]ERROR: Failed to create .env file: {e}[/bold red]"
+            )
             return False
 
     # 5. Setup Database
-    print("\n--- Setting up Database ---")
-    # Ensure Flask uses the correct app context by setting env var for the subprocess
+    console.print("\n[bold]Setting up Database...[/bold]")
     flask_env = os.environ.copy()
     flask_env["FLASK_APP"] = "src/watchlist"
-    # Get the path to the flask executable within the venv
-    python_exe, pip_exe, flask_exe = get_venv_paths()
     migrations_dir = PROJECT_ROOT / "migrations"
 
-    print("Attempting database upgrade...")
-    success, result = run_command(
-        [flask_exe, "db", "upgrade"],
-        capture=True,
-        check=False,
-        env=flask_env,
-        msg_on_fail="flask db upgrade command failed.",
-    )
-
-    # If upgrade failed (likely because migrations folder doesn't exist yet)
-    if not success or (result and result.returncode != 0):
-        print("Database upgrade failed or no migrations found (might be first run).")
-        print("Attempting flask db init...")
-
-        # Check if migrations folder exists. If so, something else is wrong with upgrade.
-        if (PROJECT_ROOT / "migrations").exists():
-            print(
-                "ERROR: 'migrations' folder exists, but 'flask db upgrade' failed.",
-                file=sys.stderr,
+    # Ensure migrations folder exists, or initialize it
+    if not migrations_dir.exists():
+        console_stderr.print(
+            f"[yellow]Migrations folder not found at: {migrations_dir}[/yellow]"
+        )
+        console_stderr.print(
+            "[yellow]Initializing migrations folder with 'flask db init'...[/yellow]"
+        )
+        try:
+            subprocess.run([str(flask_exe), "db", "init"], check=True, env=flask_env)
+            console.print(
+                f"[green]Migrations folder created at: {migrations_dir}[/green]"
             )
-            print("Check previous error messages or database state.", file=sys.stderr)
+        except Exception as e:
+            console_stderr.print(
+                f"[bold red]ERROR: Could not initialize migrations folder: {e}[/bold red]"
+            )
             return False
-
-        # Run flask db init
-        success_init, _ = run_command(
-            [flask_exe, "db", "init"],
-            env=flask_env,
-            msg_on_fail="flask db init failed.",
+        # After initializing, create the initial migration
+        console_stderr.print(
+            "[yellow]Creating initial migration with 'flask db migrate'...[/yellow]"
         )
-        if not success_init:
+        try:
+            subprocess.run(
+                [str(flask_exe), "db", "migrate", "-m", "Initial migration"],
+                check=True,
+                env=flask_env,
+            )
+            console.print("[green]Initial migration created.[/green]")
+        except Exception as e:
+            console_stderr.print(
+                f"[bold red]ERROR: Could not create initial migration: {e}[/bold red]"
+            )
             return False
 
-        # Create an initial migration for the database
-        print("Creating initial database migration...")
-        success_migrate, _ = run_command(
-            [flask_exe, "db", "migrate", "-m", "Initial migration"],
-            env=flask_env,
-            msg_on_fail="flask db migrate failed.",
-        )
-        if not success_migrate:
-            return False
+    def db_upgrade():
+        subprocess.run([flask_exe, "db", "upgrade"], check=True, env=flask_env)
 
-        # Try upgrade again now that init and migrate are done
-        print("Attempting database upgrade again...")
-        success_upgrade_again, _ = run_command(
-            [flask_exe, "db", "upgrade"],
-            env=flask_env,
-            msg_on_fail="flask db upgrade failed after init/stamp.",
-        )
-        if not success_upgrade_again:
-            return False
+    try:
+        run_with_progress("Applying database migrations", db_upgrade)
+        console.print("[green]Database setup/checked successfully.[/green]")
+    except Exception as e:
+        console_stderr.print(f"[bold red]Database migration failed: {e}[/bold red]")
+        return False
 
-    print("Database setup/checked successfully.")
-
-    print("\n--- Setup Complete! ---")
-    print("You can now run the application using run.bat or ./run.sh")
+    elapsed = time.perf_counter() - start_time
+    mins, secs = divmod(int(elapsed), 60)
+    time_str = f"{mins}m {secs}s" if mins else f"{secs}s"
+    console.rule(f"[bold green]Setup Complete in {time_str}![/bold green]")
+    console.print(
+        f"[bold green]You can now run the application using run.bat or ./run.sh[/bold green]"
+    )
     return True
 
 
 if __name__ == "__main__":
-    if main():
-        sys.exit(0)  # Success
-    else:
-        print("\n--- Setup Failed! ---", file=sys.stderr)
-        sys.exit(1)  # Failure
+    try:
+        if main():
+            sys.exit(0)
+        else:
+            sys.exit(1)
+    except Exception as e:
+        if "console" in globals():
+            console.print_exception()
+        else:
+            print(f"ERROR: {e}", file=sys.stderr)
+        sys.exit(1)

@@ -1,31 +1,45 @@
 @echo off
 setlocal
+set SETUP_EXIT_CODE=1
 
+echo.
 echo --- ShowTrackr Setup Launcher (Windows) ---
 
-REM Check for Python
 echo Checking for Python 3.10+...
 python --version > nul 2>&1
 if errorlevel 1 (
-    echo ERROR: Python not found in PATH. 
-    echo Please install Python 3.10 or newer from python.org 
-    echo and ensure it's added to your PATH during installation.
-    echo Setup cannot continue.
-    goto :finally
+echo ERROR: Python not found in PATH.
+echo Please install Python 3.10 or newer from python.org
+echo and ensure it's added to your PATH during installation.
+echo Setup cannot continue.
+goto :finally
 )
-echo Python found. Proceeding with setup script...
-echo(
+
+echo Checking for pip...
+python -m pip --version > nul 2>&1
+if errorlevel 1 (
+echo WARNING: pip not found for Python. Please repair your Python installation and ensure pip is available.
+goto :finally
+)
+
+echo All Python prerequisites found.
 
 REM Run the Python setup script
 python setup.py
 
-REM Capture the exit code from setup.py
 set SETUP_EXIT_CODE=%errorlevel%
 
 :finally
-echo(
-echo Setup script finished. Press any key to exit.
+echo.
+if %SETUP_EXIT_CODE%==0 (
+echo Python setup script completed successfully.
+echo To activate the virtual environment, run: .\.venv\Scripts\activate
+echo Then run the application using: .\run.bat
+) else (
+echo Python setup script failed. Please check the error messages above.
+)
+echo.
+echo Press any key to exit...
 pause > nul
 exit /b %SETUP_EXIT_CODE%
-
 endlocal
