@@ -18,8 +18,19 @@ goto :finally
 echo Checking for pip...
 python -m pip --version > nul 2>&1
 if errorlevel 1 (
-echo WARNING: pip not found for Python. Please repair your Python installation and ensure pip is available.
-goto :finally
+  echo WARNING: pip not found for Python.
+  echo Attempting to install pip...
+  python -m ensurepip --upgrade > nul 2>&1
+  if errorlevel 1 (
+    echo ERROR: Failed to install pip. Please install it manually.
+    goto :finally
+  )
+  REM Re-check pip after installation
+  python -m pip --version > nul 2>&1
+  if errorlevel 1 (
+    echo ERROR: pip still not found after installation attempt.
+    goto :finally
+  )
 )
 
 echo All Python prerequisites found.

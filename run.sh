@@ -6,7 +6,7 @@ source ./.venv/bin/activate || {
     exit 1
 }
 
-echo "Setting FLASK_APP environment variable..."
+echo "Setting environment variable..."
 export FLASK_APP=src/watchlist
 
 echo "Starting Flask application..."

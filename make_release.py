@@ -1,4 +1,8 @@
 # make_release.py
+# ShowTrackr Release Builder
+# This script is used to create a release package for the ShowTrackr project.
+# It copies specified files and folders from the project directory to a new release folder,
+# and optionally creates a zip archive of the release folder.
 import os
 import shutil
 import json
@@ -104,8 +108,38 @@ def copy_with_filter(src, dst, progress=None, task_id=None):
             progress.advance(task_id)
 
 
+def run_tests():
+    import subprocess
+
+    console.print("[bold blue]Running test suite with pytest before release...[/]")
+    result = subprocess.run(
+        [sys.executable, "-m", "pytest"], capture_output=True, text=True
+    )
+    if result.returncode == 0:
+        console.print("[bold green]✅ All tests passed![/]")
+        return True
+    else:
+        console.print("[bold red]❌ Some tests failed![/]")
+        console.print(
+            "[yellow]See details by running: [bold]pytest -v[/] in your terminal.[/]"
+        )
+        return False
+
+
 def main():
     try:
+        # Pre-release test step
+        tests_ok = run_tests()
+        if not tests_ok:
+            cont = (
+                prompt("Tests failed. Continue with release anyway? (y/n)", "n")
+                .lower()
+                .startswith("y")
+            )
+            if not cont:
+                console.print("[bold yellow]Aborting release due to test failures.[/]")
+                sys.exit(1)
+
         console.print(
             "\n[bold cyan]==============================[/]", justify="center"
         )

@@ -339,6 +339,7 @@ def main():
         env_content = f"""# Flask Secret Key (Required)
 SECRET_KEY='{secret_key}'
 FLASK_APP=src/watchlist
+# Set to False for production
 FLASK_DEBUG=True
 DATABASE_URL=sqlite:///../data/database.db
 GOOGLE_APPS_SCRIPT_FEEDBACK_URL='https://script.google.com/macros/s/AKfycbwgakVifq4XkMRUMYvcRuR3083z6tn4cmjx7kwQCn5zNBwGJxEObKf5zGTI5an0A2rwvQ/exec'

@@ -9,9 +9,9 @@ Thank you for considering contributing to ShowTrackr! We appreciate your help in
     - **Fork the Repository:** Create your own copy of the repository on GitHub.
     - **Create a Branch:** Create a descriptive branch name for your feature or bug fix (e.g., `git checkout -b feature/add-search` or `git checkout -b fix/pagination-bug`).
     - **Make Changes:** Write your code and ensure it follows the project's style.
-    - **Commit Changes:** Commit your work with clear and concise commit messages. Consider using [Conventional Commits](https://www.conventionalcommits.org/) if you are familiar with them.
+    - **Commit Changes:** Commit your work with clear and concise commit messages.
       ```bash
-      git commit -m "feat: Add basic search functionality"
+      git commit -m "Add basic search functionality"
       ```
     - **Push to Your Fork:** Push your branch to your forked repository on GitHub.
       ```bash

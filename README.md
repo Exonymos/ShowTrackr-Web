@@ -80,18 +80,22 @@ More previews showcasing different themes and features are available in the [Pre
 
 ### Quick Start
 
-1. **Download or Clone the Repository**
+1. **Download the [latest release](https://github.com/Exonymos/ShowTrackr-Web/releases/latest).**
+
+   - Download the `ShowTrackr-Web-vX.X.X.zip` file. X.X.X is the version number.
+   - Unzip the downloaded file to a location of your choice.
+   - Open the unzipped folder.
 
 2. **Run the Setup Script:**
 
    - **Windows:** Double-click `setup.bat` or run `setup.bat` in Command Prompt.
-   - **Linux/macOS:** Run `./setup.sh` in your terminal (you may need to `chmod +x setup.sh` first).
+   - **Linux/macOS:** Run `bash setup.sh` in your terminal (you may need to `chmod +x setup.sh` first).
 
 3. **Follow the prompts.** The setup will:
 
    - Check for Python 3.10+, pip, and venv (and help you install them if missing)
    - Install the `rich` library for beautiful output
-   - Install all Python and Node dependencies
+   - Install all Python dependencies
    - Set up the database and configuration
 
 4. **Activate the virtual environment:**
@@ -101,7 +105,7 @@ More previews showcasing different themes and features are available in the [Pre
 
 5. **Run the application:**
    - **Windows:** `run.bat`
-   - **Linux/macOS:** `./run.sh`
+   - **Linux/macOS:** `bash run.sh`
 
 If you encounter errors, see the [Setup Guide](./docs/setup.md) for troubleshooting and manual steps.
 

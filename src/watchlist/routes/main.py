@@ -1,4 +1,5 @@
 # src/watchlist/routes/main.py
+import os
 from flask import Blueprint, render_template, request, current_app, session, url_for
 from ..models import WatchlistItem
 from .. import db, htmx
@@ -176,6 +177,6 @@ def about():
     return render_template(
         "about.html",
         version=config.APP_VERSION,
-        feedback_url=config.GOOGLE_APPS_SCRIPT_FEEDBACK_URL,
-        sheet_url=config.GOOGLE_SHEET_PUBLIC_URL,
+        feedback_url=os.environ.get("GOOGLE_APPS_SCRIPT_FEEDBACK_URL"),
+        sheet_url=os.environ.get("GOOGLE_SHEET_PUBLIC_URL"),
     )

@@ -6,9 +6,9 @@ This guide provides detailed instructions for setting up the ShowTrackr applicat
 
 1.  **Python:** You need Python installed. Version 3.13 or newer is recommended.
 
-- **Check Installation:** Open your terminal or command prompt and type `python --version` or `python3 --version`.
-- **Download:** If you don't have Python or need a newer version, download it from the official website: [python.org/downloads/](https://www.python.org/downloads/)
-- **Installation Note:** During installation (especially on Windows), ensure you check the box that says **"Add Python X.Y to PATH"**.
+    - **Check Installation:** Open your terminal or command prompt and type `python --version` or `python3 --version`.
+    - **Download:** If you don't have Python or need a newer version, download it from the official website: [python.org/downloads/](https://www.python.org/downloads/)
+    - **Installation Note:** During installation (especially on Windows), ensure you check the box that says **"Add Python X.Y to PATH"**.
 
 2.  **pip:** Python package manager. It comes bundled with Python installations. You can check if it's installed by running `pip --version` or `pip3 --version` in your terminal. If it's not installed, you can install it by following the instructions on the [pip installation page](https://pip.pypa.io/en/stable/installation/).
 
@@ -20,31 +20,39 @@ This guide provides detailed instructions for setting up the ShowTrackr applicat
 
 Choose one of the following methods:
 
+### Download the latest release
+
+You can download the latest release of the ShowTrackr code from the GitHub repository. This is the recommended method for most users.
+
+1.  Go to the GitHub repository releases: [ShowTrackr-Web](https://github.com/Exonymos/ShowTrackr-Web/releases/latest)
+2.  Make sure the release have the latest version.
+3.  Click on "ShowTrackr-Web-vX.X.X.zip" (where X.X.X is the version number).
+4.  Save the ZIP file to your computer.
+5.  Extract the ZIP file to a location of your choice.
+6.  Open your terminal or command prompt and navigate into the extracted folder (e.g., `cd path/to/ShowTrackr-Web-vX.X.X`).
+
+### Clone the repository
+
 **Method A: Downloading ZIP**
 
 1.  Go to the GitHub repository: [github.com/Exonymos/ShowTrackr-Web](https://github.com/Exonymos/ShowTrackr-Web)
-
 2.  Click the green "<> Code" button.
-
 3.  Select "Download ZIP".
-
 4.  Extract the downloaded ZIP file to a location of your choice.
-
 5.  Open your terminal or command prompt and navigate into the extracted folder (e.g., `cd path/to/ShowTrackr-Web-main`).
 
-**Method B: Using Git (for latest updates)**
+**Method B: Using Git (needs Git installed)**
 
-1.  Open your terminal or command prompt.
-
-2.  Navigate to the directory where you want to store the project.
-
-3.  Clone the repository:
+1.  Download and install Git from [git-scm.com](https://git-scm.com/downloads) if you haven't already.
+2.  Open your terminal or command prompt.
+3.  Navigate to the directory where you want to clone the repository (e.g., `cd path/to/your/directory`).
+4.  Run the following command to clone the repository:
 
     ```bash
     git clone https://github.com/Exonymos/ShowTrackr-Web.git
     ```
 
-4.  Change into the project directory:
+5.  Navigate into the cloned directory:
 
     ```bash
     cd ShowTrackr-Web
@@ -68,7 +76,7 @@ The project includes convenience scripts to automate the setup process (creating
 - **Windows:**
 
   ```bash
-  .\setup.bat
+  setup.bat
   ```
 
 After running the setup script, **you still need to perform Step 3 (Configure `.env`) manually.** Remember to activate the virtual environment (`source .venv/bin/activate` or `.\.venv\Scripts\activate`) before running the application.
@@ -94,7 +102,7 @@ A virtual environment keeps the project's dependencies separate from your global
   - **Windows (Command Prompt):** `.\.venv\Scripts\activate.bat`
   - **Windows (PowerShell):** `.\.venv\Scripts\Activate.ps1`
     (If you get an execution policy error, run PowerShell as Administrator and execute: `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser`. Then try activating again.)
-  - **macOS / Linux (Bash/Zsh):** `source .venv/bin/activate`
+  - **Linux:** `source .venv/bin/activate`
 
   You should see `(.venv)` at the beginning of your terminal prompt after activation.
 
@@ -117,16 +125,24 @@ The application needs a secret key for security. This is stored in a `.env` file
 - **Add Content:** Copy and paste the following into the `.env` file:
 
   ```dotenv
-  # data/.env
-  # --- IMPORTANT: REPLACE WITH YOUR OWN SECRET KEY ---
+  # Flask Secret Key (Required)
+  # IMPORTANT: Replace with a strong, unique secret key!
   SECRET_KEY='YOUR_SUPER_SECRET_KEY_HERE'
 
-  # --- Default Flask Settings (Usually no need to change) ---
+  # Flask App Configuration
   FLASK_APP=src/watchlist
-  FLASK_DEBUG=True # Set to False for slightly better performance if not debugging
 
-  # --- Database Location (Usually no need to change) ---
+  # Flask Debug Mode
+  # IMPORTANT: Set FLASK_DEBUG=False for production/deployment!
+  FLASK_DEBUG=True
+
+  # Database URL
+  # Path relative to the src/watchlist directory where Flask runs
   DATABASE_URL=sqlite:///../data/database.db
+
+  # Feedback URL
+  GOOGLE_APPS_SCRIPT_FEEDBACK_URL='https://script.google.com/macros/s/AKfycbwgakVifq4XkMRUMYvcRuR3083z6tn4cmjx7kwQCn5zNBwGJxEObKf5zGTI5an0A2rwvQ/exec'
+  GOOGLE_SHEET_PUBLIC_URL='https://docs.google.com/spreadsheets/d/1OW1PQTpdOcJK3bWLHsjkNuHZBkXp_RpLMel4IlDMrLg'
   ```
 
 - **Generate Secret Key:** Replace `'YOUR_SUPER_SECRET_KEY_HERE'` with a strong, random key. You can generate one using Python in your terminal:
@@ -146,6 +162,15 @@ The application needs a secret key for security. This is stored in a `.env` file
 **4. Initialize the Database (First Time Only)**
 
 If this is your first time setting up the project, you need to initialize the database and create the tables:
+
+Make sure you have activated your virtual environment and set the environment variables.
+
+- **Check if `.venv` is active:** You should see `(.venv)` at the beginning of your terminal prompt. If not, activate it using the command from [Step 1](#setup-steps).
+- **Set environment variables:**
+
+  - **Windows (Command Prompt):** `set FLASK_APP=src/watchlist`
+  - **Windows (PowerShell):** `$env:FLASK_APP="src/watchlist"`
+  - **Linux:** `export FLASK_APP="src/watchlist"`
 
 - **If the `migrations/` folder does not exist, run:**
 

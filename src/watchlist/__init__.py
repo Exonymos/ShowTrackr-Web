@@ -16,9 +16,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-# Load .env
+# Load .env (always, before config is read)
 dotenv_path = DATA_DIR / ".env"
-load_dotenv(dotenv_path=dotenv_path)
+load_dotenv(dotenv_path=dotenv_path, override=True)
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -71,13 +71,12 @@ def create_app():
     # Context Processors
     @app.context_processor
     def inject_global_vars():
-        """Injects validated theme and app version into templates."""
         theme = get_validated_theme(session)
         return dict(
             current_theme=theme,
             app_version=config.APP_VERSION,
-            feedback_url=config.GOOGLE_APPS_SCRIPT_FEEDBACK_URL,
-            sheet_url=config.GOOGLE_SHEET_PUBLIC_URL,
+            feedback_url=os.environ.get("GOOGLE_APPS_SCRIPT_FEEDBACK_URL"),
+            sheet_url=os.environ.get("GOOGLE_SHEET_PUBLIC_URL"),
         )
 
     # Error Handlers

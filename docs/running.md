@@ -19,14 +19,12 @@ The project provides convenient scripts to start the application. These scripts 
 
       ```batch
       run.bat
-
       ```
 
     - **Linux:**
 
       ```bash
       bash run.sh
-
       ```
 
       (If you haven't already, you might need to make it executable first: `chmod +x run.sh`, then you can run `./run.sh`)
@@ -57,9 +55,9 @@ If you prefer or if the scripts have issues, you can run the necessary commands 
 2.  **Set `FLASK_APP` (if necessary):**
     Flask needs to know where your application is. This is usually handled by the `.env` file, but you can set it explicitly if needed.
 
-    - Windows (PowerShell): `$env:FLASK_APP="src/watchlist"`
-    - Windows (cmd): `set FLASK_APP=src/watchlist`
-    - Linux: `export FLASK_APP="src/watchlist"`
+    - **Windows (Command Prompt):** `set FLASK_APP=src/watchlist`
+    - **Windows (PowerShell):** `$env:FLASK_APP="src/watchlist"`
+    - **Linux:** `export FLASK_APP="src/watchlist"`
 
 3.  **Apply Database Migrations:**
     This ensures your database schema is current.
