@@ -69,7 +69,7 @@ It uses a modern web stack (Python/Flask backend, HTMX for dynamic frontend upda
 
 ## Previews
 
-![ShowTrackr Home Page - Dracula Theme](./previews/home_cupcake_1.png)
+![ShowTrackr Home Page](./previews/home.png)
 _Main watchlist view with the Cupcake theme._
 
 More previews showcasing different themes and features are available in the [Previews folder](./previews/).

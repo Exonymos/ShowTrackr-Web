@@ -4,7 +4,7 @@ from datetime import date
 from pathlib import Path
 
 # Application Info
-APP_VERSION = "0.2.1-dev"
+APP_VERSION = "0.3.0-dev"
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 

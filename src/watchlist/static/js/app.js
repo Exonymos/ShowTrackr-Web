@@ -180,6 +180,15 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.addEventListener("keydown", handleSearchShortcut);
+
+  // Show server-side flash messages as toasts
+  document.querySelectorAll(".flash-message").forEach(function (el) {
+    const msg = el.dataset.message;
+    let type = el.dataset.category;
+    if (type === "message") type = "info";
+    showToast(msg, type);
+    el.remove();
+  });
 });
 
 // Feedback Form Submission

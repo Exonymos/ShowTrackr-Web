@@ -9,6 +9,8 @@ import json
 import re
 import sys
 import fnmatch
+import shutil
+import tempfile
 from pathlib import Path
 
 try:
@@ -126,6 +128,103 @@ def run_tests():
         return False
 
 
+def update_for_production_in_release(release_root, version, changes):
+    """
+    - Comment out test dependencies in requirements.txt
+    - Update version in package.json
+    - Update APP_VERSION in config.py
+    - Record changes for summary
+    """
+    import re
+    import json
+    from pathlib import Path
+
+    # 1. requirements.txt
+    req_path = Path(release_root) / "requirements.txt"
+    try:
+        if req_path.exists():
+            with open(req_path, encoding="utf-8") as f:
+                lines = f.readlines()
+            new_lines = []
+            changed = False
+            for line in lines:
+                if any(
+                    dep in line for dep in ["pytest", "pytest-flask", "pytest-mock"]
+                ):
+                    if not line.strip().startswith("#"):
+                        new_lines.append(
+                            f"# {line}" if not line.startswith("#") else line
+                        )
+                        changed = True
+                    else:
+                        new_lines.append(line)
+                else:
+                    new_lines.append(line)
+            if changed:
+                with open(req_path, "w", encoding="utf-8") as f:
+                    f.writelines(new_lines)
+                changes.append(("requirements.txt", "Commented out test dependencies."))
+    except Exception as e:
+        changes.append(("requirements.txt", f"[ERROR] Could not update: {e}"))
+
+    # 2. package.json
+    pkg_path = Path(release_root) / "package.json"
+    try:
+        if pkg_path.exists():
+            with open(pkg_path, encoding="utf-8") as f:
+                data = json.load(f)
+            old_version = data.get("version", "")
+            if old_version != version:
+                data["version"] = version
+                with open(pkg_path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2)
+                changes.append(
+                    ("package.json", f"Updated version: {old_version} → {version}")
+                )
+    except Exception as e:
+        changes.append(("package.json", f"[ERROR] Could not update: {e}"))
+
+    # 3. config.py
+    config_path = Path(release_root) / "src" / "watchlist" / "config.py"
+    try:
+        if config_path.exists():
+            with open(config_path, encoding="utf-8") as f:
+                lines = f.readlines()
+            new_lines = []
+            changed = False
+            for line in lines:
+                if line.strip().startswith("APP_VERSION"):
+                    old = line.strip()
+                    new = f'APP_VERSION = "{version}"\n'
+                    if line != new:
+                        new_lines.append(new)
+                        changed = True
+                        changes.append(
+                            ("config.py", f"Updated APP_VERSION: {old} → {new.strip()}")
+                        )
+                    else:
+                        new_lines.append(line)
+                else:
+                    new_lines.append(line)
+            if changed:
+                with open(config_path, "w", encoding="utf-8") as f:
+                    f.writelines(new_lines)
+    except Exception as e:
+        changes.append(("config.py", f"[ERROR] Could not update: {e}"))
+
+
+def show_changes_summary(changes):
+    if not changes:
+        console.print("[green]No files were changed for production release.[/]")
+        return
+    console.print("\n[bold cyan]Production Release Changes in Release Output:[/]")
+    for fname, desc in changes:
+        if "[ERROR]" in desc:
+            console.print(f"[bold red]{fname}[/]: {desc}")
+        else:
+            console.print(f"[bold yellow]{fname}[/]: {desc}")
+
+
 def main():
     try:
         # Pre-release test step
@@ -149,12 +248,19 @@ def main():
         )
         # Version input with validation
         while True:
-            version = prompt("Enter version for release", get_version())
+            version_input = prompt("Enter version for release", get_version())
+            prod_mode = False
+            version = version_input
+            if version_input.endswith("-P"):
+                prod_mode = True
+                version = version_input[:-2]  # Remove -P
+                version = version.strip()
             if validate_version(version):
                 break
             console.print(
                 "\n[bold red]❌ Invalid version format. Please use x.x.x (e.g. 0.24.3, 0.2.4)[/]"
             )
+        changes = []
         release_name = f"ShowTrackr-Web-v{version}"
         console.print("\nChoose release type:")
         console.print(
@@ -169,6 +275,15 @@ def main():
             if choice in ("1", "2"):
                 break
             console.print("\n[bold red]❌ Invalid choice. Please enter 1 or 2.[/]")
+        prod_release_root = None
+        if prod_mode:
+            # For zip-only mode, update in tempdir/versioned_dir before zipping
+            # For folder mode, update in release_folder before zipping
+            if choice == "1":
+                # Will be set inside the tempdir context
+                pass
+            else:
+                prod_release_root = PROJECT_ROOT / release_name
         if choice == "1":
             zip_name = f"{release_name}.zip"
             zip_path = PROJECT_ROOT / zip_name
@@ -210,6 +325,11 @@ def main():
                                 console.print(
                                     f"  [yellow]⚠️  Warning: {item} not found, skipping.[/]"
                                 )
+                    # --- PRODUCTION PATCH IN RELEASE DIR ---
+                    if prod_mode:
+                        update_for_production_in_release(
+                            versioned_dir, version, changes
+                        )
                     shutil.make_archive(
                         str(zip_path.with_suffix("")),
                         "zip",
@@ -267,6 +387,9 @@ def main():
                             console.print(
                                 f"  [yellow]⚠️  Warning: {item} not found, skipping.[/]"
                             )
+                # --- PRODUCTION PATCH IN RELEASE DIR ---
+                if prod_mode:
+                    update_for_production_in_release(release_folder, version, changes)
                 console.print(
                     f"\n[bold green]✅ Release folder created at:[/] [cyan]{release_folder}[/]\n"
                 )
@@ -318,6 +441,17 @@ def main():
                         console.print(
                             f"[bold red]❌ Error deleting release folder: {e}[/]"
                         )
+        # --- END SUMMARY ---
+        if prod_mode:
+            see = (
+                prompt(
+                    "Show what was changed for production release output? (y/n)", "n"
+                )
+                .lower()
+                .startswith("y")
+            )
+            if see:
+                show_changes_summary(changes)
         console.print("[bold cyan]==============================[/]", justify="center")
         console.print("[bold magenta]Release Build Done![/]", justify="center")
         console.print(

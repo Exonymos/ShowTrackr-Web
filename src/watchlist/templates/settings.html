@@ -13,9 +13,7 @@
   {% if messages %}
   <div class="mb-4 space-y-2">
     {% for category, message in messages %}
-    <div class="alert alert-{{ category if category != 'message' else 'info' }} shadow-md text-sm">
-      <span>{{ message }}</span>
-    </div>
+    <div class="flash-message" data-category="{{ category }}" data-message="{{ message|e }}"></div>
     {% endfor %}
   </div>
   {% endif %}

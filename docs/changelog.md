@@ -6,7 +6,7 @@ Version history for the ShowTrackr application.
 
 ## Table of Contents
 
-- [0.3.0 - 2025-05-21](#030---2025-05-21)
+- [0.3.0 - 2025-05-25](#030---2025-05-25)
 - [0.2.1 - 2025-05-09](#021---2025-05-09)
 - [0.2.0 - 2025-05-02](#020---2025-05-02)
 - [0.1.1 - 2025-04-25](#011---2025-04-25)
@@ -14,22 +14,27 @@ Version history for the ShowTrackr application.
 
 ---
 
-## [[0.3.0]](https://github.com/Exonymos/ShowTrackr-Web/releases/tag/0.3.0) - 2025-05-21
+## [[0.3.0]](https://github.com/Exonymos/ShowTrackr-Web/releases/tag/0.3.0) - 2025-05-25
 
 ### Added
 
-- Data export and import functionality for watchlist items via the Settings page (JSON format).
-- Comprehensive test suite for WatchlistItem model, settings, and item management routes.
-- Extensive tests for data import/export, validation, and error handling.
-- Additional validation for pagination size and theme selection in settings.
-- Improved error handling and user feedback for invalid import files and malformed data.
+- Export and import your watchlist as a backup file (JSON) from the Settings page. You can now back up your data and restore it easily.
+- Improved error messages and validation for settings and data import, including clearer feedback for invalid files or data.
+- More tests for watchlist items, settings, and data import/export to ensure reliability and catch edge cases.
+- Additional validation for pagination size and theme selection in settings to prevent invalid values.
+- Feedback form improvements: better validation, clearer error and confirmation messages, and improved accessibility.
+- Added categories for themes. Light and Dark themes are now grouped separately, and a new "Ember" dark theme has been added for a fresh look.
 
 ### Changed
 
-- Updated dependencies, including Flask upgraded to 3.1.1.
-- Enhanced validation logic for watchlist item fields (year, rating, date formats).
+- Upgraded Flask and other dependencies to latest versions for improved security and performance.
+- Enhanced validation for watchlist item fields (year, rating, date formats) to prevent bad data.
 - Improved setup scripts and documentation for environment and database initialization.
-- Improved test coverage and reliability for settings and item routes.
+- Improved test coverage and reliability for settings and item routes, including better session/config handling in tests.
+- Refined UI feedback using DaisyUI Toasts for a more modern experience.
+- Improved reliability of add/edit modal closing after successful save/delete.
+- Improved list view column alignment and poster placeholder appearance.
+- Removed some themes that were similar to existing ones to reduce clutter.
 
 ### Fixed
 
@@ -37,6 +42,8 @@ Version history for the ShowTrackr application.
 - Fixed error handling for malformed JSON and invalid file types during import.
 - Fixed session and configuration handling in tests for more robust test isolation.
 - Fixed minor issues in pagination and theme selection logic.
+- Fixed filter/sort controls not hiding on About/Settings pages.
+- Fixed minor bugs when editing items with null values in certain fields (e.g., year, rating).
 
 <div align="right">
   <a href="#table-of-contents">Back to Top</a>
