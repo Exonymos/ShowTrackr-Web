@@ -80,14 +80,14 @@
           <label for="theme_select_welcome" class="sr-only">Select Theme</label>
           <select id="theme_select_welcome" name="theme" class="select select-bordered select-sm"
             aria-label="Select Theme" onchange="this.form.requestSubmit()">
-            {% set valid_themes = ['cupcake', 'dracula', 'light', 'dark', 'bumblebee', 'synthwave', 'emerald',
-            'halloween', 'corporate', 'forest', 'retro', 'black', 'valentine', 'luxury', 'garden', 'business', 'lofi',
-            'night', 'pastel', 'coffee', 'fantasy', 'dim', 'wireframe', 'sunset', 'cmyk', 'abyss', 'autumn', 'acid',
-            'lemonade', 'winter', 'nord', 'caramellatte', 'silk'] %}
-            {% for theme_option in valid_themes %}
-            <option value="{{ theme_option }}" {{ 'selected' if theme_option==current_theme else '' }}>
-              {{ theme_option.title() }}
-            </option>
+            {% for category, themes_in_category in config.THEME_CATEGORIES.items() %}
+            <optgroup label="{{ category }}">
+              {% for theme_option in themes_in_category %}
+              <option value="{{ theme_option }}" {{ 'selected' if theme_option==current_theme else '' }}>
+                {{ theme_option.replace('-', ' ').title() }} {# Nicer display name #}
+              </option>
+              {% endfor %}
+            </optgroup>
             {% endfor %}
           </select>
           <span class="htmx-indicator loading loading-ring loading-xs"></span>

@@ -2,31 +2,72 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
-  themes: cupcake --default, dracula --prefersdark, light, dark, bumblebee, synthwave, emerald, halloween, corporate, forest, retro, black, valentine, luxury, garden, business, lofi, night, pastel, coffee, fantasy, dim, wireframe, sunset, cmyk, abyss, autumn, acid, lemonade, winter, nord, caramellatte, silk;
+  themes: cupcake --default, dark --prefersdark, "acid", "bumblebee",
+    "caramellatte", "corporate", "lemonade", "light", "lofi", "nord", "pastel",
+    "retro", "silk", "valentine", "winter", "autumn", "abyss", "aqua", "black",
+    "business", "coffee", "dim", "dracula", "forest", "halloween", "luxury",
+    "night", "sunset", "synthwave";
+}
+
+/* Custom Themes */
+@plugin "daisyui/theme" {
+  name: "ember";
+  default: false;
+  prefersdark: false;
+  color-scheme: "dark";
+  --color-base-100: oklch(27% 0.105 12.094);
+  --color-base-200: oklch(41% 0.159 10.272);
+  --color-base-300: oklch(45% 0.188 13.697);
+  --color-base-content: oklch(94% 0.03 12.58);
+  --color-primary: oklch(63% 0.237 25.331);
+  --color-primary-content: oklch(98% 0 0);
+  --color-secondary: oklch(68% 0.169 237.323);
+  --color-secondary-content: oklch(97% 0.013 236.62);
+  --color-accent: oklch(62% 0.214 259.815);
+  --color-accent-content: oklch(97% 0.014 254.604);
+  --color-neutral: oklch(51% 0.222 16.935);
+  --color-neutral-content: oklch(96% 0.015 12.422);
+  --color-info: oklch(71% 0.143 215.221);
+  --color-info-content: oklch(98% 0.019 200.873);
+  --color-success: oklch(72% 0.219 149.579);
+  --color-success-content: oklch(98% 0.018 155.826);
+  --color-warning: oklch(76% 0.188 70.08);
+  --color-warning-content: oklch(98% 0.022 95.277);
+  --color-error: oklch(64% 0.246 16.439);
+  --color-error-content: oklch(96% 0.015 12.422);
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
 }
 
 /* Inter Variable Font */
 @font-face {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("../font/Inter-VariableFont_opsz\,wght.ttf") format('truetype');
+  src: url("../font/Inter-VariableFont_opsz\,wght.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: italic;
   font-weight: 100 900;
   font-display: swap;
-  src: url("../font/Inter-Italic-VariableFont_opsz\,wght.ttf") format('truetype');
+  src: url("../font/Inter-Italic-VariableFont_opsz\,wght.ttf")
+    format("truetype");
 }
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -93,7 +134,7 @@ body {
 
 /* Subtle focus ring for page input */
 .page-input:focus {
-  outline: 2px solid hsl(var(--p)/.5);
+  outline: 2px solid hsl(var(--p) / 0.5);
   outline-offset: 2px;
 }
 
@@ -108,5 +149,5 @@ body {
 }
 
 .htmx-request.htmx-indicator {
-  opacity: 1
+  opacity: 1;
 }

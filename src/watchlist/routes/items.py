@@ -52,6 +52,8 @@ def save_item():
     is_new_item = not item_id
     error_messages = []
 
+    form_data_dict = request.form.to_dict()
+
     try:
         if is_new_item:
             item = WatchlistItem()
@@ -64,38 +66,50 @@ def save_item():
                 return resp
 
         # Update fields from form
-        item.title = request.form.get("title", "").strip()
-        item.type = request.form.get("type")
-        # Stricter year validation
-        year_str = request.form.get("year", "").strip()
-        if year_str:  # If a year string is provided
+        item.title = form_data_dict.get("title", "").strip()
+        item.type = form_data_dict.get("type")
+        year_str = form_data_dict.get("year", "").strip()
+        if year_str:
             if year_str.isdigit():
-                item.year = int(year_str)
-                if not (1800 <= item.year <= 2050):
+                year_val = int(year_str)
+                if not (1800 <= year_val <= 2050):
                     error_messages.append("Year must be between 1800 and 2050.")
+                    item.year = None
+                else:
+                    item.year = year_val
             else:
                 error_messages.append("Year must be a valid number.")
                 item.year = None
         else:
             item.year = None
-        item.overview = request.form.get("overview", "").strip() or None
-        item.poster_url = request.form.get("poster_url", "").strip() or None
-        item.status = request.form.get("status")
+
+        item.overview = form_data_dict.get("overview", "").strip() or None
+        item.poster_url = form_data_dict.get("poster_url", "").strip() or None
+        item.status = form_data_dict.get("status")
+
         # Handle empty rating string
-        rating_str = request.form.get("rating", "").strip()
-        if rating_str.isdigit():
-            item.rating = int(rating_str)
-            if not (1 <= item.rating <= 10):
-                error_messages.append("Rating must be between 1 and 10.")
+        rating_str = form_data_dict.get("rating", "").strip()
+        if rating_str:
+            if rating_str.isdigit():
+                rating_val = int(rating_str)
+                if not (1 <= rating_val <= 10):
+                    error_messages.append("Rating must be between 1 and 10.")
+                    item.rating = None
+                else:
+                    item.rating = rating_val
+            else:
+                error_messages.append("Rating must be a valid number.")
+                item.rating = None
         else:
             item.rating = None
-        item.notes = request.form.get("notes", "").strip() or None
-        item.tmdb_id = request.form.get("tmdb_id", "").strip() or None
-        item.imdb_id = request.form.get("imdb_id", "").strip() or None
-        item.boxd_id = request.form.get("boxd_id", "").strip() or None
+
+        item.notes = form_data_dict.get("notes", "").strip() or None
+        item.tmdb_id = form_data_dict.get("tmdb_id", "").strip() or None
+        item.imdb_id = form_data_dict.get("imdb_id", "").strip() or None
+        item.boxd_id = form_data_dict.get("boxd_id", "").strip() or None
 
         # Handle Date Watched
-        date_watched_str = request.form.get("date_watched", "").strip()
+        date_watched_str = form_data_dict.get("date_watched", "").strip()
         if date_watched_str:
             try:
                 # Attempt to parse YYYY-MM-DD format
@@ -116,24 +130,36 @@ def save_item():
             error_messages.append("Invalid type selected.")
         if item.status not in ["Plan to Watch", "Watched"]:
             error_messages.append("Invalid status selected.")
-        if item.rating is not None and not (1 <= item.rating <= 10):
-            error_messages.append("Rating must be between 1 and 10.")
 
         # Check collected errors
         if error_messages:
-            form_data = (
-                item if not is_new_item else WatchlistItem(**request.form.to_dict())
+            form_render_item = (
+                db.session.get(WatchlistItem, int(item_id))
+                if not is_new_item
+                else WatchlistItem()
             )
-            if "Invalid Date Watched format" in error_messages:
-                form_data.date_watched_str = date_watched_str
+            form_render_item.title = form_data_dict.get("title", "")
+            form_render_item.type = form_data_dict.get("type")
+            form_render_item.year_str = form_data_dict.get("year", "")
+            form_render_item.overview = form_data_dict.get("overview", "")
+            form_render_item.poster_url = form_data_dict.get("poster_url", "")
+            form_render_item.status = form_data_dict.get("status")
+            form_render_item.rating_str = form_data_dict.get("rating", "")
+            form_render_item.notes = form_data_dict.get("notes", "")
+            form_render_item.tmdb_id = form_data_dict.get("tmdb_id", "")
+            form_render_item.imdb_id = form_data_dict.get("imdb_id", "")
+            form_render_item.boxd_id = form_data_dict.get("boxd_id", "")
+
+            if item.date_watched and isinstance(item.date_watched, date):
+                form_render_item.date_watched_str = item.date_watched.isoformat()
             else:
-                form_data.date_watched_str = (
-                    item.date_watched.isoformat() if item.date_watched else ""
-                )
+                form_render_item.date_watched_str = date_watched_str
 
             resp = make_response(
                 render_template(
-                    "_add_edit_item_form.html", item=form_data, errors=error_messages
+                    "_add_edit_item_form.html",
+                    item=form_render_item,
+                    errors=error_messages,
                 ),
                 400,
             )
@@ -147,7 +173,6 @@ def save_item():
         db.session.commit()
 
         resp = make_response("", 200)
-        resp = make_response("", 200)
         resp.headers["HX-Trigger"] = "loadWatchlist"
         resp.headers["X-Close-Modal"] = "true"
         resp.headers["X-HX-Alert"] = safe_header_value(
@@ -158,36 +183,68 @@ def save_item():
 
     except SQLAlchemyError as e:
         db.session.rollback()
-        current_app.logger.error(f"Database error saving item: {e}")
+        current_app.logger.error(f"Database error saving item: {e}", exc_info=True)
+        form_render_item = (
+            WatchlistItem(**form_data_dict)
+            if is_new_item
+            else db.session.get(WatchlistItem, int(item_id))
+        )
+        if form_render_item:  # Repopulate with form data if item exists
+            for key, value in form_data_dict.items():
+                if hasattr(form_render_item, key):
+                    setattr(form_render_item, key, value)
+            form_render_item.date_watched_str = form_data_dict.get("date_watched", "")
+            form_render_item.year_str = form_data_dict.get("year", "")
+            form_render_item.rating_str = form_data_dict.get("rating", "")
         resp = make_response(
             render_template(
-                "_form_error.html",
-                message="Database error saving item. Please try again.",
+                "_add_edit_item_form.html",
+                item=form_render_item,
+                errors=["Database error saving item. Please try again."],
             ),
             500,
         )
-        resp.headers["X-HX-Alert"] = "Database error saving item."
+        resp.headers["X-HX-Alert"] = "Database error. Please try again."
         resp.headers["X-HX-Alert-Type"] = "error"
         return resp
+
     except ValueError as e:
         db.session.rollback()
-        current_app.logger.error(f"Form data error: {e}")
+        current_app.logger.error(f"Form data conversion error: {e}", exc_info=True)
+        form_render_item = (
+            WatchlistItem(**form_data_dict)
+            if is_new_item
+            else db.session.get(WatchlistItem, int(item_id))
+        )
+        if form_render_item:
+            for key, value in form_data_dict.items():
+                if hasattr(form_render_item, key):
+                    setattr(form_render_item, key, value)
+            form_render_item.date_watched_str = form_data_dict.get("date_watched", "")
+            form_render_item.year_str = form_data_dict.get("year", "")
+            form_render_item.rating_str = form_data_dict.get("rating", "")
+
         resp = make_response(
             render_template(
-                "_form_error.html",
-                message=f"Invalid data submitted (e.g., non-numeric year/rating).",
+                "_add_edit_item_form.html",
+                item=form_render_item,
+                errors=[
+                    f"Invalid data submitted (e.g., non-numeric year/rating): {e}."
+                ],
             ),
             400,
         )
-        resp.headers["X-HX-Alert"] = "Invalid data submitted."
+        resp.headers["X-HX-Alert"] = "Invalid data in form."
         resp.headers["X-HX-Alert-Type"] = "error"
         return resp
+
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Unexpected error saving item: {e}")
+        current_app.logger.error(f"Unexpected error saving item: {e}", exc_info=True)
         resp = make_response(
             render_template(
-                "_form_error.html", message="An unexpected error occurred."
+                "_form_error.html",
+                message="An unexpected server error occurred. Please check logs.",
             ),
             500,
         )

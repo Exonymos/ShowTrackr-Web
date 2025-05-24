@@ -32,38 +32,51 @@ GOOGLE_SHEET_PUBLIC_URL = os.environ.get("GOOGLE_SHEET_PUBLIC_URL", None)
 
 # UI / Theme Configuration
 DEFAULT_THEME = "cupcake"
+THEME_CATEGORIES = {
+    "Light": [
+        "acid",
+        "bumblebee",
+        "caramellatte",
+        "corporate",
+        "cupcake",  # Default
+        "lemonade",
+        "light",
+        "lofi",
+        "nord",
+        "pastel",
+        "retro",
+        "silk",
+        "valentine",
+        "winter",
+        "autumn",
+    ],
+    "Dark": [
+        "abyss",
+        "aqua",
+        "black",
+        "business",
+        "coffee",
+        "dark",
+        "dim",
+        "dracula",
+        "ember",
+        "forest",
+        "halloween",
+        "luxury",
+        "night",
+        "sunset",
+        "synthwave",
+    ],
+}
+
+# Generate a list of all valid themes from the categories
 VALID_THEMES = [
-    "cupcake",
-    "dracula",
-    "light",
-    "dark",
-    "bumblebee",
-    "synthwave",
-    "emerald",
-    "halloween",
-    "corporate",
-    "forest",
-    "retro",
-    "black",
-    "valentine",
-    "luxury",
-    "garden",
-    "business",
-    "lofi",
-    "night",
-    "pastel",
-    "coffee",
-    "fantasy",
-    "dim",
-    "wireframe",
-    "sunset",
-    "cmyk",
-    "abyss",
-    "autumn",
-    "acid",
-    "lemonade",
-    "winter",
-    "nord",
-    "caramellatte",
-    "silk",
+    theme for category_themes in THEME_CATEGORIES.values() for theme in category_themes
 ]
+
+# Fallback for DEFAULT_THEME
+if DEFAULT_THEME not in VALID_THEMES:
+    if VALID_THEMES:
+        DEFAULT_THEME = VALID_THEMES[0]
+    else:
+        DEFAULT_THEME = "light"

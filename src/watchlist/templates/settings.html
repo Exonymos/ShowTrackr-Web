@@ -32,10 +32,14 @@
         class="flex flex-wrap gap-4 items-center">
         <div class="form-control w-full max-w-xs">
           <select name="theme" class="select select-bordered" aria-label="Select Theme">
-            {% for theme_option in valid_themes %}
-            <option value="{{ theme_option }}" {{ 'selected' if theme_option==current_theme else '' }}>
-              {{ theme_option.title() }}
-            </option>
+            {% for category, themes_in_category in config.THEME_CATEGORIES.items() %}
+            <optgroup label="{{ category }}">
+              {% for theme_option in themes_in_category %}
+              <option value="{{ theme_option }}" {{ 'selected' if theme_option==current_theme else '' }}>
+                {{ theme_option.replace('-', ' ').title() }}
+              </option>
+              {% endfor %}
+            </optgroup>
             {% endfor %}
           </select>
         </div>

@@ -50,7 +50,8 @@
         <span class="label-text">Release Year</span>
       </label>
       <input type="number" id="year" name="year" placeholder="e.g., 2019" class="input input-bordered w-full"
-        value="{{ item.year if item and item.year else '' }}" min="1800" max="2050" oninput="setFormDirty()">
+        value="{{ item.year_str if errors and item.year_str is defined else (item.year if item and item.year is not none else '') }}"
+        min="1800" max="2050" oninput="setFormDirty()">
     </div>
 
     <!-- Status (Required) -->
@@ -75,7 +76,8 @@
         <span class="label-text">Rating (1-10)</span>
       </label>
       <input type="number" id="rating" name="rating" placeholder="-" class="input input-bordered w-full"
-        value="{{ item.rating if item and item.rating else '' }}" min="1" max="10" oninput="setFormDirty()">
+        value="{{ item.rating_str if errors and item.rating_str is defined else (item.rating if item and item.rating is not none else '') }}"
+        min="1" max="10" oninput="setFormDirty()">
     </div>
 
     <!-- Date Watched -->
@@ -84,7 +86,7 @@
         <span class="label-text">Date Watched</span>
       </label>
       <input type="date" id="date_watched" name="date_watched" class="input input-bordered w-full max-w-xs block"
-        value="{{ item.date_watched_str if item and item.date_watched_str is defined else (item.date_watched.isoformat() if item and item.date_watched else '') }}"
+        value="{{ item.date_watched_str if errors and item.date_watched_str is defined else (item.date_watched.isoformat() if item and item.date_watched else '') }}"
         onchange="setFormDirty()">
     </div>
   </div>
@@ -95,7 +97,7 @@
       <span class="label-text">Overview</span>
     </label>
     <textarea id="overview" name="overview" class="textarea textarea-bordered h-24 w-full"
-      placeholder="Brief summary...">{{ item.overview if item else '' }}</textarea>
+      placeholder="Brief summary...">{{ item.overview if item and item.overview is not none else '' }}</textarea>
   </div>
 
   <!-- Poster URL -->
@@ -104,7 +106,7 @@
       <span class="label-text">Poster URL</span>
     </label>
     <input type="url" id="poster_url" name="poster_url" placeholder="https://..." class="input input-bordered w-full"
-      value="{{ item.poster_url if item else '' }}" oninput="setFormDirty()">
+      value="{{ item.poster_url if item and item.poster_url is not none else '' }}" oninput="setFormDirty()">
     <div class="label">
       <span class="label-text-alt">If left blank, a placeholder will be shown.</span>
     </div>
@@ -119,21 +121,21 @@
           <span class="label-text">IMDb ID</span>
         </label>
         <input type="text" id="imdb_id" name="imdb_id" placeholder="e.g., tt4154796" class="input input-bordered w-full"
-          value="{{ item.imdb_id if item else '' }}">
+          value="{{ item.imdb_id if item and item.imdb_id is not none else '' }}">
       </div>
       <div class="form-control">
         <label class="label" for="tmdb_id">
           <span class="label-text">TMDb ID</span>
         </label>
         <input type="text" id="tmdb_id" name="tmdb_id" placeholder="e.g., 100088" class="input input-bordered w-full"
-          value="{{ item.tmdb_id if item else '' }}">
+          value="{{ item.tmdb_id if item and item.tmdb_id is not none else '' }}">
       </div>
       <div class="form-control">
         <label class="label" for="boxd_id">
           <span class="label-text">Letterboxd ID</span>
         </label>
         <input type="text" id="boxd_id" name="boxd_id" placeholder="e.g., 9vE4" class="input input-bordered w-full"
-          value="{{ item.boxd_id if item else '' }}">
+          value="{{ item.boxd_id if item and item.boxd_id is not none else '' }}">
       </div>
     </div>
     <div class="label pt-2">
@@ -147,7 +149,7 @@
       <span class="label-text">Notes</span>
     </label>
     <textarea id="notes" name="notes" class="textarea textarea-bordered h-20 w-full"
-      placeholder="Personal thoughts or reminders...">{{ item.notes if item else '' }}</textarea>
+      placeholder="Personal thoughts or reminders...">{{ item.notes if item and item.notes is not none else '' }}</textarea>
   </div>
 
   <!-- Action Buttons -->
