@@ -4,8 +4,8 @@
 
 - [🏠 Home Page](#-home-page)
 - [➕ Add Item Form](#-add-item-form)
-- [ℹ️ About Page](#-add-item-form)
-- [⚙️ Settings Page](#-settings-page)
+- [ℹ️ About Page](#ℹ%EF%B8%8F-about-page)
+- [⚙️ Settings Page](#%EF%B8%8F-settings-page)
 - [🎨 Themes Preview](#-themes-preview)
 
 ## 🏠 Home Page

@@ -42,11 +42,9 @@ try:
 
     console = Console()
     rich_traceback_install(show_locals=True, suppress=[])
-    logger = None  # Do not override root logger
 except ImportError:
     # Fallback to standard print/logging
     console = None
-    logger = None
 
 # --- Virtual Environment Warning ---
 if current_executable != expected_executable:
@@ -99,7 +97,7 @@ if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
                 "Ensuring database migrations are up-to-date...", total=None
             )
             try:
-                result = subprocess.run(
+                subprocess.run(
                     [sys.executable, "-m", "flask", "db", "upgrade"],
                     check=True,
                     cwd=project_root,

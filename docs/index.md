@@ -13,8 +13,8 @@ This documentation site provides all the information you need to set up, run, us
 ## Project Information
 
 - **[📜 Changelog](./changelog.md):** See the history of versions and changes made to the application.
-- **[🤝 Contribution Guidelines](../../CONTRIBUTING.md):** Interested in helping out? Find out how.
-- **[⚖️ License Information](../../LICENSE):** Understand the licensing for ShowTrackr (GPL-3.0).
+- **[🤝 Contribution Guidelines](../CONTRIBUTING.md):** Interested in helping out? Find out how.
+- **[⚖️ License Information](../LICENSE):** Understand the licensing for ShowTrackr (GPL-3.0).
 - **[🐙 GitHub Repository](https://github.com/Exonymos/ShowTrackr-Web):** Visit the project's source code.
 
 ---

@@ -9,7 +9,6 @@ import json
 import re
 import sys
 import fnmatch
-import shutil
 import tempfile
 from pathlib import Path
 
@@ -135,8 +134,6 @@ def update_for_production_in_release(release_root, version, changes):
     - Update APP_VERSION in config.py
     - Record changes for summary
     """
-    import re
-    import json
     from pathlib import Path
 
     # 1. requirements.txt
@@ -275,15 +272,6 @@ def main():
             if choice in ("1", "2"):
                 break
             console.print("\n[bold red]❌ Invalid choice. Please enter 1 or 2.[/]")
-        prod_release_root = None
-        if prod_mode:
-            # For zip-only mode, update in tempdir/versioned_dir before zipping
-            # For folder mode, update in release_folder before zipping
-            if choice == "1":
-                # Will be set inside the tempdir context
-                pass
-            else:
-                prod_release_root = PROJECT_ROOT / release_name
         if choice == "1":
             zip_name = f"{release_name}.zip"
             zip_path = PROJECT_ROOT / zip_name

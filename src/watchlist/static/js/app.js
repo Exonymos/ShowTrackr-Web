@@ -199,8 +199,6 @@ const feedbackStatusEl = document.getElementById("feedback-status");
 if (feedbackForm && feedbackSubmitBtn) {
   const FEEDBACK_SCRIPT_URL =
     feedbackForm.dataset.feedbackUrl || document.body.dataset.feedbackUrl;
-  const APP_VERSION =
-    feedbackForm.querySelector('input[name="app_version"]')?.value || "unknown";
 
   feedbackForm.addEventListener("submit", async (event) => {
     event.preventDefault();

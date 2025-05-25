@@ -1,5 +1,5 @@
 # src/watchlist/models/watchlist_item.py
-from datetime import datetime, timezone, date
+from datetime import datetime, timezone
 from .. import db
 
 
