@@ -164,6 +164,7 @@ def ensure_rich():
                         rich_version = line.strip()
                         break
         except Exception:
+            # Exception ignored intentionally: fallback to plain output if rich version detection fails
             pass
         # Determine venv pip path
         venv_dir = Path(__file__).parent / ".venv"

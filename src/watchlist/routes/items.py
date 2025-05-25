@@ -3,18 +3,14 @@ from flask import (
     Blueprint,
     render_template,
     request,
-    redirect,
-    url_for,
-    flash,
     make_response,
     current_app,
-    session,
 )
 import unicodedata
 from ..models import WatchlistItem
 from .. import db, htmx
 from sqlalchemy.exc import SQLAlchemyError
-from datetime import date, datetime
+from datetime import date
 
 items_bp = Blueprint("items", __name__)
 

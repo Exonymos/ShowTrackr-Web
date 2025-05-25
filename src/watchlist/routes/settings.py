@@ -17,8 +17,6 @@ from ..models import WatchlistItem
 import json
 from datetime import datetime, date, timezone
 import io
-from werkzeug.utils import secure_filename
-import os
 
 settings_bp = Blueprint("settings", __name__, url_prefix="/settings")
 

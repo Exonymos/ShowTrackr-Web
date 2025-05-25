@@ -1,10 +1,9 @@
 # src/watchlist/routes/main.py
 import os
-from flask import Blueprint, render_template, request, current_app, session, url_for
+from flask import Blueprint, render_template, request, current_app, session
 from ..models import WatchlistItem
 from .. import db, htmx
-from sqlalchemy import desc, asc, func, or_
-from datetime import date
+from sqlalchemy import desc, asc, func
 from .. import config
 
 main_bp = Blueprint("main", __name__)

@@ -3,13 +3,11 @@
 # This script is used to create a release package for the ShowTrackr project.
 # It copies specified files and folders from the project directory to a new release folder,
 # and optionally creates a zip archive of the release folder.
-import os
 import shutil
 import json
 import re
 import sys
 import fnmatch
-import tempfile
 from pathlib import Path
 
 try:
