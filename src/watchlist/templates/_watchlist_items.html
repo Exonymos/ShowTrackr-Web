@@ -219,8 +219,70 @@
 {% endif %}
 
 {% else %}
-<div class="text-center text-base-content opacity-70 py-10">
-  <p class="text-lg">Your watchlist is empty.</p>
-  <p>Click the "Add" button above to add your first item!</p>
+{% if current_search or current_filter_status != 'all' or current_filter_type != 'all' or current_filter_years or
+current_filter_rating_min is not none or current_filter_rating_max is not none %}
+<div class="text-center text-base-content opacity-90 py-10 flex flex-col items-center gap-3">
+  <div class="w-24 h-24 md:w-28 md:h-28 text-base-content">
+    <svg class="mx-auto w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 116 121" fill="none">
+      <path
+        d="M.207 63.57c0-31.804 25.78-57.442 57.442-57.442 31.614 0 57.43 25.626 57.43 57.442 0 13.495-4.649 25.91-12.452 35.705A57.28 57.28 0 0 1 57.649 121c-17.906 0-34.247-8.206-44.99-21.725C4.854 89.482.206 77.065.206 63.57"
+        class="fill-base-200 opacity-70" />
+      <path
+        d="M72.794.6h-.01a10 10 0 0 0-1.39-.1h-49.23c-5.038 0-9.124 4.064-9.124 9.085v97.701c0 5.022 4.086 9.086 9.124 9.086h70.957c5.052 0 9.124-4.064 9.124-9.086V29.448q0-1.034-.226-2.032a9 9 0 0 0-2.725-4.659L77.545 2.897A9.1 9.1 0 0 0 72.794.6Z"
+        class="fill-base-100 stroke-base-300 stroke-1" />
+      <circle cx="60.207" cy="61" r="21.026" class="fill-base-200 opacity-60" />
+      <path
+        d="M74.679 46.141c-8.105-8.093-21.226-8.093-29.319 0-8.105 8.093-8.105 21.226 0 29.319 8.093 8.105 21.214 8.105 29.319 0 8.093-8.093 8.093-21.226 0-29.319Zm4.79-4.79c10.741 10.74 10.741 28.158 0 38.9-10.752 10.74-28.159 10.74-38.911 0-10.741-10.742-10.741-28.16 0-38.9 10.752-10.741 28.159-10.741 38.911 0Zm3.778 48.173-6.386-6.393a32.3 32.3 0 0 0 5.484-5.476l6.386 6.392z"
+        class="stroke-base-content/40 stroke-1" />
+      <path
+        d="M104.591 94.497h-.001L92.735 82.653l-.002-.002a2.655 2.655 0 0 0-3.77 0l.346.346-.346-.347-7.106 7.106a2.677 2.677 0 0 0-.002 3.767l.002.002 11.859 11.859a7.693 7.693 0 1 0 10.875-10.887Z"
+        class="fill-secondary stroke-secondary-content/70 stroke-1" />
+      <g class="fill-primary">
+        <path
+          d="M62.55 65.671a.896.896 0 0 1-.887-.898c0-1.986-3.003-1.986-3.003 0a.9.9 0 0 1-.899.898.896.896 0 0 1-.887-.898c0-4.351 6.574-4.34 6.574 0a.9.9 0 0 1-.899.898m7.626-7.601h-3.712a.9.9 0 0 1-.899-.9c0-.484.402-.886.899-.886h3.712c.497 0 .899.402.899.887a.9.9 0 0 1-.899.898m-16.315.001h-3.713a.9.9 0 0 1-.898-.9c0-.484.402-.886.898-.886h3.713a.893.893 0 0 1 0 1.785" />
+        <rect x="28.925" y="16.385" width="30.769" height="2.051" rx="1.026" />
+        <rect x="28.925" y="22.538" width="10.256" height="2.051" rx="1.026" />
+        <circle cx="42.258" cy="23.564" r="1.026" />
+        <circle cx="46.361" cy="23.564" r="1.026" />
+        <circle cx="50.463" cy="23.564" r="1.026" />
+      </g>
+      <rect x="28.925" y="100.487" width="41.026" height="4.103" rx="2.051" class="fill-secondary opacity-80" />
+    </svg>
+  </div>
+  <p class="text-lg font-semibold mt-2">No results found.</p>
+  <p class="text-sm opacity-80 mt-1">Try adjusting your filters or search terms.</p>
 </div>
+{% else %}
+<div class="text-center text-base-content opacity-90 py-10 flex flex-col items-center gap-3">
+  <div class="w-24 h-24 md:w-28 md:h-28 text-base-content">
+    <svg class="mx-auto w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 116 121" fill="none">
+      <path
+        d="M.207 63.57c0-31.804 25.78-57.442 57.442-57.442 31.614 0 57.43 25.626 57.43 57.442 0 13.495-4.649 25.91-12.452 35.705A57.28 57.28 0 0 1 57.649 121c-17.906 0-34.247-8.206-44.99-21.725C4.854 89.482.206 77.065.206 63.57"
+        class="fill-base-200 opacity-70" />
+      <path
+        d="M72.794.6h-.01a10 10 0 0 0-1.39-.1h-49.23c-5.038 0-9.124 4.064-9.124 9.085v97.701c0 5.022 4.086 9.086 9.124 9.086h70.957c5.052 0 9.124-4.064 9.124-9.086V29.448q0-1.034-.226-2.032a9 9 0 0 0-2.725-4.659L77.545 2.897A9.1 9.1 0 0 0 72.794.6Z"
+        class="fill-base-100 stroke-base-300 stroke-1" />
+      <circle cx="60.207" cy="61" r="21.026" class="fill-base-200 opacity-60" />
+      <path
+        d="M74.679 46.141c-8.105-8.093-21.226-8.093-29.319 0-8.105 8.093-8.105 21.226 0 29.319 8.093 8.105 21.214 8.105 29.319 0 8.093-8.093 8.093-21.226 0-29.319Zm4.79-4.79c10.741 10.74 10.741 28.158 0 38.9-10.752 10.74-28.159 10.74-38.911 0-10.741-10.742-10.741-28.16 0-38.9 10.752-10.741 28.159-10.741 38.911 0Zm3.778 48.173-6.386-6.393a32.3 32.3 0 0 0 5.484-5.476l6.386 6.392z"
+        class="stroke-base-content/40 stroke-1" />
+      <path
+        d="M104.591 94.497h-.001L92.735 82.653l-.002-.002a2.655 2.655 0 0 0-3.77 0l.346.346-.346-.347-7.106 7.106a2.677 2.677 0 0 0-.002 3.767l.002.002 11.859 11.859a7.693 7.693 0 1 0 10.875-10.887Z"
+        class="fill-secondary stroke-secondary-content/70 stroke-1" />
+      <g class="fill-primary">
+        <path
+          d="M62.55 65.671a.896.896 0 0 1-.887-.898c0-1.986-3.003-1.986-3.003 0a.9.9 0 0 1-.899.898.896.896 0 0 1-.887-.898c0-4.351 6.574-4.34 6.574 0a.9.9 0 0 1-.899.898m7.626-7.601h-3.712a.9.9 0 0 1-.899-.9c0-.484.402-.886.899-.886h3.712c.497 0 .899.402.899.887a.9.9 0 0 1-.899.898m-16.315.001h-3.713a.9.9 0 0 1-.898-.9c0-.484.402-.886.898-.886h3.713a.893.893 0 0 1 0 1.785" />
+        <rect x="28.925" y="16.385" width="30.769" height="2.051" rx="1.026" />
+        <rect x="28.925" y="22.538" width="10.256" height="2.051" rx="1.026" />
+        <circle cx="42.258" cy="23.564" r="1.026" />
+        <circle cx="46.361" cy="23.564" r="1.026" />
+        <circle cx="50.463" cy="23.564" r="1.026" />
+      </g>
+      <rect x="28.925" y="100.487" width="41.026" height="4.103" rx="2.051" class="fill-secondary opacity-80" />
+    </svg>
+  </div>
+  <p class="text-xl font-semibold mt-2">Your Watchlist is Empty!</p>
+  <p class="text-sm opacity-80 mt-1">Click the "Add Item" button in the welcome section above to get started.</p>
+</div>
+{% endif %}
 {% endif %}

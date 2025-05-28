@@ -1,0 +1,87 @@
+name: 🐛 Bug Report
+description: Create a report to help us improve ShowTrackr.
+title: "[BUG] Brief description of bug"
+labels: ["bug", "triage"]
+assignees: "Exonymos" # Exonymos
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thank you for taking the time to file a bug report!** 
+        Please help us understand the problem by providing as much detail as possible.
+
+        **Before Submitting:**
+        - Have you checked if this issue is already reported in our [Issues](https://github.com/Exonymos/ShowTrackr-Web/issues)?
+        - Have you checked our [Q&A Discussions](https://github.com/Exonymos/ShowTrackr-Web/discussions/categories/q-a) for potential solutions or similar questions?
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "🔎 Describe the Bug"
+      description: "A clear and concise description of what the bug is. What did you see? What went wrong?"
+      placeholder: "e.g., When I try to import a JSON file, the page crashes and shows a 500 error."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: "🔁 To Reproduce"
+      description: "Steps to reliably reproduce the behavior. Please be specific!"
+      placeholder: |
+        1. Go to 'Settings' page
+        2. Select file 'my_backup.json'
+        3. Click 'Import Watchlist'
+        4. See error / unexpected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: "✅ Expected Behavior"
+      description: "A clear and concise description of what you expected to happen."
+      placeholder: "e.g., I expected the data to be imported successfully and see a success message."
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: "ShowTrackr Version"
+      description: "Which version of ShowTrackr are you using? (See 'About' page in the app or in the 'package.json' file)"
+      placeholder: "e.g., v0.3.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: "💻 Your Environment (please complete the following information):"
+      description: |
+        This helps us narrow down environment-specific issues.
+        - **Operating System:** [e.g., Windows 11, Ubuntu 24.04 LTS]
+        - **Browser (if applicable):** [e.g., Chrome 124, Firefox 125]
+        - **How are you running ShowTrackr?** [e.g., Using run.bat, python run.py directly]
+      value: |
+        - OS: 
+        - Browser: 
+        - Running Method:
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: "📸 Screenshots (Optional)"
+      description: "If applicable, add screenshots to help explain your problem. You can drag & drop images here."
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: "📋 Additional Context (Optional)"
+      description: "Add any other context about the problem here. Were there any error messages in the terminal/console? What were you trying to do?"
+    validations:
+      required: false

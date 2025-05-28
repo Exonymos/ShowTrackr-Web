@@ -3,6 +3,7 @@
 ## Table of Contents
 
 - [🏠 Home Page](#-home-page)
+- [🚫 Error Pages](#-error-pages)
 - [➕ Add Item Form](#-add-item-form)
 - [ℹ️ About Page](#ℹ%EF%B8%8F-about-page)
 - [⚙️ Settings Page](#%EF%B8%8F-settings-page)
@@ -13,6 +14,16 @@
 |                       Main                        |                                       Empty List                                       |
 | :-----------------------------------------------: | :------------------------------------------------------------------------------------: |
 | [![ShowTrackr Home Page](./home.png)](./home.png) | [![ShowTrackr Home Page - No Watchlist](./home_empty_list.png)](./home_empty_list.png) |
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+---
+
+## 🚫 Error Pages
+
+|                     404 Not Found                     |               500 Internal Server Error               |
+| :---------------------------------------------------: | :---------------------------------------------------: |
+| [![404 Error Page](./error_404.png)](./error_404.png) | [![500 Error Page](./error_500.png)](./error_500.png) |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

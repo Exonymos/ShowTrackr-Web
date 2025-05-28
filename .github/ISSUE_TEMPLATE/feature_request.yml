@@ -1,0 +1,49 @@
+name: ✨ Feature Request
+description: Suggest an idea or enhancement for ShowTrackr.
+title: "[FEAT] Brief description of your idea"
+labels: ["enhancement", "feature request"]
+assignees: "Exonymos" # Exonymos
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thank you for suggesting an idea to improve ShowTrackr!**
+
+        **Before Submitting:**
+        - Have you checked if this idea has already been proposed in our [Issues](https://github.com/Exonymos/ShowTrackr-Web/issues)?
+        - Have you discussed this idea in our [Ideas Discussions](https://github.com/Exonymos/ShowTrackr-Web/discussions/categories/ideas)? This can help refine the concept with community input!
+
+  - type: textarea
+    id: problem-related
+    attributes:
+      label: "❓ Is your feature request related to a problem? Please describe."
+      description: "A clear and concise description of what the problem is. Or, if it's a new idea, explain the opportunity."
+      placeholder: "e.g., I'm always frustrated when I have to manually look up actor details, or, It would be great if ShowTrackr could..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: "💡 Describe the solution you'd like"
+      description: "A clear and concise description of what you want to happen. How would this feature work from your perspective?"
+      placeholder: "e.g., Add a button next to each item that links to an actor search on IMDb."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "🔄 Describe alternatives you've considered (Optional)"
+      description: "A clear and concise description of any alternative solutions or features you've considered."
+      placeholder: "e.g., Instead of a button, maybe a right-click context menu."
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: "📋 Additional Context (Optional)"
+      description: "Add any other context, mockups, or screenshots about the feature request here. Why would this be valuable?"
+    validations:
+      required: false
