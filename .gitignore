@@ -34,9 +34,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Miscellaneous
-n-*.md
 tempCodeRunnerFile.py
-releases/
-misc/
+.notcommit/
 *.zip
 ShowTrackr-Web-v*/

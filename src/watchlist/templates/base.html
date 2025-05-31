@@ -21,7 +21,7 @@
 <body class="bg-base-200" data-feedback-url="{{ feedback_url }}" data-sheet-url="{{ sheet_url }}">
 
   <!-- Header -->
-  <header class="bg-neutral text-neutral-content shadow sticky top-0 z-1000">
+  <header class="bg-neutral text-neutral-content shadow sticky top-0 z-[1000]">
     <div class="navbar max-w-7xl mx-auto px-4">
       <div class="navbar-start">
         <a href="{{ url_for('main.index') }}" class="btn btn-ghost text-xl normal-case">
@@ -65,7 +65,7 @@
       <p class="mb-4">Track your shows and movies with ease!</p>
       <div class="flex flex-wrap justify-center items-center gap-4 mt-6 mb-4">
         <button class="btn btn-primary btn-md" hx-get="{{ url_for('items.add_item_form') }}" hx-target="#modal-content"
-          hx-swap="innerHTML" onclick="resetFormDirtyFlag(); add_item_modal.showModal()"
+          hx-swap="innerHTML" onclick="resetFormDirtyFlag(); document.getElementById('add_item_modal').showModal()"
           aria-label="Add new watchlist item">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
             class="w-5 h-5 mr-1">
@@ -167,13 +167,15 @@
 
   <!-- Add Item Modal -->
   <dialog id="add_item_modal" class="modal">
-    <div class="modal-box w-11/12 max-w-3xl">
-      <form method="dialog" id="modal-control-form">
-        <button id="modal-close-button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" type="button"
+    <div class="modal-box w-11/12 max-w-3xl flex flex-col max-h-[98vh] p-0">
+      <!-- Static Header: Title and Close Button -->
+      <div class="p-4 border-b border-base-300 sticky top-0 bg-base-100 z-20">
+        <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4"
           onclick="checkUnsavedChangesAndCloseModal()">✕</button>
-      </form>
-      <h3 class="font-bold text-lg mb-4" id="modal-title">Add New Watchlist Item</h3>
-      <div id="modal-content">
+        <h3 class="font-bold text-lg" id="modal-title-static">Add New Watchlist Item</h3>
+      </div>
+      <!-- Scrollable Content Area -->
+      <div id="modal-content" class="flex-grow overflow-y-auto px-4">
         <!-- Add/Edit item form will be loaded here by HTMX -->
         <div class="text-center p-8">
           <span class="loading loading-ring loading-lg"></span>
@@ -197,7 +199,7 @@
   <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
 
   <!-- Toast Container placeholder -->
-  <div id="toast-container" class="toast toast-bottom toast-end z-[99]"></div>
+  <div id="toast-container" class="toast toast-bottom toast-end z-[9999]"></div>
 </body>
 
 </html>

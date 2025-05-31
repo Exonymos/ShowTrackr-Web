@@ -51,7 +51,7 @@ def test_load_watchlist_htmx_empty(client):
     assert (
         b'<table class="table w-full table-fixed">' not in response.data
     )  # Table should NOT be there
-    assert b"Your watchlist is empty." in response.data  # Empty message should be there
+    assert b"Your Watchlist is Empty!" in response.data  # Empty message should be there
     assert b'<div id="controls-bar"' in response.data
 
 
@@ -142,7 +142,7 @@ def test_load_watchlist_filter_no_results(client, db_session):
         headers={"HX-Request": "true"},
     )
     assert b"Unique Movie" not in response.data
-    assert b"Your watchlist is empty." in response.data
+    assert b"No results found." in response.data
 
 
 def test_load_watchlist_sort_title_asc_desc(client, db_session):

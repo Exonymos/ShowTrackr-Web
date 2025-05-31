@@ -130,7 +130,7 @@ document.body.addEventListener("htmx:afterSwap", function (event) {
   // Modal Handling
   if (targetId === "modal-content") {
     resetFormDirtyFlag();
-    const form = event.detail.target.querySelector("form");
+    const form = event.detail.target.querySelector("form#item-form");
     if (form) {
       form.querySelectorAll("input, textarea, select").forEach((input) => {
         input.addEventListener("input", setFormDirty);
@@ -138,31 +138,33 @@ document.body.addEventListener("htmx:afterSwap", function (event) {
       });
 
       const itemIdInput = form.querySelector('input[name="item_id"]');
-      const modalTitle = document.getElementById("modal-title");
-      if (itemIdInput && itemIdInput.value && modalTitle) {
-        modalTitle.textContent = "Edit Watchlist Item";
-      } else if (modalTitle) {
-        modalTitle.textContent = "Add New Watchlist Item";
+      const modalTitleElement = document.getElementById("modal-title-static");
+      if (modalTitleElement) {
+        if (itemIdInput && itemIdInput.value) {
+          modalTitleElement.textContent = "Edit Watchlist Item";
+        } else {
+          modalTitleElement.textContent = "Add New Watchlist Item";
+        }
       }
     }
   }
 
   // Modal Closing on Success
   const originatingElement = event.detail.requestConfig.elt;
-  const modalElement = originatingElement
-    ? originatingElement.closest(".modal")
+  const itemForm = originatingElement
+    ? originatingElement.closest("form#item-form")
     : null;
 
   if (
-    modalElement &&
+    itemForm &&
+    itemForm.parentElement.parentElement.id === "modal-content" &&
     event.detail.xhr.status === 200 &&
     event.detail.xhr.getResponseHeader("X-Close-Modal")
   ) {
-    const modalId = modalElement.id;
-    const modal = document.getElementById(modalId);
+    const modalDialog = document.getElementById("add_item_modal");
     resetFormDirtyFlag();
-    if (modal && typeof modal.close === "function") {
-      modal.close();
+    if (modalDialog && typeof modalDialog.close === "function") {
+      modalDialog.close();
     }
   }
 });
