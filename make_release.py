@@ -127,42 +127,13 @@ def run_tests():
 
 def update_for_production_in_release(release_root, version, changes):
     """
-    - Comment out test dependencies in requirements.txt
     - Update version in package.json
     - Update APP_VERSION in config.py
     - Record changes for summary
     """
     from pathlib import Path
 
-    # 1. requirements.txt
-    req_path = Path(release_root) / "requirements.txt"
-    try:
-        if req_path.exists():
-            with open(req_path, encoding="utf-8") as f:
-                lines = f.readlines()
-            new_lines = []
-            changed = False
-            for line in lines:
-                if any(
-                    dep in line for dep in ["pytest", "pytest-flask", "pytest-mock"]
-                ):
-                    if not line.strip().startswith("#"):
-                        new_lines.append(
-                            f"# {line}" if not line.startswith("#") else line
-                        )
-                        changed = True
-                    else:
-                        new_lines.append(line)
-                else:
-                    new_lines.append(line)
-            if changed:
-                with open(req_path, "w", encoding="utf-8") as f:
-                    f.writelines(new_lines)
-                changes.append(("requirements.txt", "Commented out test dependencies."))
-    except Exception as e:
-        changes.append(("requirements.txt", f"[ERROR] Could not update: {e}"))
-
-    # 2. package.json
+    # 1. package.json
     pkg_path = Path(release_root) / "package.json"
     try:
         if pkg_path.exists():
@@ -179,7 +150,7 @@ def update_for_production_in_release(release_root, version, changes):
     except Exception as e:
         changes.append(("package.json", f"[ERROR] Could not update: {e}"))
 
-    # 3. config.py
+    # 2. config.py
     config_path = Path(release_root) / "src" / "watchlist" / "config.py"
     try:
         if config_path.exists():

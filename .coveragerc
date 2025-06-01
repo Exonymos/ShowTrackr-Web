@@ -1,0 +1,22 @@
+[run]
+source = src/watchlist
+branch = True
+omit =
+    .venv/*
+    tests/*
+    run.py
+    setup.py
+    make_release.py
+    */migrations/*
+    src/watchlist/__init__.py
+    src/watchlist/models/__init__.py
+    src/watchlist/routes/__init__.py
+
+[report]
+fail_under = 0
+
+show_missing = True
+
+[html]
+directory = coverage_html_report
+title = ShowTrackr Test Coverage Report

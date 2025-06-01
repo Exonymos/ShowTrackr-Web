@@ -1,0 +1,17 @@
+# Dependency
+coverage_html_report/
+
+# Minified files
+src/watchlist/static/js/htmx.min.js
+src/watchlist/static/js/bundle.js
+src/watchlist/static/css/output.css
+
+# HTML files
+src/watchlist/templates/**/*.html
+
+# Git and version control
+.github
+package-lock.json
+
+# Documentation and notes
+**/*.md

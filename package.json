@@ -6,7 +6,13 @@
   "main": "index.js",
   "scripts": {
     "build:css": "npx @tailwindcss/cli -i ./src/watchlist/static/css/input.css -o ./src/watchlist/static/css/output.css -m --optimize",
-    "watch:css": "npx @tailwindcss/cli -i ./src/watchlist/static/css/input.css -o ./src/watchlist/static/css/output.css -w"
+    "watch:css": "npx @tailwindcss/cli -i ./src/watchlist/static/css/input.css -o ./src/watchlist/static/css/output.css -w",
+    "build:js": "npx esbuild src/watchlist/static/js/app.js --bundle --outfile=src/watchlist/static/js/bundle.js --minify",
+    "watch:js": "npx esbuild src/watchlist/static/js/app.js --bundle --outfile=src/watchlist/static/js/bundle.js --watch --minify",
+    "lint:js": "eslint src/watchlist/static/js/",
+    "lint:js:fix": "eslint src/watchlist/static/js/ --fix",
+    "format:check": "prettier . --check",
+    "format:write": "prettier . --write"
   },
   "keywords": [
     "flask",
@@ -27,7 +33,12 @@
     "@tailwindcss/cli": "^4.1.5",
     "autoprefixer": "^10.4.21",
     "daisyui": "^5.0.35",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "globals": "^16.2.0",
     "postcss": "^8.5.3",
+    "prettier": "^3.5.3",
     "tailwindcss": "^4.1.5"
   }
 }

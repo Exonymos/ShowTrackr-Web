@@ -1,0 +1,39 @@
+[flake8]
+; Maximum Line Length
+max-line-length = 88
+
+; Specific Error/Warning Codes to Ignore
+; E501: line too long
+; W503: line break before binary operator
+; E203: whitespace before ':'
+; F401: module imported but unused (only used for development)
+; F841: local variable assigned but never used (only used for development)
+ignore = E501, W503, E203, F401, F841
+
+; Files/Directories to Exclude
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    .pytest_cache,
+    .vscode,
+    .github,
+    .notcommit,
+    data/,
+    docs/,
+    migrations/,
+    node_modules/,
+    previews/,
+    build/,
+    dist/,
+    *.egg-info,
+    make_release.py,
+
+; McCabe Complexity Threshold
+max-complexity = 12
+
+; Per-file Ignoring
+per-file-ignores =
+    tests/*.py:F401, E402
+    tests/models/*.py:F401
+    tests/routes/*.py:F401

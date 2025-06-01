@@ -33,6 +33,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# 
+.coverage
+coverage_html_report
+
 # Miscellaneous
 tempCodeRunnerFile.py
 .notcommit/

@@ -1,20 +1,45 @@
 /* src/watchlist/static/css/input.css */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "daisyui" {
-  themes: cupcake --default, dark --prefersdark, "acid", "bumblebee",
-    "caramellatte", "corporate", "lemonade", "light", "lofi", "nord", "pastel",
-    "retro", "silk", "valentine", "winter", "autumn", "abyss", "aqua", "black",
-    "business", "coffee", "dim", "dracula", "forest", "halloween", "luxury",
-    "night", "sunset", "synthwave";
+  themes:
+    cupcake --default,
+    dark --prefersdark,
+    'acid',
+    'bumblebee',
+    'caramellatte',
+    'corporate',
+    'lemonade',
+    'light',
+    'lofi',
+    'nord',
+    'pastel',
+    'retro',
+    'silk',
+    'valentine',
+    'winter',
+    'autumn',
+    'abyss',
+    'aqua',
+    'black',
+    'business',
+    'coffee',
+    'dim',
+    'dracula',
+    'forest',
+    'halloween',
+    'luxury',
+    'night',
+    'sunset',
+    'synthwave';
 }
 
 /* Custom Themes */
 @plugin "daisyui/theme" {
-  name: "ember";
+  name: 'ember';
   default: false;
   prefersdark: false;
-  color-scheme: "dark";
+  color-scheme: 'dark';
   --color-base-100: oklch(27% 0.105 12.094);
   --color-base-200: oklch(41% 0.159 10.272);
   --color-base-300: oklch(45% 0.188 13.697);
@@ -47,27 +72,27 @@
 
 /* Inter Variable Font */
 @font-face {
-  font-family: "Inter";
+  font-family: 'Inter';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("../font/Inter-VariableFont_opsz\,wght.ttf") format("truetype");
+  src: url('../font/Inter-VariableFont_opsz\,wght.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: "Inter";
+  font-family: 'Inter';
   font-style: italic;
   font-weight: 100 900;
   font-display: swap;
-  src: url("../font/Inter-Italic-VariableFont_opsz\,wght.ttf")
-    format("truetype");
+  src: url('../font/Inter-Italic-VariableFont_opsz\,wght.ttf')
+    format('truetype');
 }
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

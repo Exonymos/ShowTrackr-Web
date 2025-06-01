@@ -11,28 +11,28 @@ function resetFormDirtyFlag() {
 }
 
 function checkUnsavedChangesAndCloseModal() {
-  const modal = document.getElementById("add_item_modal");
+  const modal = document.getElementById('add_item_modal');
   if (isFormDirty) {
-    if (!confirm("You have unsaved changes. Are you sure you want to close?")) {
+    if (!confirm('You have unsaved changes. Are you sure you want to close?')) {
       return;
     }
   }
   resetFormDirtyFlag();
-  if (modal && typeof modal.close === "function") {
+  if (modal && typeof modal.close === 'function') {
     modal.close();
   }
 }
 
 // Reset filter
 function resetFilters() {
-  const filterForm = document.getElementById("filter-form");
+  const filterForm = document.getElementById('filter-form');
   filterForm.reset(); // Reset the form fields to their initial values
 
   // Trigger an HTMX request to reload the watchlist with default filters
-  htmx.ajax("GET", filterForm.getAttribute("hx-get"), {
-    target: filterForm.getAttribute("hx-target"),
-    swap: filterForm.getAttribute("hx-swap"),
-    indicator: filterForm.getAttribute("hx-indicator"),
+  htmx.ajax('GET', filterForm.getAttribute('hx-get'), {
+    target: filterForm.getAttribute('hx-target'),
+    swap: filterForm.getAttribute('hx-swap'),
+    indicator: filterForm.getAttribute('hx-indicator'),
   });
 }
 
@@ -41,12 +41,12 @@ function showPosterTooltip(event) {
   clearTimeout(tooltipTimeout);
   const imgElement = event.target;
   const largePosterUrl = imgElement.dataset.largePoster;
-  const tooltipElement = document.getElementById("poster-hover-tooltip");
+  const tooltipElement = document.getElementById('poster-hover-tooltip');
 
   if (largePosterUrl && tooltipElement) {
     const largeImg = new Image();
     largeImg.onload = () => {
-      tooltipElement.innerHTML = "";
+      tooltipElement.innerHTML = '';
       tooltipElement.appendChild(largeImg);
 
       // Calculate position
@@ -74,76 +74,76 @@ function showPosterTooltip(event) {
 
       tooltipElement.style.left = `${left}px`;
       tooltipElement.style.top = `${top}px`;
-      tooltipElement.style.display = "block";
+      tooltipElement.style.display = 'block';
     };
     largeImg.onerror = () => {
-      console.error("Failed to load large poster image for tooltip.");
-      tooltipElement.style.display = "none";
+      console.error('Failed to load large poster image for tooltip.');
+      tooltipElement.style.display = 'none';
     };
     largeImg.src = largePosterUrl;
-    largeImg.alt = "Large Poster";
-    largeImg.style.maxWidth = "250px";
-    largeImg.style.maxHeight = "400px";
-    largeImg.style.borderRadius = "0.25rem";
+    largeImg.alt = 'Large Poster';
+    largeImg.style.maxWidth = '250px';
+    largeImg.style.maxHeight = '400px';
+    largeImg.style.borderRadius = '0.25rem';
   }
 }
 
 function hidePosterTooltip() {
   // A short delay before hiding
   tooltipTimeout = setTimeout(() => {
-    const tooltipElement = document.getElementById("poster-hover-tooltip");
+    const tooltipElement = document.getElementById('poster-hover-tooltip');
     if (tooltipElement) {
-      tooltipElement.style.display = "none";
-      tooltipElement.innerHTML = "";
+      tooltipElement.style.display = 'none';
+      tooltipElement.innerHTML = '';
     }
   }, 100); // 100ms delay
 }
 
 // Event delegation for poster hover
-document.addEventListener("mouseover", function (event) {
-  if (event.target.matches(".poster-image")) {
+document.addEventListener('mouseover', function (event) {
+  if (event.target.matches('.poster-image')) {
     showPosterTooltip(event);
   }
-  if (event.target.closest("#poster-hover-tooltip")) {
+  if (event.target.closest('#poster-hover-tooltip')) {
     clearTimeout(tooltipTimeout);
   }
 });
 
-document.addEventListener("mouseout", function (event) {
-  if (event.target.matches(".poster-image")) {
-    const tooltipElement = document.getElementById("poster-hover-tooltip");
+document.addEventListener('mouseout', function (event) {
+  if (event.target.matches('.poster-image')) {
+    const tooltipElement = document.getElementById('poster-hover-tooltip');
     if (!tooltipElement || !tooltipElement.contains(event.relatedTarget)) {
       hidePosterTooltip();
     }
   }
   if (
-    event.target.closest("#poster-hover-tooltip") &&
-    !event.target.closest("#poster-hover-tooltip").contains(event.relatedTarget)
+    event.target.closest('#poster-hover-tooltip') &&
+    !event.target.closest('#poster-hover-tooltip').contains(event.relatedTarget)
   ) {
     hidePosterTooltip();
   }
 });
 
-document.body.addEventListener("htmx:afterSwap", function (event) {
+document.body.addEventListener('htmx:afterSwap', function (event) {
   const targetId = event.detail.target.id;
 
   // Modal Handling
-  if (targetId === "modal-content") {
+  if (targetId === 'modal-content') {
     resetFormDirtyFlag();
-    const form = event.detail.target.querySelector("form#item-form");
+    const form = event.detail.target.querySelector('form#item-form');
     if (form) {
-      form.querySelectorAll("input, textarea, select").forEach((input) => {
-        input.addEventListener("input", setFormDirty);
-        input.addEventListener("change", setFormDirty);
+      form.querySelectorAll('input, textarea, select').forEach((input) => {
+        input.addEventListener('input', setFormDirty);
+        input.addEventListener('change', setFormDirty);
       });
 
       const itemIdInput = form.querySelector('input[name="item_id"]');
-      const modalTitleElement = document.getElementById("modal-title-static");
+      const modalTitleElement = document.getElementById('modal-title-static');
       if (modalTitleElement) {
         if (itemIdInput && itemIdInput.value) {
-          modalTitleElement.textContent = "Edit Watchlist Item";
+          modalTitleElement.textContent = 'Edit Watchlist Item';
         } else {
-          modalTitleElement.textContent = "Add New Watchlist Item";
+          modalTitleElement.textContent = 'Add New Watchlist Item';
         }
       }
     }
@@ -152,98 +152,98 @@ document.body.addEventListener("htmx:afterSwap", function (event) {
   // Modal Closing on Success
   const originatingElement = event.detail.requestConfig.elt;
   const itemForm = originatingElement
-    ? originatingElement.closest("form#item-form")
+    ? originatingElement.closest('form#item-form')
     : null;
 
   if (
     itemForm &&
-    itemForm.parentElement.parentElement.id === "modal-content" &&
+    itemForm.parentElement.parentElement.id === 'modal-content' &&
     event.detail.xhr.status === 200 &&
-    event.detail.xhr.getResponseHeader("X-Close-Modal")
+    event.detail.xhr.getResponseHeader('X-Close-Modal')
   ) {
-    const modalDialog = document.getElementById("add_item_modal");
+    const modalDialog = document.getElementById('add_item_modal');
     resetFormDirtyFlag();
-    if (modalDialog && typeof modalDialog.close === "function") {
+    if (modalDialog && typeof modalDialog.close === 'function') {
       modalDialog.close();
     }
   }
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
   // Keyboard shortcut for search
   function handleSearchShortcut(event) {
-    if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
       event.preventDefault();
-      const searchInput = document.getElementById("search-input");
+      const searchInput = document.getElementById('search-input');
       if (searchInput) {
         searchInput.focus();
       }
     }
   }
 
-  document.addEventListener("keydown", handleSearchShortcut);
+  document.addEventListener('keydown', handleSearchShortcut);
 
   // Show server-side flash messages as toasts
-  document.querySelectorAll(".flash-message").forEach(function (el) {
+  document.querySelectorAll('.flash-message').forEach(function (el) {
     const msg = el.dataset.message;
     let type = el.dataset.category;
-    if (type === "message") type = "info";
+    if (type === 'message') type = 'info';
     showToast(msg, type);
     el.remove();
   });
 });
 
 // Feedback Form Submission
-const feedbackForm = document.getElementById("feedback-form");
-const feedbackSubmitBtn = document.getElementById("feedback-submit-btn");
-const feedbackStatusEl = document.getElementById("feedback-status");
+const feedbackForm = document.getElementById('feedback-form');
+const feedbackSubmitBtn = document.getElementById('feedback-submit-btn');
+const feedbackStatusEl = document.getElementById('feedback-status');
 
 if (feedbackForm && feedbackSubmitBtn) {
   const FEEDBACK_SCRIPT_URL =
     feedbackForm.dataset.feedbackUrl || document.body.dataset.feedbackUrl;
 
-  feedbackForm.addEventListener("submit", async (event) => {
+  feedbackForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     if (!FEEDBACK_SCRIPT_URL) {
-      showToast("Feedback submission URL is not configured.", "error");
+      showToast('Feedback submission URL is not configured.', 'error');
       return;
     }
 
-    const feedbackInput = document.getElementById("feedback-text");
+    const feedbackInput = document.getElementById('feedback-text');
     const submitButtonText =
-      feedbackSubmitBtn.querySelector("span:not(.loading)");
-    const submitButtonSpinner = feedbackSubmitBtn.querySelector(".loading");
+      feedbackSubmitBtn.querySelector('span:not(.loading)');
+    const submitButtonSpinner = feedbackSubmitBtn.querySelector('.loading');
 
     const feedbackText = feedbackInput.value.trim();
     if (!feedbackText) {
-      showToast("Feedback cannot be empty.", "warning");
+      showToast('Feedback cannot be empty.', 'warning');
       feedbackInput.focus();
       return;
     }
 
     // Disable button and show spinner
     feedbackSubmitBtn.disabled = true;
-    submitButtonText.classList.add("hidden");
-    submitButtonSpinner.classList.remove("hidden");
-    if (feedbackStatusEl) feedbackStatusEl.textContent = "Submitting...";
+    submitButtonText.classList.add('hidden');
+    submitButtonSpinner.classList.remove('hidden');
+    if (feedbackStatusEl) feedbackStatusEl.textContent = 'Submitting...';
 
     // Create FormData
     const formData = new FormData(feedbackForm);
-    const sendInfoCheckbox = document.getElementById("feedback-send-info");
-    formData.set("sendInfo", sendInfoCheckbox.checked);
+    const sendInfoCheckbox = document.getElementById('feedback-send-info');
+    formData.set('sendInfo', sendInfoCheckbox.checked);
 
     if (sendInfoCheckbox.checked) {
       // Include userAgent if checked
-      formData.set("userAgent", navigator.userAgent || "N/A");
+      formData.set('userAgent', navigator.userAgent || 'N/A');
     } else {
       // Ensure user agent isn't sent if unchecked
-      formData.delete("userAgent");
+      formData.delete('userAgent');
     }
 
     try {
       const response = await fetch(FEEDBACK_SCRIPT_URL, {
-        method: "POST",
+        method: 'POST',
         body: formData,
       });
 
@@ -254,94 +254,94 @@ if (feedbackForm && feedbackSubmitBtn) {
 
       const resultText = await response.text();
 
-      if (resultText.toLowerCase().includes("success")) {
-        showToast("Feedback submitted successfully!", "success");
+      if (resultText.toLowerCase().includes('success')) {
+        showToast('Feedback submitted successfully!', 'success');
         feedbackForm.reset();
-        if (feedbackStatusEl) feedbackStatusEl.textContent = "";
+        if (feedbackStatusEl) feedbackStatusEl.textContent = '';
       } else {
-        showToast(resultText || "Failed to submit feedback.", "error");
+        showToast(resultText || 'Failed to submit feedback.', 'error');
         if (feedbackStatusEl)
-          feedbackStatusEl.textContent = resultText || "Submission failed.";
+          feedbackStatusEl.textContent = resultText || 'Submission failed.';
       }
     } catch (error) {
-      console.error("Feedback submission error:", error);
-      showToast(`Error submitting feedback: ${error.message}`, "error");
+      console.error('Feedback submission error:', error);
+      showToast(`Error submitting feedback: ${error.message}`, 'error');
       if (feedbackStatusEl)
-        feedbackStatusEl.textContent = "Error. Please try again.";
+        feedbackStatusEl.textContent = 'Error. Please try again.';
     } finally {
       // Re-enable button and hide spinner
       feedbackSubmitBtn.disabled = false;
-      submitButtonText.classList.remove("hidden");
-      submitButtonSpinner.classList.add("hidden");
+      submitButtonText.classList.remove('hidden');
+      submitButtonSpinner.classList.add('hidden');
     }
   });
 }
 
 // Toast Notifications
-function showToast(message, type = "info") {
+function showToast(message, type = 'info') {
   const toastContainer =
-    document.getElementById("toast-container") || createToastContainer();
-  const toastId = "toast-" + Date.now();
+    document.getElementById('toast-container') || createToastContainer();
+  const toastId = 'toast-' + Date.now();
   const alertClass =
     {
-      success: "alert-success",
-      error: "alert-error",
-      warning: "alert-warning",
-      info: "alert-info",
-    }[type] || "alert-info";
+      success: 'alert-success',
+      error: 'alert-error',
+      warning: 'alert-warning',
+      info: 'alert-info',
+    }[type] || 'alert-info';
 
   const toastHtml = `
                 <div id="${toastId}" class="alert ${alertClass} shadow-lg text-sm py-2 px-4">
                     <span>${message}</span>
                 </div>
             `;
-  toastContainer.insertAdjacentHTML("beforeend", toastHtml);
+  toastContainer.insertAdjacentHTML('beforeend', toastHtml);
 
   // Auto-remove toast after a few seconds
   setTimeout(() => {
     const toastElement = document.getElementById(toastId);
     if (toastElement) {
-      toastElement.style.transition = "opacity 0.5s ease-out";
-      toastElement.style.opacity = "0";
+      toastElement.style.transition = 'opacity 0.5s ease-out';
+      toastElement.style.opacity = '0';
       setTimeout(() => toastElement.remove(), 500);
     }
   }, 4000); // 4 sec timeout
 }
 
 function createToastContainer() {
-  const container = document.createElement("div");
-  container.id = "toast-container";
-  container.className = "toast toast-bottom toast-end z-[99]";
+  const container = document.createElement('div');
+  container.id = 'toast-container';
+  container.className = 'toast toast-bottom toast-end z-[99]';
   document.body.appendChild(container);
   return container;
 }
 
-document.body.addEventListener("htmx:afterRequest", function (event) {
+document.body.addEventListener('htmx:afterRequest', function (event) {
   const xhr = event.detail.xhr;
-  const modal = document.getElementById("add_item_modal");
+  const modal = document.getElementById('add_item_modal');
 
-  if (xhr.status === 200 && xhr.getResponseHeader("X-Close-Modal")) {
-    if (modal && typeof modal.close === "function") {
+  if (xhr.status === 200 && xhr.getResponseHeader('X-Close-Modal')) {
+    if (modal && typeof modal.close === 'function') {
       modal.close();
     }
   }
 
-  const message = xhr.getResponseHeader("X-HX-Alert");
-  const messageType = xhr.getResponseHeader("X-HX-Alert-Type") || "info";
+  const message = xhr.getResponseHeader('X-HX-Alert');
+  const messageType = xhr.getResponseHeader('X-HX-Alert-Type') || 'info';
   if (message) {
     showToast(message, messageType);
   }
 });
 
-document.body.addEventListener("htmx:beforeSwap", function (evt) {
+document.body.addEventListener('htmx:beforeSwap', function (evt) {
   if (
     evt.detail.xhr.status >= 400 &&
-    evt.detail.target.id === "form-feedback"
+    evt.detail.target.id === 'form-feedback'
   ) {
-    if (evt.detail.serverResponse.includes("alert-error")) {
-      showToast("Please correct the errors in the form.", "error");
+    if (evt.detail.serverResponse.includes('alert-error')) {
+      showToast('Please correct the errors in the form.', 'error');
     } else {
-      showToast("An unexpected error occurred.", "error");
+      showToast('An unexpected error occurred.', 'error');
       evt.preventDefault();
     }
   }
@@ -349,7 +349,7 @@ document.body.addEventListener("htmx:beforeSwap", function (evt) {
 
 // Handle Direct Page Input
 function goToPage(event, inputElement) {
-  if (event.type === "keydown" && event.key !== "Enter") {
+  if (event.type === 'keydown' && event.key !== 'Enter') {
     return;
   }
   event.preventDefault();
@@ -363,18 +363,18 @@ function goToPage(event, inputElement) {
     parseInt(pageNum) > 0 &&
     parseInt(pageNum) <= parseInt(inputElement.max)
   ) {
-    currentParams.set("page", pageNum);
+    currentParams.set('page', pageNum);
     const finalUrl = `${targetUrl}?${currentParams.toString()}`;
 
-    htmx.ajax("GET", finalUrl, {
-      target: "#watchlist-content",
-      swap: "innerHTML",
-      indicator: "#htmx-indicator",
+    htmx.ajax('GET', finalUrl, {
+      target: '#watchlist-content',
+      swap: 'innerHTML',
+      indicator: '#htmx-indicator',
     });
   } else {
     showToast(
       `Please enter a valid page number (1-${inputElement.max}).`,
-      "warning"
+      'warning'
     );
   }
 }
