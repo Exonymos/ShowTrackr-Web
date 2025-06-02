@@ -1,0 +1,50 @@
+version: 2
+updates:
+  # Python dependencies (pip)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    target-branch: "main"
+    reviewers:
+      - "Exonymos"
+    labels:
+      - "dependencies"
+      - "python"
+    # Group multiple pip updates into a single PR
+    groups:
+      python-dev-dependencies:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+
+  # JavaScript dependencies (npm)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    target-branch: "main"
+    reviewers:
+      - "Exonymos"
+    labels:
+      - "dependencies"
+      - "javascript"
+    groups:
+      npm-dev-dependencies:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    target-branch: "main"
+    reviewers:
+      - "Exonymos"
+    labels:
+      - "dependencies"
+      - "github_actions"

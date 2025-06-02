@@ -33,7 +33,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# 
+# Coverage
 .coverage
 coverage_html_report
 
@@ -42,3 +42,6 @@ tempCodeRunnerFile.py
 .notcommit/
 *.zip
 ShowTrackr-Web-v*/
+
+# Temporary until issues are resolved
+ci_checks.yml

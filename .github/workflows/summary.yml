@@ -4,33 +4,105 @@ on:
   issues:
     types: [opened]
 
-jobs:
-  summary:
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      models: read
-      contents: read
+permissions:
+  issues: write
+  pull-requests: read
+  contents: read
 
+jobs:
+  assist:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Run AI inference
-        id: inference
+      - name: AI Issue Analysis
+        id: analysis
         uses: actions/ai-inference@v1
         with:
           prompt: |
-            Summarize the following GitHub issue in one paragraph for the ShowTrackr-Web project.
-            Then, classify the issue as one of: bug, feature request, question, or other.
-            If possible, extract any affected feature/module (e.g., watchlist, UI, import/export).
-            Title: ${{ github.event.issue.title }}
-            Body: ${{ github.event.issue.body }}
+            Analyze the following GitHub issue for the ShowTrackr-Web project.
+            The project helps users track movies and TV shows they've watched or plan to watch.
+            Core features include manual item entry, filtering, sorting, theming, and data import/export.
 
-      - name: Comment with AI summary
-        run: |
-          gh issue comment $ISSUE_NUMBER --body '${{ steps.inference.outputs.response }}'
+            Issue Title: ${{ github.event.issue.title }}
+            Issue Body:
+            ${{ github.event.issue.body }}
+
+            ---
+            Please provide the following in a structured format:
+
+            1.  **Summary (1-2 sentences):** Briefly summarize the main point of the issue.
+            2.  **Classification:** Classify the issue as one of: `bug`, `feature request`, `question`, `documentation`, or `other`. Output only the single classification word.
+            3.  **Affected Feature/Module (if applicable):** Identify the primary feature or code module this issue relates to (e.g., `watchlist`, `UI`, `import/export`, `settings`, `filters`, `search`, `add/edit modal`, `feedback form`, `setup/installation`). If multiple, list the main one or up to two. If not applicable, state "N/A".
+            4.  **Key Information/Problem Statement:** Extract the core problem or request.
+            5.  **User Expectation (if a bug or feature request):** What does the user expect to happen or want to achieve? If not applicable, state "N/A".
+            6.  **Reproducibility (if a bug):** Does the user provide steps to reproduce? (Yes/No/Partial/N/A)
+
+            Format the output as follows, ensuring "Classification" contains only the single classification word:
+
+            **AI Analysis:**
+            - **Summary:** [Your 1-2 sentence summary here]
+            - **Classification:** [bug|feature request|question|documentation|other]
+            - **Affected Feature/Module:** [Your identified feature/module or N/A]
+            - **Key Information:** [Your extracted key information]
+            - **User Expectation:** [Your extracted user expectation or N/A]
+            - **Reproducibility:** [Yes|No|Partial|N/A]
+          model: gpt-3.5-turbo
+
+      - name: Post AI Analysis as Comment
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
-          RESPONSE: ${{ steps.inference.outputs.response }}
+          AI_RESPONSE: ${{ steps.analysis.outputs.response }}
+        run: |
+          # Extract the full AI response for the comment
+          # The response from actions/ai-inference is directly in steps.analysis.outputs.response
+          FULL_COMMENT_BODY=$(echo "$AI_RESPONSE" | sed 's/Classification: .*/Classification: [The classification determined by AI]/')
+
+          gh issue comment "$ISSUE_NUMBER" --body "$FULL_COMMENT_BODY"
+
+      - name: Extract Classification for Labeling
+        id: extract_label
+        run: |
+          # Extract the raw classification word for labeling
+          CLASSIFICATION_WORD=$(echo "${{ steps.analysis.outputs.response }}" | grep -oP 'Classification: \K\w+( \w+)*' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
+          # If no classification found or it's 'other', default to a general label or no specific label
+          if [ -z "$CLASSIFICATION_WORD" ] || [ "$CLASSIFICATION_WORD" = "other" ]; then
+            echo "AI_LABEL=needs-triage" >> $GITHUB_OUTPUT
+          else
+            # Ensure the label exists in your repository or handle cases where it might not
+            # For simplicity, we assume labels like 'bug', 'feature-request', 'question', 'documentation' exist
+            echo "AI_LABEL=$CLASSIFICATION_WORD" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Add Label Based on AI Classification
+        if: steps.extract_label.outputs.AI_LABEL != '' && steps.extract_label.outputs.AI_LABEL != 'needs-triage' # Only label if a specific one is found
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const label = "${{ steps.extract_label.outputs.AI_LABEL }}";
+            // Check if label is one of the expected types to avoid adding arbitrary labels
+            const allowedLabels = ['bug', 'feature-request', 'question', 'documentation'];
+            if (allowedLabels.includes(label)) {
+              github.rest.issues.addLabels({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: [label]
+              });
+            } else {
+              console.log(`AI suggested label "${label}" is not in the allowed list. Skipping auto-labeling.`);
+              // Optionally, add a default 'needs-triage' label here if no specific match
+              github.rest.issues.addLabels({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: ['needs-triage']
+              });
+            }
+        env:
+          AI_LABEL: ${{ steps.extract_label.outputs.AI_LABEL }}
