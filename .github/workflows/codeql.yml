@@ -14,8 +14,12 @@ name: "CodeQL Advanced"
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - "src/watchlist/static/js/bundle.js"
   pull_request:
     branches: ["main"]
+    paths-ignore:
+      - "src/watchlist/static/js/bundle.js"
   schedule:
     - cron: "30 16 * * 0" # Sunday at 16:30 UTC
 

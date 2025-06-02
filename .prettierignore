@@ -10,8 +10,4 @@ src/watchlist/static/css/output.css
 src/watchlist/templates/**/*.html
 
 # Git and version control
-.github
 package-lock.json
-
-# Documentation and notes
-**/*.md
