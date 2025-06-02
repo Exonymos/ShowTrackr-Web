@@ -7,14 +7,11 @@ updates:
       interval: "weekly"
       day: "monday"
     target-branch: "main"
-    reviewers:
-      - "Exonymos"
     labels:
       - "dependencies"
       - "python"
-    # Group multiple pip updates into a single PR
     groups:
-      python-dev-dependencies:
+      python-dependencies:
         applies-to: "version-updates"
         patterns:
           - "*"
@@ -26,14 +23,12 @@ updates:
       interval: "weekly"
       day: "monday"
     target-branch: "main"
-    reviewers:
-      - "Exonymos"
     labels:
       - "dependencies"
       - "javascript"
     groups:
-      npm-dev-dependencies:
-        applies-to: "security-updates"
+      npm-dependencies:
+        applies-to: "version-updates"
         patterns:
           - "*"
 
@@ -43,8 +38,6 @@ updates:
     schedule:
       interval: "monthly"
     target-branch: "main"
-    reviewers:
-      - "Exonymos"
     labels:
       - "dependencies"
       - "github_actions"

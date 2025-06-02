@@ -1,0 +1,9 @@
+# This is a CODEOWNERS file.
+
+# Lines starting with '#' are comments.
+
+# Each line is a file pattern followed by one or more owners.
+
+# General ownership for the whole repository
+
+* @Exonymos

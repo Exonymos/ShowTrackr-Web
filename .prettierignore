@@ -11,3 +11,4 @@ src/watchlist/templates/**/*.html
 
 # Git and version control
 package-lock.json
+CODEOWNERS

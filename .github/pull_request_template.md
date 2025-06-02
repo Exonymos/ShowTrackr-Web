@@ -23,6 +23,8 @@ Use keywords like "Closes #123" or "Fixes #456" to automatically close linked is
 For related discussions or tasks that aren't directly closed, use "Related to #789".
 -->
 
+<!-- Leave N/A if not applicable -->
+
 - Closes #
 - Related to #
 
@@ -58,7 +60,7 @@ Please confirm the following before requesting review:
 
 <!-- Please check the relevant option(s) by putting an `x` in the brackets: -->
 
-- [ ] My code follows the project's [Contribution Guidelines](../../CONTRIBUTING.md) and [Code of Conduct](../../CODE_OF_CONDUCT.md).
+- [ ] My code follows the project's [Contribution Guidelines](https://github.com/Exonymos/ShowTrackr-Web/blob/main/CONTRIBUTING.md) and [Code of Conduct](https://github.com/Exonymos/ShowTrackr-Web/blob/main/CODE_OF_CONDUCT.md).
 - [ ] I have performed a self-review of my code.
 - [ ] I have commented my code, particularly in hard-to-understand areas.
 - [ ] I have made corresponding changes to the documentation if applicable.
@@ -76,6 +78,6 @@ Add any extra context, considerations, or open questions for reviewers here.
 If your changes include UI modifications, please add screenshots or GIFs to help illustrate the before/after changes.
 -->
 
-- ***
+---
 
 Thank you for your contribution! 🎉
