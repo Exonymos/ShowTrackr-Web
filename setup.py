@@ -105,24 +105,6 @@ def run_command(
         return False, e
 
 
-def check_npm():
-    """Checks if npm is installed and available."""
-    console.print("Checking for Node.js/npm...")
-    success, _ = run_command(
-        ["npm", "--version"], capture=True, check=False
-    )  # Don't exit if npm not found
-    if success:
-        console.print("Node.js/npm found.")
-        return True
-    else:
-        console_stderr.print("WARNING: npm (Node.js) not found or command failed.")
-        console_stderr.print(
-            "If you plan to modify CSS/JS, install Node.js from nodejs.org."
-        )
-        console_stderr.print("Skipping npm-related steps.")
-        return False
-
-
 def run_with_progress(description, func, *args, **kwargs):
     """Run a function with a Rich progress bar."""
     with Progress(
@@ -130,7 +112,7 @@ def run_with_progress(description, func, *args, **kwargs):
         TextColumn("[progress.description]{task.description}"),
         BarColumn(),
         TimeElapsedColumn(),
-        console=console,
+        console=console if isinstance(console, Console) else None,
     ) as progress:
         task = progress.add_task(description, total=None)
         try:
@@ -138,14 +120,14 @@ def run_with_progress(description, func, *args, **kwargs):
             progress.update(task, description=f"{description} [green]done![/green]")
             progress.stop_task(task)
             return result
-        except Exception as e:
+        except Exception as e:  # noqa: F841
             progress.stop_task(task)
             raise
 
 
 def ensure_rich():
     try:
-        from rich.console import Console
+        from rich.console import Console  # noqa: F401
 
         return True
     except ImportError:
@@ -183,7 +165,7 @@ def ensure_rich():
             pip_cmd.append("rich")
         try:
             subprocess.check_call(pip_cmd)
-            from rich.console import Console
+            from rich.console import Console  # noqa: F401
 
             return True
         except Exception as e:
@@ -239,19 +221,9 @@ else:
     logger = logging.getLogger("rich")
 
 
-# --- Main Setup Logic ---
-def main():
-    import time
-
-    start_time = time.perf_counter()
-    console.rule("[bold cyan]ShowTrackr Setup")
-    console.print("[bold]Starting ShowTrackr Setup...[/bold]")
-    os.chdir(PROJECT_ROOT)
-
-    if not check_python_version():
-        return False
-
-    # 1. Setup Virtual Environment
+# 1. Setup Virtual Environment
+def setup_virtual_environment():
+    """Sets up the Python virtual environment."""
     console.print("\n[bold]Setting up Virtual Environment...[/bold]")
     if VENV_DIR.exists() and (VENV_DIR / "pyvenv.cfg").exists():
         console.print(
@@ -273,7 +245,7 @@ def main():
             )
             return False
 
-    python_exe, pip_exe, flask_exe = get_venv_paths()
+    python_exe, pip_exe, _ = get_venv_paths()
     if not python_exe.exists() or not pip_exe.exists():
         console_stderr.print(
             f"[bold red]ERROR: Could not find python/pip executables in {VENV_DIR}.[/bold red]"
@@ -283,14 +255,20 @@ def main():
         )
         return False
     console.print("[green]Virtual environment paths located.[/green]")
+    return True
 
-    # 2. Install Python Dependencies
+
+# 2. Install Python Dependencies
+def install_python_dependencies():
+    """Installs Python dependencies from requirements.txt."""
     console.print("\n[bold]Installing Python Dependencies...[/bold]")
     if not REQUIREMENTS_FILE.exists():
         console_stderr.print(
             f"[bold red]ERROR: {REQUIREMENTS_FILE} not found![/bold red]"
         )
         return False
+
+    python_exe, _, _ = get_venv_paths()
 
     def pip_install():
         subprocess.run(
@@ -305,30 +283,12 @@ def main():
             f"[bold red]Failed to install Python dependencies: {e}[/bold red]"
         )
         return False
+    return True
 
-    # 3. Install Node Dependencies & Build Assets
-    console.print("\n[bold]Setting up Frontend Assets (Node.js/npm)...[/bold]")
-    npm_available = check_npm()
-    if PACKAGE_JSON_FILE.exists() and npm_available:
 
-        def npm_install():
-            subprocess.run(["npm", "install"], check=True)
-
-        try:
-            run_with_progress("Installing npm packages", npm_install)
-            console.print(
-                "[green]Node.js/npm dependencies installed successfully.[/green]"
-            )
-        except Exception as e:
-            console_stderr.print(f"[yellow]WARNING: npm install failed: {e}[/yellow]")
-    elif PACKAGE_JSON_FILE.exists():
-        console_stderr.print("[yellow]npm not found. Skipping Node.js steps.[/yellow]")
-    else:
-        console.print(
-            "[yellow]package.json not found. Skipping Node steps (assuming CDN or no build needed).[/yellow]"
-        )
-
-    # 4. Setup Configuration (.env)
+# 3. Setup Configuration (.env)
+def setup_configuration_file():
+    """Sets up the .env configuration file."""
     console.print("\n[bold]Setting up Configuration...[/bold]")
     if not DATA_DIR.exists():
         DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -355,9 +315,14 @@ GOOGLE_SHEET_PUBLIC_URL='https://docs.google.com/spreadsheets/d/1OW1PQTpdOcJK3bW
                 f"[bold red]ERROR: Failed to create .env file: {e}[/bold red]"
             )
             return False
+    return True
 
-    # 5. Setup Database
+
+# 4. Setup Database
+def setup_database():
+    """Initializes and migrates the database."""
     console.print("\n[bold]Setting up Database...[/bold]")
+    _, _, flask_exe = get_venv_paths()
     flask_env = os.environ.copy()
     flask_env["FLASK_APP"] = "src/watchlist"
     migrations_dir = PROJECT_ROOT / "migrations"
@@ -406,13 +371,39 @@ GOOGLE_SHEET_PUBLIC_URL='https://docs.google.com/spreadsheets/d/1OW1PQTpdOcJK3bW
     except Exception as e:
         console_stderr.print(f"[bold red]Database migration failed: {e}[/bold red]")
         return False
+    return True
+
+
+# --- Main Setup Logic ---
+def main():
+    import time
+
+    start_time = time.perf_counter()
+    console.rule("[bold cyan]ShowTrackr Setup")
+    console.print("[bold]Starting ShowTrackr Setup...[/bold]")
+    os.chdir(PROJECT_ROOT)
+
+    if not check_python_version():
+        return False
+
+    if not setup_virtual_environment():
+        return False
+
+    if not install_python_dependencies():
+        return False
+
+    if not setup_configuration_file():
+        return False
+
+    if not setup_database():
+        return False
 
     elapsed = time.perf_counter() - start_time
     mins, secs = divmod(int(elapsed), 60)
     time_str = f"{mins}m {secs}s" if mins else f"{secs}s"
     console.rule(f"[bold green]Setup Complete in {time_str}![/bold green]")
     console.print(
-        f"[bold green]You can now run the application using run.bat or ./run.sh[/bold green]"
+        "[bold green]You can now run the application using run.bat or ./run.sh[/bold green]"
     )
     return True
 

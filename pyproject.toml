@@ -3,11 +3,6 @@ line-length = 88
 
 [tool.pyright]
 include = ["src", "tests", "run.py", "setup.py", "make_release.py"]
-exclude = ["**/__pycache__", ".venv", "**/migrations/"] # Added migrations
+exclude = ["**/__pycache__", ".venv", "**/migrations/"]
 pythonVersion = "3.13"
 typeCheckingMode = "basic"
-
-reportOptionalMemberAccess = "warning"
-reportAttributeAccessIssue = "warning"
-reportCallIssue = "warning"
-reportPossiblyUnboundVariable = "warning"

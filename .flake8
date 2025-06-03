@@ -5,10 +5,11 @@ max-line-length = 88
 ; Specific Error/Warning Codes to Ignore
 ; E501: line too long
 ; W503: line break before binary operator
+; W504: line break after binary operator
 ; E203: whitespace before ':'
-; F401: module imported but unused (only used for development)
-; F841: local variable assigned but never used (only used for development)
-ignore = E501, W503, E203, F401, F841
+; F401: module imported but unused (only used for development to reduce noise)
+; F841: local variable assigned but never used (only used for development to reduce noise)
+ignore = E501, W503, W504, E203
 
 ; Files/Directories to Exclude
 exclude =
@@ -27,7 +28,6 @@ exclude =
     build/,
     dist/,
     *.egg-info,
-    make_release.py,
 
 ; McCabe Complexity Threshold
 max-complexity = 12
