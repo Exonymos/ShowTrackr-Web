@@ -1,8 +1,46 @@
+# pyproject.toml
+
+# --- Tool Configuration ---
+
 [tool.black]
 line-length = 88
+target-version = ["py311", "py312", "py313"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --color=yes --cov=src/watchlist --cov-report=term-missing"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.pyright]
-include = ["src", "tests", "run.py", "setup.py", "make_release.py"]
-exclude = ["**/__pycache__", ".venv", "**/migrations/"]
-pythonVersion = "3.13"
+include = ["src/watchlist", "tests", "run.py", "setup.py", "make_release.py"]
+exclude = ["**/__pycache__", ".venv*", "venv*", "**/migrations/"]
 typeCheckingMode = "basic"
+pythonVersion = "3.11"
+pythonPlatform = "All"
+
+reportMissingImports = "warning"
+reportMissingTypeStubs = "none"
+reportUnusedVariable = "warning"
+reportGeneralTypeIssues = "warning"
+reportOptionalSubscript = "warning"
+reportOptionalMemberAccess = "warning"
+reportOptionalCall = "warning"
+reportOptionalOperand = "warning"
+reportTypedDictNotRequiredAccess = "warning"
+
+[tool.coverage.run]
+source = ["src/watchlist"]
+branch = true
+omit = ["*/__init__.py", "tests/*"]
+
+[tool.coverage.report]
+fail_under = 0
+show_missing = true
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+title = "ShowTrackr Test Coverage Report"
