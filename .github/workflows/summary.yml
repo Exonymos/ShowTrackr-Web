@@ -20,7 +20,7 @@ jobs:
 
       - name: AI Issue Analysis
         id: analysis
-        uses: actions/ai-inference@v1
+        uses: actions/ai-inference@v2
         with:
           prompt: |
             Analyze the following GitHub issue for the ShowTrackr-Web project.
