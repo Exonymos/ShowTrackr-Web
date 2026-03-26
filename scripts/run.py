@@ -1,12 +1,12 @@
-# run.py
+# scripts/run.py
 import os
 import subprocess
 import sys
 from pathlib import Path
 import platform
 
-# Ensure the script is running from the project root directory
-project_root = Path(__file__).parent.resolve()
+# Locate project root (ShowTrackr-Web/) - this script lives in scripts/
+project_root = Path(__file__).resolve().parent.parent
 os.chdir(project_root)
 
 # --- Virtual Environment Check  ---
@@ -27,7 +27,6 @@ try:
 except OSError:
     # Handle potential errors during path resolution if venv doesn't exist fully
     current_executable = Path(sys.executable)
-
 
 try:
     from rich.console import Console
@@ -58,10 +57,10 @@ if current_executable != expected_executable:
         console.print("\n[bold]Please activate the environment first:[/]")
         if is_windows:
             console.print("[green]> .\\.venv\\Scripts\\activate[/]")
-            console.print("Or run setup.bat / run.bat")
+            console.print("Or run scripts\\setup.bat / scripts\\run.bat")
         else:
             console.print("[green]$ source ./.venv/bin/activate[/]")
-            console.print("Or run setup.sh / run.sh")
+            console.print("Or run scripts/setup.sh / scripts/run.sh")
         console.print(
             "[yellow]Continuing, but dependency issues or unexpected behavior may occur.[/yellow]"
         )
@@ -75,23 +74,25 @@ if current_executable != expected_executable:
         print("\nPlease activate the environment first:")
         if is_windows:
             print("> .\\.venv\\Scripts\\activate")
-            print("Or run setup.bat / run.bat")
+            print("Or run scripts\\setup.bat / scripts\\run.bat")
         else:
             print("$ source ./.venv/bin/activate")
-            print("Or run setup.sh / run.sh")
+            print("Or run scripts/setup.sh / scripts/run.sh")
         print("------------")
         print("Continuing, but dependency issues or unexpected behavior may occur.")
         print("------------")
 
 # --- Database Migration Progress ---
 if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+    flask_env = os.environ.copy()
+    flask_env["FLASK_APP"] = "apps/desktop/src/core"
     if console:
         with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            BarColumn(),
-            TimeElapsedColumn(),
-            console=console,
+                SpinnerColumn(),
+                TextColumn("[progress.description]{task.description}"),
+                BarColumn(),
+                TimeElapsedColumn(),
+                console=console,
         ) as progress:
             task = progress.add_task(
                 "Ensuring database migrations are up-to-date...", total=None
@@ -102,6 +103,7 @@ if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
                     check=True,
                     cwd=project_root,
                     capture_output=True,
+                    env=flask_env,
                 )
                 progress.update(
                     task,
@@ -133,6 +135,7 @@ if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
                 check=True,
                 cwd=project_root,
                 capture_output=True,
+                env=flask_env,
             )
             print("Database migrations checked/applied successfully.")
         except subprocess.CalledProcessError as e:
@@ -152,9 +155,9 @@ if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
 
 # --- Start Development Server ---
 try:
-    src_path = project_root / "src"
+    src_path = project_root / "apps" / "desktop" / "src"
     sys.path.insert(0, str(src_path))
-    from watchlist import create_app
+    from core import create_app
 
     app = create_app()
     if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
@@ -172,16 +175,16 @@ except ImportError as e:
     if console:
         console.print(f"[bold red]Error importing application:[/] {e}")
         console.print(
-            "[yellow]Ensure all dependencies are installed (`pip install -r requirements.txt`)"
+            "[yellow]Ensure all dependencies are installed: run [bold]uv sync[/] from the project root."
         )
-        console.print("Try running the setup script (setup.bat or setup.sh).")
+        console.print("Or run scripts/setup.bat (Windows) or scripts/setup.sh (Linux/macOS).")
     else:
         print(f"Error importing application: {e}", file=sys.stderr)
         print(
-            "Ensure all dependencies are installed (`pip install -r requirements.txt`)",
+            "Ensure all dependencies are installed: run `uv sync` from the project root.",
             file=sys.stderr,
         )
-        print("Try running the setup script (setup.bat or setup.sh).", file=sys.stderr)
+        print("Or run scripts/setup.bat (Windows) or scripts/setup.sh (Linux/macOS).", file=sys.stderr)
     sys.exit(1)
 except KeyboardInterrupt:
     if console:
