@@ -1,7 +1,7 @@
-# make_release.py
-# ShowTrackr Release Builder
-# This script is used to create a release package for the ShowTrackr project.
-# It copies specified files and folders from the project directory to a new release folder,
+# scripts/make_release.py
+# ShowTrackr-Web Release Builder
+# This script is used to create a release package for the ShowTrackr-Web project.
+# It copies specified files and folders from the project directory to a new release folder
 # and optionally creates a zip archive of the release folder.
 import shutil
 import json
@@ -24,27 +24,26 @@ console = Console()
 # --- CONFIGURABLE ---
 # Files/folders to include (relative to project root)
 INCLUDE = [
+    "apps/desktop/src/core",
+    "apps/desktop/data/.env.example",
     "docs",
-    "src",
+    "scripts",
     ".gitignore",
     "LICENSE",
     "package.json",
+    "pyproject.toml",
     "README.md",
-    "requirements.txt",
-    "run.bat",
-    "run.py",
-    "run.sh",
-    "setup.bat",
-    "setup.py",
-    "setup.sh",
 ]
-# Files/folders to exclude (relative to project root, supports glob patterns)
 EXCLUDE = [
-    "src/**/__pycache__",
-    "src/**/__pycache__/*",
+    "apps/**/__pycache__",
+    "apps/**/__pycache__/*",
+    "docs/previews",
+    "docs/previews/*",
+    "scripts/make_release.py",
+    "scripts/.coverage"
 ]
 
-PROJECT_ROOT = Path(__file__).parent.resolve()
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
 def get_version():
@@ -99,20 +98,22 @@ def copy_files_to_target_with_progress(target_dir):
             total_files += count_files_to_copy(src_path, should_exclude)
 
     with Progress(
-        TextColumn("[progress.description]{task.description}"),
-        BarColumn(),
-        "[progress.percentage]{task.percentage:>3.0f}%",
-        "{task.completed}/{task.total} files",
-        TimeElapsedColumn(),
-        console=console,
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            "[progress.percentage]{task.percentage:>3.0f}%",
+            "{task.completed}/{task.total} files",
+            TimeElapsedColumn(),
+            console=console,
     ) as progress:
         task = progress.add_task("Copying files", total=total_files)
         for item_name in INCLUDE:
             src_path = PROJECT_ROOT / item_name
             if src_path.exists():
                 try:
+                    # Preserve the full relative path from the project root in the release
+                    rel_path = Path(item_name)
                     copy_with_filter(
-                        src_path, target_dir / src_path.name, progress, task
+                        src_path, target_dir / rel_path, progress, task
                     )
                 except Exception as e:
                     console.print(f"  [yellow]⚠️  Error copying {item_name}: {e}[/]")
@@ -218,7 +219,7 @@ def update_for_production_in_release(release_root, version, changes_list):
         changes_list.append(("package.json", f"[ERROR] Could not update: {e}"))
 
     # 2. config.py
-    config_path = Path(release_root) / "src" / "watchlist" / "config.py"
+    config_path = Path(release_root) / "apps" / "desktop" / "src" / "core" / "config.py"
     try:
         if config_path.exists():
             with open(config_path, encoding="utf-8") as f:
@@ -275,7 +276,7 @@ def create_zip_archive(zip_path, root_dir_for_archive, base_dir_to_archive):
 
 
 def handle_zip_only_release(
-    release_name_base, version_str, prod_mode_flag, changes_list_ref
+        release_name_base, version_str, prod_mode_flag, changes_list_ref
 ):
     """Handles the 'zip only' release process."""
     zip_name = f"{release_name_base}.zip"
@@ -298,7 +299,7 @@ def handle_zip_only_release(
 
 
 def handle_folder_release(
-    release_name_base, version_str, prod_mode_flag, changes_list_ref
+        release_name_base, version_str, prod_mode_flag, changes_list_ref
 ):
     """Handles the 'folder' release process."""
     release_folder_path = PROJECT_ROOT / release_name_base
@@ -364,7 +365,7 @@ def main():
         console.print(
             "\n[bold cyan]==============================[/]", justify="center"
         )
-        console.print("[bold magenta]ShowTrackr Release Builder[/]", justify="center")
+        console.print("[bold magenta]ShowTrackr-Web Release Builder[/]", justify="center")
         console.print(
             "[bold cyan]==============================\n[/]", justify="center"
         )
