@@ -1,6 +1,6 @@
 # src/watchlist/__init__.py
 import os
-from flask import Flask, session, request, render_template, current_app
+from flask import Flask, session, render_template, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_htmx import HTMX
@@ -61,7 +61,7 @@ def create_app():
 
     # Import and Register Blueprints
     with app.app_context():
-        from . import models
+        from . import models  # noqa: F401
         from .routes import main_bp, items_bp, settings_bp
 
         app.register_blueprint(main_bp)

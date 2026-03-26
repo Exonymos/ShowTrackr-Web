@@ -51,7 +51,7 @@ if current_executable != expected_executable:
     if console:
         console.rule("[bold yellow]Virtual Environment Warning")
         console.print(
-            f":warning: [yellow]It looks like the virtual environment (.venv) is not activated, or you are running this script with a different Python interpreter.[/yellow]"
+            ":warning: [yellow]It looks like the virtual environment (.venv) is not activated, or you are running this script with a different Python interpreter.[/yellow]"
         )
         console.print(f"[bold]Expected venv:[/] [cyan]{expected_venv_path}[/]")
         console.print(f"[bold]Current Python:[/] [magenta]{sys.executable}[/]")
@@ -74,10 +74,10 @@ if current_executable != expected_executable:
         print(f"Current Python: {sys.executable}")
         print("\nPlease activate the environment first:")
         if is_windows:
-            print(f"> .\\.venv\\Scripts\\activate")
+            print("> .\\.venv\\Scripts\\activate")
             print("Or run setup.bat / run.bat")
         else:
-            print(f"$ source ./.venv/bin/activate")
+            print("$ source ./.venv/bin/activate")
             print("Or run setup.sh / run.sh")
         print("------------")
         print("Continuing, but dependency issues or unexpected behavior may occur.")

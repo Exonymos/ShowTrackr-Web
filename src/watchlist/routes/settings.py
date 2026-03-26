@@ -20,6 +20,130 @@ import io
 
 settings_bp = Blueprint("settings", __name__, url_prefix="/settings")
 
+ALLOWED_EXTENSIONS = {"json"}
+
+
+# --- Helper Functions ---
+def _allowed_file(filename):
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[0] != ""
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
+
+
+def _validate_uploaded_file(request_files):
+    """Validates the uploaded file."""
+    if "backup_file" not in request_files:
+        flash("No file part in the request.", "error")
+        return None
+    file = request_files["backup_file"]
+    if file.filename == "":
+        flash("No file selected for uploading.", "warning")
+        return None
+    if not file or not _allowed_file(file.filename):
+        flash("Invalid file type. Please upload a .json file.", "error")
+        return None
+    return file
+
+
+def _parse_imported_rating(raw_rating, item_title_for_log):
+    """Parses and validates rating from imported item."""
+    if raw_rating is None:
+        return None
+    try:
+        item_rating_int = int(raw_rating)
+        if 1 <= item_rating_int <= 10:
+            return item_rating_int
+        else:
+            current_app.logger.warning(
+                f"Rating {raw_rating} out of range for item '{item_title_for_log}'. Setting to None."
+            )
+            return None
+    except ValueError:
+        current_app.logger.warning(
+            f"Invalid rating format '{raw_rating}' for item '{item_title_for_log}'. Setting to None."
+        )
+        return None
+
+
+def _parse_imported_year(raw_year, item_title_for_log):
+    """Parses and validates year from imported item."""
+    if raw_year is None:
+        return None
+    try:
+        item_year_int = int(raw_year)
+        if 1800 <= item_year_int <= 2050:
+            return item_year_int
+        else:
+            current_app.logger.warning(
+                f"Year {raw_year} out of range for item '{item_title_for_log}'. Setting to None."
+            )
+            return None
+    except ValueError:
+        current_app.logger.warning(
+            f"Invalid year format '{raw_year}' for item '{item_title_for_log}'. Setting to None."
+        )
+        return None
+
+
+def _process_imported_item(raw_item: dict, items_skipped_list: list):
+    """
+    Processes a single raw item from the imported JSON data.
+    Returns a WatchlistItem instance or None if skipped.
+    Modifies items_skipped_list by reference if an item is skipped.
+    """
+    item_title_for_log = raw_item.get("title", "N/A")
+
+    if not raw_item.get("title") or not raw_item.get("type"):
+        items_skipped_list[0] += 1
+        current_app.logger.warning(
+            f"Skipping item due to missing title or type: {item_title_for_log}"
+        )
+        return None
+
+    item_rating = _parse_imported_rating(raw_item.get("rating"), item_title_for_log)
+    item_year = _parse_imported_year(raw_item.get("year"), item_title_for_log)
+
+    new_item = WatchlistItem(
+        title=raw_item.get("title"),
+        type=raw_item.get("type"),
+        year=item_year,
+        tmdb_id=raw_item.get("tmdb_id"),
+        imdb_id=raw_item.get("imdb_id"),
+        boxd_id=raw_item.get("boxd_id"),
+        overview=raw_item.get("overview"),
+        poster_url=raw_item.get("poster_url"),
+        status=raw_item.get("status", "Watched"),  # Default to Watched
+        rating=item_rating,
+        notes=raw_item.get("notes"),
+    )
+
+    # Date Added
+    raw_date_added = raw_item.get("date_added")
+    if raw_date_added:
+        try:
+            new_item.date_added = datetime.fromisoformat(raw_date_added)
+        except ValueError:
+            new_item.date_added = datetime.now(timezone.utc)
+    else:
+        new_item.date_added = datetime.now(timezone.utc)
+
+    # Date Watched
+    raw_date_watched = raw_item.get("date_watched")
+    if raw_date_watched:
+        try:
+            new_item.date_watched = date.fromisoformat(raw_date_watched)
+        except ValueError:
+            new_item.date_watched = None  # Explicitly set to None on error
+    else:
+        new_item.date_watched = None
+
+    return new_item
+
+
+# --- Routes ---
+
 
 @settings_bp.route("/", methods=["GET"])
 def show_settings():
@@ -125,145 +249,50 @@ def export_data_json():
         )
 
     except Exception as e:
-        current_app.logger.error(f"Error during data export: {e}")
+        current_app.logger.error(f"Error during data export: {e}", exc_info=True)
         flash("Error exporting data. Please check logs.", "error")
         return redirect(url_for("settings.show_settings"))
-
-
-ALLOWED_EXTENSIONS = {"json"}
-
-
-def allowed_file(filename):
-    return (
-        "." in filename
-        and filename.rsplit(".", 1)[0] != ""
-        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-    )
 
 
 @settings_bp.route("/import_data", methods=["POST"])
 def import_data_json():
     """Imports watchlist items from an uploaded JSON file, replacing existing data."""
-    if "backup_file" not in request.files:
-        flash("No file part in the request.", "error")
+    file = _validate_uploaded_file(request.files)
+    if not file:
         return redirect(url_for("settings.show_settings"))
 
-    file = request.files["backup_file"]
+    try:
+        json_data = file.read().decode("utf-8")
+        imported_items_raw = json.loads(json_data)
 
-    if file.filename == "":
-        flash("No file selected for uploading.", "warning")
-        return redirect(url_for("settings.show_settings"))
+        db.session.query(WatchlistItem).delete()  # CRITICAL: Delete existing items
 
-    if file and allowed_file(file.filename):
-        try:
-            # Read and parse the JSON file
-            json_data = file.read().decode("utf-8")
-            imported_items_raw = json.loads(json_data)
+        new_items_to_add = []
+        items_skipped_list = [0]
 
-            # CRITICAL: Delete existing items
-            db.session.query(WatchlistItem).delete()
+        for raw_item in imported_items_raw:
+            processed_item = _process_imported_item(raw_item, items_skipped_list)
+            if processed_item:
+                new_items_to_add.append(processed_item)
 
-            new_items_to_add = []
-            items_skipped = 0
-
-            for raw_item in imported_items_raw:
-                # Basic validation for required fields
-                if not raw_item.get("title") or not raw_item.get("type"):
-                    items_skipped += 1
-                    current_app.logger.warning(
-                        f"Skipping item due to missing title or type: {raw_item.get('title', 'N/A')}"
-                    )
-                    continue
-
-                # rating and year validation
-                raw_rating = raw_item.get("rating")
-                item_rating = None
-                if raw_rating is not None:
-                    try:
-                        item_rating_int = int(raw_rating)
-                        if 1 <= item_rating_int <= 10:
-                            item_rating = item_rating_int
-                        else:
-                            current_app.logger.warning(
-                                f"Rating {raw_rating} out of range for item '{raw_item.get('title', 'N/A')}'. Setting to None."
-                            )
-                    except ValueError:
-                        current_app.logger.warning(
-                            f"Invalid rating format '{raw_rating}' for item '{raw_item.get('title', 'N/A')}'. Setting to None."
-                        )
-
-                raw_year = raw_item.get("year")
-                item_year = None
-                if raw_year is not None:
-                    try:
-                        item_year_int = int(raw_year)
-                        if 1800 <= item_year_int <= 2050:
-                            item_year = item_year_int
-                        else:
-                            current_app.logger.warning(
-                                f"Year {raw_year} out of range for item '{raw_item.get('title', 'N/A')}'. Setting to None."
-                            )
-                    except ValueError:
-                        current_app.logger.warning(
-                            f"Invalid year format '{raw_year}' for item '{raw_item.get('title', 'N/A')}'. Setting to None."
-                        )
-
-                new_item = WatchlistItem(
-                    title=raw_item.get("title"),
-                    type=raw_item.get("type"),
-                    year=item_year,
-                    tmdb_id=raw_item.get("tmdb_id"),
-                    imdb_id=raw_item.get("imdb_id"),
-                    boxd_id=raw_item.get("boxd_id"),
-                    overview=raw_item.get("overview"),
-                    poster_url=raw_item.get("poster_url"),
-                    status=raw_item.get("status", "Watched"),
-                    rating=item_rating,
-                    notes=raw_item.get("notes"),
-                )
-
-                if raw_item.get("date_added"):
-                    try:
-                        new_item.date_added = datetime.fromisoformat(
-                            raw_item.get("date_added")
-                        )
-                    except ValueError:
-                        new_item.date_added = datetime.now(timezone.utc)
-                else:
-                    new_item.date_added = datetime.now(timezone.utc)
-
-                if raw_item.get("date_watched"):
-                    try:
-                        new_item.date_watched = date.fromisoformat(
-                            raw_item.get("date_watched")
-                        )
-                    except ValueError:
-                        new_item.date_watched = None
-
-                new_items_to_add.append(new_item)
-
+        if new_items_to_add:  # Only add if there are items, to avoid empty add_all call
             db.session.add_all(new_items_to_add)
-            db.session.commit()
+        db.session.commit()
 
-            success_msg = f"{len(new_items_to_add)} items imported successfully."
-            if items_skipped > 0:
-                success_msg += (
-                    f" {items_skipped} items were skipped due to missing data."
-                )
-            flash(success_msg, "success")
+        success_msg = f"{len(new_items_to_add)} items imported successfully."
+        if items_skipped_list[0] > 0:
+            success_msg += f" {items_skipped_list[0]} items were skipped due to missing/invalid data."
+        flash(success_msg, "success")
 
-        except json.JSONDecodeError:
-            flash("Invalid JSON file. Please upload a valid backup.", "error")
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            current_app.logger.error(f"Database error during import: {e}")
-            flash("Database error during import. Data rolled back.", "error")
-        except Exception as e:
-            db.session.rollback()
-            current_app.logger.error(f"Error during data import: {e}")
-            flash(f"An unexpected error occurred during import: {str(e)}", "error")
+    except json.JSONDecodeError:
+        flash("Invalid JSON file. Please upload a valid backup.", "error")
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        current_app.logger.error(f"Database error during import: {e}", exc_info=True)
+        flash("Database error during import. Data rolled back.", "error")
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Error during data import: {e}", exc_info=True)
+        flash(f"An unexpected error occurred during import: {str(e)}", "error")
 
-        return redirect(url_for("settings.show_settings"))
-    else:
-        flash("Invalid file type. Please upload a .json file.", "error")
-        return redirect(url_for("settings.show_settings"))
+    return redirect(url_for("settings.show_settings"))
