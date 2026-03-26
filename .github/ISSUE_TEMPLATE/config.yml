@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: ❓ ShowTrackr Q&A Discussions
+  - name: ❓ ShowTrackr-Web Q&A Discussions
     url: https://github.com/Exonymos/ShowTrackr-Web/discussions/categories/q-a
-    about: Have a question about setting up or using ShowTrackr? Ask the community first!
-  - name: 💡 ShowTrackr Ideas & Feature Discussions
+    about: Have a question about setting up or using ShowTrackr-Web? Ask the community first!
+  - name: 💡 ShowTrackr-Web Ideas & Feature Discussions
     url: https://github.com/Exonymos/ShowTrackr-Web/discussions/categories/ideas
     about: Share and discuss new feature ideas with the community.
-  - name: 💬 ShowTrackr General Chat
+  - name: 💬 ShowTrackr-Web General Chat
     url: https://github.com/Exonymos/ShowTrackr-Web/discussions/categories/general
-    about: For other general discussions related to ShowTrackr.
+    about: For other general discussions related to ShowTrackr-Web.

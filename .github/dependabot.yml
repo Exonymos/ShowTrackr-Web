@@ -1,43 +1,43 @@
 version: 2
 updates:
   # Python dependencies (pip)
-  - package-ecosystem: "pip"
-    directory: "/"
+  - package-ecosystem: 'pip'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-    target-branch: "main"
+      interval: 'weekly'
+      day: 'monday'
+    target-branch: 'main'
     labels:
-      - "dependencies"
-      - "python"
+      - 'dependencies'
+      - 'python'
     groups:
       python-dependencies:
-        applies-to: "version-updates"
+        applies-to: 'version-updates'
         patterns:
-          - "*"
+          - '*'
 
   # JavaScript dependencies (npm)
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-    target-branch: "main"
+      interval: 'weekly'
+      day: 'monday'
+    target-branch: 'main'
     labels:
-      - "dependencies"
-      - "javascript"
+      - 'dependencies'
+      - 'javascript'
     groups:
       npm-dependencies:
-        applies-to: "version-updates"
+        applies-to: 'version-updates'
         patterns:
-          - "*"
+          - '*'
 
   # GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "monthly"
-    target-branch: "main"
+      interval: 'monthly'
+    target-branch: 'main'
     labels:
-      - "dependencies"
-      - "github_actions"
+      - 'dependencies'
+      - 'github_actions'
