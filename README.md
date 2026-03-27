@@ -4,29 +4,18 @@
 
 **Track your shows and movies with ease!**
 
-[//]: # ([![License: GPL v3]&#40;https://img.shields.io/github/license/Exonymos/SeriesScape?color=brightgreen&style=flat-square&#41;]&#40;https://opensource.org/licenses/GPL-3.0&#41;)
-
-[//]: # ([![GitHub issues]&#40;https://img.shields.io/github/issues/Exonymos/SeriesScape?style=flat-square&#41;]&#40;https://github.com/Exonymos/SeriesScape/issues&#41;)
-
-[//]: # ([![GitHub last commit]&#40;https://img.shields.io/github/last-commit/Exonymos/SeriesScape?style=flat-square&#41;]&#40;https://github.com/Exonymos/SeriesScape/commits/main&#41;)
-
-[//]: # (<br>)
-
-[//]: # ([![Python Version]&#40;https://img.shields.io/badge/python-3.10+-blue.svg?style=flat-square&#41;]&#40;https://www.python.org/downloads/&#41;)
-
-[//]: # ([![Flask Version]&#40;https://img.shields.io/badge/Flask-3.0+-lightgrey.svg?style=flat-square&#41;]&#40;https://flask.palletsprojects.com/&#41;)
-
-[//]: # ([![Release Version]&#40;https://img.shields.io/github/v/release/Exonymos/SeriesScape?style=flat-square&#41;]&#40;https://github.com/Exonymos/SeriesScape/releases/latest&#41;)
-
-[//]: # (<br>)
-
-[//]: # ([![GitHub Repo stars]&#40;https://img.shields.io/github/stars/Exonymos/SeriesScape?style=social&#41;]&#40;https://github.com/Exonymos/SeriesScape/stargazers&#41;)
-
-[//]: # ([![GitHub Repo forks]&#40;https://img.shields.io/github/forks/Exonymos/SeriesScape?style=social&#41;]&#40;https://github.com/Exonymos/SeriesScape/forks&#41;)
-
-[//]: # (<br>)
-
-[//]: # ([![Downloads]&#40;https://img.shields.io/github/downloads/Exonymos/SeriesScape/total?color=blue&logo=github&#41;]&#40;https://github.com/Exonymos/SeriesScape/releases&#41;)
+[![License: GPL v3](https://img.shields.io/github/license/Exonymos/SeriesScape?color=brightgreen&style=flat-square)](https://opensource.org/licenses/GPL-3.0)
+[![GitHub issues](https://img.shields.io/github/issues/Exonymos/SeriesScape?style=flat-square)](https://github.com/Exonymos/SeriesScape/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Exonymos/SeriesScape?style=flat-square)](https://github.com/Exonymos/SeriesScape/commits/main)
+<br>
+[![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg?style=flat-square)](https://www.python.org/downloads/)
+[![Flask Version](https://img.shields.io/badge/Flask-3.0+-lightgrey.svg?style=flat-square)](https://flask.palletsprojects.com/)
+[![Release Version](https://img.shields.io/github/v/release/Exonymos/SeriesScape?style=flat-square)](https://github.com/Exonymos/SeriesScape/releases/latest)
+<br>
+[![GitHub Repo stars](https://img.shields.io/github/stars/Exonymos/SeriesScape?style=social)](https://github.com/Exonymos/SeriesScape/stargazers)
+[![GitHub Repo forks](https://img.shields.io/github/forks/Exonymos/SeriesScape?style=social)](https://github.com/Exonymos/SeriesScape/forks)
+<br>
+[![Downloads](https://img.shields.io/github/downloads/Exonymos/SeriesScape/total?color=blue&logo=github)](https://github.com/Exonymos/SeriesScape/releases)
 
 SeriesScape is a simple, personal, locally run web application designed to help you keep track of movies and TV shows
 you want to watch or have already watched. It focuses on manual entry, giving you full control over your watchlist data
