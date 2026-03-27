@@ -1,5 +1,5 @@
 name: ✨ Feature Request
-description: Suggest an idea or enhancement for ShowTrackr-Web.
+description: Suggest an idea or enhancement for SeriesScape.
 title: '[FEAT] Brief description of your idea'
 labels: [ 'enhancement', 'feature-request' ]
 assignees: 'Exonymos' # Exonymos
@@ -7,18 +7,18 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Thank you for suggesting an idea to improve ShowTrackr-Web!**
+        **Thank you for suggesting an idea to improve SeriesScape!**
 
         **Before Submitting:**
-        - Have you checked if this idea has already been proposed in our [Issues](https://github.com/Exonymos/ShowTrackr-Web/issues)?
-        - Have you discussed this idea in our [Ideas Discussions](https://github.com/Exonymos/ShowTrackr-Web/discussions/categories/ideas)? This can help refine the concept with community input!
+        - Have you checked if this idea has already been proposed in our [Issues](https://github.com/Exonymos/SeriesScape/issues)?
+        - Have you discussed this idea in our [Ideas Discussions](https://github.com/Exonymos/SeriesScape/discussions/categories/ideas)? This can help refine the concept with community input!
 
   - type: textarea
     id: problem-related
     attributes:
       label: '❓ Is your feature request related to a problem? Please describe.'
       description: "A clear and concise description of what the problem is. Or, if it's a new idea, explain the opportunity."
-      placeholder: "e.g., I'm always frustrated when I have to manually look up actor details, or, It would be great if ShowTrackr-Web could..."
+      placeholder: "e.g., I'm always frustrated when I have to manually look up actor details, or, It would be great if SeriesScape could..."
     validations:
       required: true
 

@@ -1,7 +1,7 @@
 # scripts/make_release.py
-# ShowTrackr-Web Release Builder
-# This script is used to create a release package for the ShowTrackr-Web project.
-# It copies specified files and folders from the project directory to a new release folder
+# SeriesScape Release Builder
+# This script is used to create a release package for the SeriesScape project.
+# It copies specified files and folders from the project directory to a new release folder,
 # and optionally creates a zip archive of the release folder.
 import shutil
 import json
@@ -110,7 +110,7 @@ def copy_files_to_target_with_progress(target_dir):
             src_path = PROJECT_ROOT / item_name
             if src_path.exists():
                 try:
-                    # Preserve the full relative path from the project root in the release
+                    # Preserve the full relative path from project root in the release
                     rel_path = Path(item_name)
                     copy_with_filter(
                         src_path, target_dir / rel_path, progress, task
@@ -365,14 +365,14 @@ def main():
         console.print(
             "\n[bold cyan]==============================[/]", justify="center"
         )
-        console.print("[bold magenta]ShowTrackr-Web Release Builder[/]", justify="center")
+        console.print("[bold magenta]SeriesScape Release Builder[/]", justify="center")
         console.print(
             "[bold cyan]==============================\n[/]", justify="center"
         )
 
         version, prod_mode = get_release_version_and_mode()
         production_changes = []  # To store descriptions of changes made for prod mode
-        release_base_name = f"ShowTrackr-Web-v{version}"
+        release_base_name = f"SeriesScape-v{version}"
 
         choice = get_release_type_choice()
 

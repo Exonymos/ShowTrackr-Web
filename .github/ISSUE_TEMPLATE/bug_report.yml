@@ -1,8 +1,8 @@
 name: 🐛 Bug Report
-description: Create a report to help us improve ShowTrackr-Web.
+description: Create a report to help us improve SeriesScape.
 title: '[BUG] Brief description of bug'
 labels: [ 'bug', 'triage' ]
-assignees: 'Exonymos'
+assignees: 'Exonymos' # Exonymos
 body:
   - type: markdown
     attributes:
@@ -11,8 +11,8 @@ body:
         Please help us understand the problem by providing as much detail as possible.
 
         **Before Submitting:**
-        - Have you checked if this issue is already reported in our [Issues](https://github.com/Exonymos/ShowTrackr-Web/issues)?
-        - Have you checked our [Q&A Discussions](https://github.com/Exonymos/ShowTrackr-Web/discussions/categories/q-a) for potential solutions or similar questions?
+        - Have you checked if this issue is already reported in our [Issues](https://github.com/Exonymos/SeriesScape/issues)?
+        - Have you checked our [Q&A Discussions](https://github.com/Exonymos/SeriesScape/discussions/categories/q-a) for potential solutions or similar questions?
 
   - type: textarea
     id: description
@@ -48,8 +48,8 @@ body:
   - type: input
     id: app-version
     attributes:
-      label: 'ShowTrackr-Web Version'
-      description: "Which version of ShowTrackr-Web are you using? (See 'About' page in the app or in the 'package.json' file)"
+      label: 'SeriesScape Version'
+      description: "Which version of SeriesScape are you using? (See 'About' page in the app or in the 'package.json' file)"
       placeholder: 'e.g., v0.3.0'
     validations:
       required: true
@@ -62,7 +62,7 @@ body:
         This helps us narrow down environment-specific issues.
         - **Operating System:** [e.g., Windows 11, Ubuntu 24.04 LTS]
         - **Browser (if applicable):** [e.g., Chrome 124, Firefox 125]
-        - **How are you running ShowTrackr-Web?** [e.g., Using run.bat, python run.py directly]
+        - **How are you running SeriesScape?** [e.g., Using run.bat, python run.py directly]
       value: |
         - OS: 
         - Browser: 

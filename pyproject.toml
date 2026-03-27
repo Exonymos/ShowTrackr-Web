@@ -1,23 +1,69 @@
-# pyproject.toml
+[project]
+name = "seriesscape"
+version = "0.3.0"
+description = "SeriesScape is a simple, personal, locally-run web application designed to help you keep track of movies and TV shows."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "alembic>=1.18.4",
+    "flask>=3.1.3",
+    "flask-htmx>=0.4.0",
+    "flask-migrate>=4.1.0",
+    "flask-sqlalchemy>=3.1.1",
+    "python-dateutil>=2.9.0.post0",
+    "python-dotenv>=1.2.2",
+    "rich>=14.3.3",
+    "sqlalchemy>=2.0.48",
+]
 
-# --- Tool Configuration ---
+[dependency-groups]
+lint = [
+    "pyright>=1.1.408",
+    "ruff>=0.15.8",
+    "ty>=0.0.26",
+]
+test = [
+    "coverage>=7.13.5",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.1.0",
+    "pytest-flask>=1.3.0",
+    "pytest-mock>=3.15.1",
+]
 
-[tool.black]
+[tool.ruff]
 line-length = 88
-target-version = ["py311", "py312", "py313"]
+target-version = "py310"
+src = ["apps/desktop/src"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "B",
+    "S",
+]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra -q --color=yes --cov=src/watchlist --cov-report=term-missing"
-testpaths = ["tests"]
+addopts = "-ra -q --color=yes --cov=apps/desktop/src/core --cov-report=term-missing"
+testpaths = ["apps/desktop/tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
 filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.pyright]
-include = ["src/watchlist", "tests", "run.py", "setup.py", "make_release.py"]
-exclude = ["**/__pycache__", ".venv*", "venv*", "**/migrations/"]
+include = ["apps/desktop/src/core", "apps/desktop/tests", "scripts/run.py", "scripts/setup.py", "scripts/make_release.py"]
+exclude = ["**/__pycache__", ".venv*", "venv*", "**/apps/desktop/migrations/"]
 typeCheckingMode = "basic"
 pythonVersion = "3.11"
 pythonPlatform = "All"
@@ -32,10 +78,34 @@ reportOptionalCall = "warning"
 reportOptionalOperand = "warning"
 reportTypedDictNotRequiredAccess = "warning"
 
+[tool.ty.environment]
+python-version = "3.11"
+python-platform = "all"
+
+[tool.ty.src]
+include = [
+    "apps/desktop/src",
+    "apps/desktop/tests",
+    "scripts/run.py",
+    "scripts/setup.py",
+    "scripts/make_release.py",
+]
+exclude = ["**/__pycache__", ".venv*", "venv*", "**/apps/desktop/migrations/"]
+
+[tool.ty.rules]
+unresolved-import = "warn"
+possibly-missing-import = "warn"
+not-subscriptable = "warn"
+unresolved-attribute = "warn"
+possibly-missing-attribute = "warn"
+call-non-callable = "warn"
+unsupported-operator = "warn"
+missing-typed-dict-key = "warn"
+
 [tool.coverage.run]
-source = ["src/watchlist"]
+source = ["apps/desktop/src/core"]
 branch = true
-omit = ["*/__init__.py", "tests/*"]
+omit = ["*/__init__.py", "apps/desktop/tests/*"]
 
 [tool.coverage.report]
 fail_under = 0
@@ -43,4 +113,4 @@ show_missing = true
 
 [tool.coverage.html]
 directory = "coverage_html_report"
-title = "ShowTrackr Test Coverage Report"
+title = "SeriesScape Test Coverage Report"

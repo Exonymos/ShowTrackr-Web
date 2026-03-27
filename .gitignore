@@ -1,47 +1,49 @@
-# .gitignore
-# Python
+# --- Python ---
 __pycache__/
 .pytest_cache/
-*.pyc
-*.pyo
-*.pyd
+.mypy_cache/
+.ruff_cache/
+.pytype/
+*.py[cod]
 *.so
 *.egg-info/
 dist/
 build/
+wheels/
+.coverage
+coverage_html_report/
+.python-version
 
-# Virtual environment
+# --- Virtual environments ---
 .venv/
+venv/
 
-# Data files
-data/.env
-data/database.db
-
-# Migrations
-migrations/
-
-# IDE / OS files
-.idea/
-.vscode/
-*.DS_Store
-Thumbs.db
-
-# Node / npm
+# --- Node / frontend ---
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+.eslintcache
 
-# Coverage
-.coverage
-coverage_html_report
+# --- IDE / editor ---
+.idea/
+.vscode/
+*.DS_Store
+Thumbs.db
 
-# Miscellaneous
+# --- Project data ---
+apps/desktop/data/*
+!apps/desktop/data/.env.example
+
+# --- Migrations ---
+apps/desktop/migrations
+
+# --- Miscellaneous ---
 tempCodeRunnerFile.py
-.notcommit/
+_notes/
 *.zip
-ShowTrackr-Web-v*/
+SeriesScape-v*/
 
-# Temporary until issues are resolved
-ci_checks.yml
+# --- Temporary until issues are resolved ---
+ci.yml

@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 import platform
 
-# Locate project root (ShowTrackr-Web/) - this script lives in scripts/
+# Locate project root (SeriesScape/) - this script lives in scripts/
 project_root = Path(__file__).resolve().parent.parent
 os.chdir(project_root)
 

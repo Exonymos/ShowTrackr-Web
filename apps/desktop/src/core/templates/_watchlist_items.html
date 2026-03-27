@@ -1,0 +1,288 @@
+<!-- apps/desktop/src/core/templates/_watchlist_items.html -->
+
+{% if items %}
+<div class="overflow-x-hidden">
+  {% set last_month_year = {'month': None, 'year': None} %}
+
+  <table class="table w-full table-fixed">
+    <colgroup>
+      <col class="w-16"> <!-- Month -->
+      <col class="w-12 text-center"> <!-- Day -->
+      <col class="w-20 text-center"> <!-- Poster -->
+      <col> <!-- Title (takes remaining space) -->
+      <col class="w-16 text-center"> <!-- Year -->
+      <col class="w-16 text-center"> <!-- Rating -->
+      <col class="w-16 text-center"> <!-- Link -->
+      <col class="w-16 text-center"> <!-- Edit -->
+    </colgroup>
+    <thead>
+      <tr>
+        <th colspan="2" class="py-3 px-2">Date</th>
+        <th class="py-3 px-2 text-center">Poster</th>
+        <th class="py-3 px-2">Title</th>
+        <th class="py-3 px-2 text-center">Year</th>
+        <th class="py-3 px-2 text-center">Rating</th>
+        <th class="py-3 px-2 text-center">Link</th>
+        <th class="py-3 px-2 text-center">Edit</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      {% set display_date = item.date_watched if item.date_watched else item.date_added %}
+      {% set show_month_year = False %}
+
+      {% if display_date %}
+      {% set current_month = display_date.strftime('%b').upper() %}
+      {% set current_year = display_date.strftime('%Y') %}
+      {% set current_day = display_date.strftime('%d') %}
+
+      {% if current_month != last_month_year.month or current_year != last_month_year.year %}
+      {% set show_month_year = True %}
+      {% set _ = last_month_year.update({'month': current_month, 'year': current_year}) %}
+      {% endif %}
+      {% else %}
+      {% set current_month = '-' %}
+      {% set current_year = '-' %}
+      {% set current_day = '-' %}
+      {% if last_month_year.month is none %}
+      {% set _ = last_month_year.update({'month': '-', 'year': '-'}) %}
+      {% endif %}
+      {% endif %}
+
+      <tr class="hover align-top">
+        <!-- Month Column -->
+        <td class="pt-3 pr-2 text-right">
+          {% if show_month_year %}
+          <div class="flex flex-col items-center justify-center h-full">
+            <div class="inline-flex items-center gap-1 bg-base-300 rounded px-2 py-1 text-xs font-medium">
+              <!-- Month Icon SVG -->
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                class="w-3 h-3 opacity-70">
+                <path fill-rule="evenodd"
+                  d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5h10.5a.75.75 0 0 0 0-1.5H4.75a.75.75 0 0 0 0 1.5Z"
+                  clip-rule="evenodd" />
+              </svg>
+              <span>{{ current_month }}</span>
+            </div>
+            <span class="text-xs opacity-60 mt-0.5">{{ current_year }}</span>
+          </div>
+          {% endif %}
+        </td>
+
+        <!-- Day Column -->
+        <td class="pt-2 pb-2 text-xl font-semibold text-center">
+          {{ current_day }}
+        </td>
+
+        <!-- Poster -->
+        <td class="w-20 pt-2 pb-2 text-center">
+          {% set poster_url = item.get_display_poster() %}
+          {% if poster_url %}
+          <img src="{{ poster_url }}" alt="Poster for {{ item.title }}" class="poster-image"
+            data-large-poster="{{ poster_url }}">
+          {% else %}
+          <div class="poster-placeholder bg-base-200 w-full shadow flex items-center justify-center">
+            <span class="text-xs px-1">{{ 'Movie' if item.type == 'movie' else 'TV' }}</span>
+          </div>
+          {% endif %}
+        </td>
+
+        <!-- Title -->
+        <td class="pt-2 pb-2 pl-3 font-semibold text-lg">
+          <a href="{{ url_for('items.edit_item_form', item_id=item.id) }}" class="link link-hover"
+            hx-get="{{ url_for('items.edit_item_form', item_id=item.id) }}" hx-target="#modal-content"
+            hx-swap="innerHTML" onclick="resetFormDirtyFlag(); add_item_modal.showModal()">
+            {{ item.title }}
+          </a>
+        </td>
+
+        <!-- Release Year -->
+        <td class="pt-2 pb-2 text-sm opacity-80 text-center">{{ item.year if item.year else '-' }}</td>
+
+        <!-- Rating -->
+        <td class="pt-2 pb-2 text-center">
+          {% if item.rating %}
+          <div class="star-rating inline-flex items-center justify-center gap-1" title="{{ item.rating }} out of 10">
+            <span class="font-medium">{{ item.rating }}</span>
+            <!-- Star Icon SVG -->
+            <svg class="w-5 h-5 text-warning" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              fill="currentColor">
+              <path fill-rule="evenodd"
+                d="m6.516 14.323-1.49 6.452a.998.998 0 0 0 1.529 1.057L12 18.202l5.445 3.63a1.001 1.001 0 0 0 1.517-1.106l-1.829-6.4 4.536-4.082a1 1 0 0 0-.59-1.74l-5.701-.454-2.467-5.461a.998.998 0 0 0-1.822 0L8.622 8.05l-5.701.453a1 1 0 0 0-.619 1.713l4.214 4.107zm2.853-4.326a.998.998 0 0 0 .832-.586L12 5.43l1.799 3.981a.998.998 0 0 0 .832.586l3.972.315-3.271 2.944c-.284.256-.397.65-.293 1.018l1.253 4.385-3.736-2.491a.995.995 0 0 0-1.109 0l-3.904 2.603 1.05-4.546a1 1 0 0 0-.276-.94l-3.038-2.962 4.09-.326z"
+                clip-rule="evenodd" />
+            </svg>
+          </div>
+          {% else %}
+          <span class="opacity-50">-</span>
+          {% endif %}
+        </td>
+
+        <!-- Quicklink -->
+        <td class="pt-2 pb-2 text-center">
+          {% set name, url, svg_path = item.get_primary_quicklink() or (None, None, None) %}
+          {% if url %}
+          <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="tooltip tooltip-left icon-link"
+            data-tip="View on {{ name }}">
+            {% if svg_path %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+              class="w-5 h-5 fill-current inline-block text-base-content/70 hover:text-primary transition-colors">
+              <path d="{{ svg_path }}"></path>
+            </svg>
+            {% else %}
+            <span class="link link-hover link-primary text-xs">{{ name }}</span>
+            {% endif %}
+          </a>
+          {% else %}
+          <span class="opacity-50">-</span>
+          {% endif %}
+        </td>
+
+        <!-- Edit Action -->
+        <td class="pt-2 pb-2 text-center action-icon">
+          <button class="btn btn-xs btn-ghost text-info hover:bg-info/10"
+            hx-get="{{ url_for('items.edit_item_form', item_id=item.id) }}" hx-target="#modal-content"
+            hx-swap="innerHTML" onclick="resetFormDirtyFlag(); add_item_modal.showModal()"
+            aria-label="Edit {{ item.title }}" title="Edit Item">
+            <!-- Edit Icon SVG -->
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+              <path
+                d="M9.343 4.692A11.6 11.6 0 0 1 12 4.385.692.692 0 0 0 12 3c-.998 0-1.995.115-2.973.344a7.63 7.63 0 0 0-5.683 5.683 13 13 0 0 0 0 5.946 7.63 7.63 0 0 0 5.683 5.683 13 13 0 0 0 5.946 0 7.63 7.63 0 0 0 5.683-5.683c.23-.978.344-1.975.344-2.973a.692.692 0 1 0-1.385 0c0 .892-.102 1.783-.307 2.657a6.24 6.24 0 0 1-4.651 4.65c-1.748.41-3.566.41-5.314 0a6.24 6.24 0 0 1-4.65-4.65 11.6 11.6 0 0 1 0-5.314 6.24 6.24 0 0 1 4.65-4.65"
+                fill="currentColor" />
+              <path
+                d="M16.263 3.693a2.868 2.868 0 0 1 3.897 4.203l-3.314 3.314a11.94 11.94 0 0 1-5.545 3.14l-.64.16a.965.965 0 0 1-1.17-1.17l.16-.641a11.94 11.94 0 0 1 3.139-5.545l3.314-3.314q.076-.077.159-.147m1.99 4.152a3.9 3.9 0 0 1-1.255-.843 3.9 3.9 0 0 1-.843-1.255L13.77 8.133a10.55 10.55 0 0 0-2.765 4.863 10.55 10.55 0 0 0 4.863-2.765z"
+                fill="currentColor" />
+            </svg>
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination Controls -->
+{% if pagination and pagination.pages > 1 %}
+<div class="flex flex-wrap justify-center items-center gap-2 mt-6 text-sm">
+  {% set base_url = url_for('main.load_watchlist') %}
+  {% set current_params = {
+  'sort': current_sort,
+  'order': current_order,
+  'filter_status': current_filter_status,
+  'filter_type': current_filter_type,
+  'filter_years': current_filter_years,
+  'filter_rating_min': current_filter_rating_min if current_filter_rating_min is not none else '',
+  'filter_rating_max': current_filter_rating_max if current_filter_rating_max is not none else '',
+  'search': current_search
+  } %}
+  {% set params_str = current_params | urlencode %}
+
+  <!-- Previous Page Link -->
+  {% if pagination.has_prev %}
+  <button class="btn btn-sm btn-outline" hx-get="{{ base_url }}?page={{ pagination.prev_num }}&{{ params_str }}"
+    hx-target="#watchlist-content" hx-swap="innerHTML" hx-indicator="#htmx-indicator">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+      class="w-4 h-4 mr-1">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+    </svg>
+    Prev </button>
+  </button>
+  {% else %}
+  <button class="btn btn-sm btn-outline btn-disabled">
+    < Prev</button>
+      {% endif %}
+
+      <!-- Page Input -->
+      <div class="flex items-center gap-1">
+        <label for="page-input-{{ range(1, 100) | random }}" class="sr-only">Page Number</label>
+        <input type="number" id="page-input-{{ range(1, 100) | random }}" name="page" min="1"
+          max="{{ pagination.pages }}" value="{{ current_page }}"
+          class="input input-bordered input-sm w-16 text-center page-input"
+          aria-label="Current Page Number, Edit to jump to page" data-base-url="{{ base_url }}"
+          data-current-params="{{ params_str }}" onkeydown="goToPage(event, this)">
+        <span class="mx-1">of {{ pagination.pages }}</span>
+      </div>
+
+      <!-- Next Page Link -->
+      {% if pagination.has_next %}
+      <button class="btn btn-sm btn-outline" hx-get="{{ base_url }}?page={{ pagination.next_num }}&{{ params_str }}"
+        hx-target="#watchlist-content" hx-swap="innerHTML" hx-indicator="#htmx-indicator">
+        Next
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+          class="w-4 h-4 ml-1">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
+      {% else %}
+      <button class="btn btn-sm btn-outline btn-disabled">Next ></button>
+      {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+{% if current_search or current_filter_status != 'all' or current_filter_type != 'all' or current_filter_years or
+current_filter_rating_min is not none or current_filter_rating_max is not none %}
+<div class="text-center text-base-content opacity-90 py-10 flex flex-col items-center gap-3">
+  <div class="w-24 h-24 md:w-28 md:h-28 text-base-content">
+    <svg class="mx-auto w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 116 121" fill="none">
+      <path
+        d="M.207 63.57c0-31.804 25.78-57.442 57.442-57.442 31.614 0 57.43 25.626 57.43 57.442 0 13.495-4.649 25.91-12.452 35.705A57.28 57.28 0 0 1 57.649 121c-17.906 0-34.247-8.206-44.99-21.725C4.854 89.482.206 77.065.206 63.57"
+        class="fill-base-200 opacity-70" />
+      <path
+        d="M72.794.6h-.01a10 10 0 0 0-1.39-.1h-49.23c-5.038 0-9.124 4.064-9.124 9.085v97.701c0 5.022 4.086 9.086 9.124 9.086h70.957c5.052 0 9.124-4.064 9.124-9.086V29.448q0-1.034-.226-2.032a9 9 0 0 0-2.725-4.659L77.545 2.897A9.1 9.1 0 0 0 72.794.6Z"
+        class="fill-base-100 stroke-base-300 stroke-1" />
+      <circle cx="60.207" cy="61" r="21.026" class="fill-base-200 opacity-60" />
+      <path
+        d="M74.679 46.141c-8.105-8.093-21.226-8.093-29.319 0-8.105 8.093-8.105 21.226 0 29.319 8.093 8.105 21.214 8.105 29.319 0 8.093-8.093 8.093-21.226 0-29.319Zm4.79-4.79c10.741 10.74 10.741 28.158 0 38.9-10.752 10.74-28.159 10.74-38.911 0-10.741-10.742-10.741-28.16 0-38.9 10.752-10.741 28.159-10.741 38.911 0Zm3.778 48.173-6.386-6.393a32.3 32.3 0 0 0 5.484-5.476l6.386 6.392z"
+        class="stroke-base-content/40 stroke-1" />
+      <path
+        d="M104.591 94.497h-.001L92.735 82.653l-.002-.002a2.655 2.655 0 0 0-3.77 0l.346.346-.346-.347-7.106 7.106a2.677 2.677 0 0 0-.002 3.767l.002.002 11.859 11.859a7.693 7.693 0 1 0 10.875-10.887Z"
+        class="fill-secondary stroke-secondary-content/70 stroke-1" />
+      <g class="fill-primary">
+        <path
+          d="M62.55 65.671a.896.896 0 0 1-.887-.898c0-1.986-3.003-1.986-3.003 0a.9.9 0 0 1-.899.898.896.896 0 0 1-.887-.898c0-4.351 6.574-4.34 6.574 0a.9.9 0 0 1-.899.898m7.626-7.601h-3.712a.9.9 0 0 1-.899-.9c0-.484.402-.886.899-.886h3.712c.497 0 .899.402.899.887a.9.9 0 0 1-.899.898m-16.315.001h-3.713a.9.9 0 0 1-.898-.9c0-.484.402-.886.898-.886h3.713a.893.893 0 0 1 0 1.785" />
+        <rect x="28.925" y="16.385" width="30.769" height="2.051" rx="1.026" />
+        <rect x="28.925" y="22.538" width="10.256" height="2.051" rx="1.026" />
+        <circle cx="42.258" cy="23.564" r="1.026" />
+        <circle cx="46.361" cy="23.564" r="1.026" />
+        <circle cx="50.463" cy="23.564" r="1.026" />
+      </g>
+      <rect x="28.925" y="100.487" width="41.026" height="4.103" rx="2.051" class="fill-secondary opacity-80" />
+    </svg>
+  </div>
+  <p class="text-lg font-semibold mt-2">No results found.</p>
+  <p class="text-sm opacity-80 mt-1">Try adjusting your filters or search terms.</p>
+</div>
+{% else %}
+<div class="text-center text-base-content opacity-90 py-10 flex flex-col items-center gap-3">
+  <div class="w-24 h-24 md:w-28 md:h-28 text-base-content">
+    <svg class="mx-auto w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 116 121" fill="none">
+      <path
+        d="M.207 63.57c0-31.804 25.78-57.442 57.442-57.442 31.614 0 57.43 25.626 57.43 57.442 0 13.495-4.649 25.91-12.452 35.705A57.28 57.28 0 0 1 57.649 121c-17.906 0-34.247-8.206-44.99-21.725C4.854 89.482.206 77.065.206 63.57"
+        class="fill-base-200 opacity-70" />
+      <path
+        d="M72.794.6h-.01a10 10 0 0 0-1.39-.1h-49.23c-5.038 0-9.124 4.064-9.124 9.085v97.701c0 5.022 4.086 9.086 9.124 9.086h70.957c5.052 0 9.124-4.064 9.124-9.086V29.448q0-1.034-.226-2.032a9 9 0 0 0-2.725-4.659L77.545 2.897A9.1 9.1 0 0 0 72.794.6Z"
+        class="fill-base-100 stroke-base-300 stroke-1" />
+      <circle cx="60.207" cy="61" r="21.026" class="fill-base-200 opacity-60" />
+      <path
+        d="M74.679 46.141c-8.105-8.093-21.226-8.093-29.319 0-8.105 8.093-8.105 21.226 0 29.319 8.093 8.105 21.214 8.105 29.319 0 8.093-8.093 8.093-21.226 0-29.319Zm4.79-4.79c10.741 10.74 10.741 28.158 0 38.9-10.752 10.74-28.159 10.74-38.911 0-10.741-10.742-10.741-28.16 0-38.9 10.752-10.741 28.159-10.741 38.911 0Zm3.778 48.173-6.386-6.393a32.3 32.3 0 0 0 5.484-5.476l6.386 6.392z"
+        class="stroke-base-content/40 stroke-1" />
+      <path
+        d="M104.591 94.497h-.001L92.735 82.653l-.002-.002a2.655 2.655 0 0 0-3.77 0l.346.346-.346-.347-7.106 7.106a2.677 2.677 0 0 0-.002 3.767l.002.002 11.859 11.859a7.693 7.693 0 1 0 10.875-10.887Z"
+        class="fill-secondary stroke-secondary-content/70 stroke-1" />
+      <g class="fill-primary">
+        <path
+          d="M62.55 65.671a.896.896 0 0 1-.887-.898c0-1.986-3.003-1.986-3.003 0a.9.9 0 0 1-.899.898.896.896 0 0 1-.887-.898c0-4.351 6.574-4.34 6.574 0a.9.9 0 0 1-.899.898m7.626-7.601h-3.712a.9.9 0 0 1-.899-.9c0-.484.402-.886.899-.886h3.712c.497 0 .899.402.899.887a.9.9 0 0 1-.899.898m-16.315.001h-3.713a.9.9 0 0 1-.898-.9c0-.484.402-.886.898-.886h3.713a.893.893 0 0 1 0 1.785" />
+        <rect x="28.925" y="16.385" width="30.769" height="2.051" rx="1.026" />
+        <rect x="28.925" y="22.538" width="10.256" height="2.051" rx="1.026" />
+        <circle cx="42.258" cy="23.564" r="1.026" />
+        <circle cx="46.361" cy="23.564" r="1.026" />
+        <circle cx="50.463" cy="23.564" r="1.026" />
+      </g>
+      <rect x="28.925" y="100.487" width="41.026" height="4.103" rx="2.051" class="fill-secondary opacity-80" />
+    </svg>
+  </div>
+  <p class="text-xl font-semibold mt-2">Your Watchlist is Empty!</p>
+  <p class="text-sm opacity-80 mt-1">Click the "Add Item" button in the welcome section above to get started.</p>
+</div>
+{% endif %}
+{% endif %}

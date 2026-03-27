@@ -4,7 +4,7 @@ REM Run from anywhere - resolve project root relative to this script's location
 cd /d "%~dp0.."
 
 echo.
-echo --- ShowTrackr-Web Launcher (Windows) ---
+echo --- SeriesScape Launcher (Windows) ---
 echo.
 
 REM Use the venv Python directly - no manual activation needed
@@ -20,7 +20,7 @@ if not exist "%VENV_PYTHON%" (
 
 set FLASK_APP=apps/desktop/src/core
 
-echo Starting ShowTrackr-Web...
+echo Starting SeriesScape...
 "%VENV_PYTHON%" scripts\run.py
 
 echo.

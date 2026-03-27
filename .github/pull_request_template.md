@@ -1,6 +1,6 @@
-# 🚀 Pull Request – ShowTrackr-Web
+# 🚀 Pull Request – SeriesScape
 
-Thank you for contributing to ShowTrackr-Web! Please fill out this template to help us review your pull request
+Thank you for contributing to SeriesScape! Please fill out this template to help us review your pull request
 efficiently.
 
 ---
@@ -64,8 +64,8 @@ Please confirm the following before requesting review:
 <!-- Please check the relevant option(s) by putting an `x` in the brackets: -->
 
 - [ ] My code follows the
-  project's [Contribution Guidelines](https://github.com/Exonymos/ShowTrackr-Web/blob/main/CONTRIBUTING.md)
-  and [Code of Conduct](https://github.com/Exonymos/ShowTrackr-Web/blob/main/CODE_OF_CONDUCT.md).
+  project's [Contribution Guidelines](https://github.com/Exonymos/SeriesScape/blob/main/CONTRIBUTING.md)
+  and [Code of Conduct](https://github.com/Exonymos/SeriesScape/blob/main/CODE_OF_CONDUCT.md).
 - [ ] I have performed a self-review of my code.
 - [ ] I have commented my code, particularly in hard-to-understand areas.
 - [ ] I have made corresponding changes to the documentation if applicable.

@@ -1,6 +1,6 @@
 # scripts/setup.py
 # Run by setup.bat / setup.sh AFTER `uv sync` has already created the venv.
-# This script handles only: .env creation and database initialization.
+# This script handles only: .env creation and database initialisation.
 import sys
 import os
 import platform
@@ -37,12 +37,12 @@ logger = logging.getLogger("rich")
 
 # --- Configuration ---
 SCRIPTS_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPTS_DIR.parent                       # ShowTrackr-Web/
-DESKTOP_APP_ROOT = PROJECT_ROOT / "apps" / "desktop"    # apps/desktop/
-DATA_DIR = DESKTOP_APP_ROOT / "data"                    # apps/desktop/data/
-MIGRATIONS_DIR = DESKTOP_APP_ROOT / "migrations"        # apps/desktop/migrations/
+PROJECT_ROOT = SCRIPTS_DIR.parent  # SeriesScape/
+DESKTOP_APP_ROOT = PROJECT_ROOT / "apps" / "desktop"  # apps/desktop/
+DATA_DIR = DESKTOP_APP_ROOT / "data"  # apps/desktop/data/
+MIGRATIONS_DIR = DESKTOP_APP_ROOT / "migrations"  # apps/desktop/migrations/
 PACKAGE_JSON_FILE = PROJECT_ROOT / "package.json"
-ENV_FILE = DATA_DIR / ".env"                            # gitignore, generated on setup
+ENV_FILE = DATA_DIR / ".env"  # gitignored, generated on setup
 PYTHON_MIN_VERSION = (3, 10)
 
 _is_windows = platform.system() == "Windows"
@@ -76,7 +76,7 @@ def check_python_version():
             style="yellow",
         )
         return False
-    console.print(f"[green]Python {sys.version.split()[0]} - OK.[/green]")
+    console.print(f"[green]Python {sys.version.split()[0]} — OK.[/green]")
     return True
 
 
@@ -114,11 +114,11 @@ def run_command(command, capture=False, check=True, cwd=PROJECT_ROOT, env=None,
 def run_with_progress(description, func, *args, **kwargs):
     """Runs a callable inside a Rich spinner progress bar."""
     with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        BarColumn(),
-        TimeElapsedColumn(),
-        console=console,
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TimeElapsedColumn(),
+            console=console,
     ) as progress:
         task = progress.add_task(description, total=None)
         try:
@@ -140,7 +140,7 @@ def setup_configuration_file():
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     if ENV_FILE.exists():
-        console.print(f"[yellow].env already exists at: {ENV_FILE} - skipping.[/yellow]")
+        console.print(f"[yellow].env already exists at: {ENV_FILE} — skipping.[/yellow]")
         return True
 
     secret_key = secrets.token_hex(24)
@@ -173,7 +173,7 @@ def setup_configuration_file():
 
 
 def setup_database():
-    """Initializes Flask-Migrate and applies migrations."""
+    """Initialises Flask-Migrate and applies migrations."""
     console.print("\n[bold]Setting up database...[/bold]")
 
     if not VENV_FLASK.exists():
@@ -187,7 +187,7 @@ def setup_database():
     flask_env["FLASK_APP"] = "apps/desktop/src/core"
 
     if not MIGRATIONS_DIR.exists():
-        console.print("[yellow]Migrations folder not found - running 'flask db init'...[/yellow]")
+        console.print("[yellow]Migrations folder not found — running 'flask db init'...[/yellow]")
         ok, _ = run_command(
             [VENV_FLASK, "db", "init"], env=flask_env,
             msg_on_fail="'flask db init' failed.",
@@ -224,8 +224,8 @@ def main():
     import time
 
     start_time = time.perf_counter()
-    console.rule("[bold cyan]ShowTrackr-Web Setup")
-    console.print("[bold]Starting ShowTrackr-Web setup...[/bold]")
+    console.rule("[bold cyan]SeriesScape Setup")
+    console.print("[bold]Starting SeriesScape setup...[/bold]")
     os.chdir(PROJECT_ROOT)
 
     if not check_python_version():

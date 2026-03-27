@@ -2,13 +2,14 @@
 coverage_html_report/
 
 # Minified files
-src/watchlist/static/js/htmx.min.js
-src/watchlist/static/js/bundle.js
-src/watchlist/static/css/output.css
+apps/desktop/src/core/static/js/htmx.min.js
+apps/desktop/src/core/static/js/bundle.js
+apps/desktop/src/core/static/css/output.css
 
 # HTML files
-src/watchlist/templates/**/*.html
+apps/desktop/src/core/templates/**/*.html
 
 # Git and version control
 package-lock.json
 CODEOWNERS
+uv.lock
