@@ -1,6 +1,8 @@
-# ShowTrackr - Changelog
+# SeriesScape - Changelog
 
-Version history for the ShowTrackr application.
+Version history for the SeriesScape application.
+
+Note: ShowTrackr was rebranded to SeriesScape in 2026.
 
 ---
 
@@ -14,23 +16,27 @@ Version history for the ShowTrackr application.
 
 ---
 
-## [[0.3.0]](https://github.com/Exonymos/ShowTrackr-Web/releases/tag/0.3.0) - 2025-05-25
+## [[0.3.0]](https://github.com/Exonymos/SeriesScape/releases/tag/0.3.0) - 2025-05-25
 
 ### Added
 
-- Export and import your watchlist as a backup file (JSON) from the Settings page. You can now back up your data and restore it easily.
-- Improved error messages and validation for settings and data import, including clearer feedback for invalid files or data.
+- Export and import your watchlist as a backup file (JSON) from the Settings page. You can now back up your data and
+  restore it easily.
+- Improved error messages and validation for settings and data import, including clearer feedback for invalid files or
+  data.
 - More tests for watchlist items, settings, and data import/export to ensure reliability and catch edge cases.
 - Additional validation for pagination size and theme selection in settings to prevent invalid values.
 - Feedback form improvements: better validation, clearer error and confirmation messages, and improved accessibility.
-- Added categories for themes. Light and Dark themes are now grouped separately, and a new "Ember" dark theme has been added for a fresh look.
+- Added categories for themes. Light and Dark themes are now grouped separately, and a new "Ember" dark theme has been
+  added for a fresh look.
 
 ### Changed
 
 - Upgraded Flask and other dependencies to latest versions for improved security and performance.
 - Enhanced validation for watchlist item fields (year, rating, date formats) to prevent bad data.
 - Improved setup scripts and documentation for environment and database initialization.
-- Improved test coverage and reliability for settings and item routes, including better session/config handling in tests.
+- Improved test coverage and reliability for settings and item routes, including better session/config handling in
+  tests.
 - Refined UI feedback using DaisyUI Toasts for a more modern experience.
 - Improved reliability of add/edit modal closing after successful save/delete.
 - Improved list view column alignment and poster placeholder appearance.
@@ -51,14 +57,15 @@ Version history for the ShowTrackr application.
 
 ---
 
-## [[0.2.1]](https://github.com/Exonymos/ShowTrackr-Web/releases/tag/0.2.1) - 2025-05-09
+## [[0.2.1]](https://github.com/Exonymos/SeriesScape/releases/tag/0.2.1) - 2025-05-09
 
 ### Added
 
 - Search functionality for TV shows and movies by title.
 - Shortcut key for search input field (Ctrl + K).
 - Feedback form for users to share their thoughts on the application.
-- Feedback collection in an online Google Sheet for easy access and management. You can view the feedback Google Sheet [here](https://docs.google.com/spreadsheets/d/1OW1PQTpdOcJK3bWLHsjkNuHZBkXp_RpLMel4IlDMrLg).
+- Feedback collection in an online Google Sheet for easy access and management. You can view the feedback Google
+  Sheet [here](https://docs.google.com/spreadsheets/d/1OW1PQTpdOcJK3bWLHsjkNuHZBkXp_RpLMel4IlDMrLg).
 
 <div align="right">
   <a href="#table-of-contents">Back to Top</a>
@@ -66,7 +73,7 @@ Version history for the ShowTrackr application.
 
 ---
 
-## [[0.2.0]](https://github.com/Exonymos/ShowTrackr-Web/releases/tag/0.2.0) - 2025-05-02
+## [[0.2.0]](https://github.com/Exonymos/SeriesScape/releases/tag/0.2.0) - 2025-05-02
 
 ### Added
 
@@ -82,7 +89,8 @@ Version history for the ShowTrackr application.
 
 ### Changed
 
-- Refactored watchlist loading route (`/load_watchlist`) to handle both HTMX partial requests and full page reloads correctly, fixing errors when refreshing pages with filter/sort parameters in the URL.
+- Refactored watchlist loading route (`/load_watchlist`) to handle both HTMX partial requests and full page reloads
+  correctly, fixing errors when refreshing pages with filter/sort parameters in the URL.
 - Refactored some functions for better readability and maintainability.
 
 ### Fixed
@@ -128,7 +136,8 @@ Version history for the ShowTrackr application.
 ### Fixed
 
 - Resolved `AttributeError: 'HTMX' object has no attribute 'on'` error by ensuring HTMX is correctly initialized.
-- Corrected database `OperationalError` related to `NULLS LAST` syntax in SQLite by switching to `func.coalesce` for sorting.
+- Corrected database `OperationalError` related to `NULLS LAST` syntax in SQLite by switching to `func.coalesce` for
+  sorting.
 
 <div align="right">
   <a href="#table-of-contents">Back to Top</a>
@@ -146,7 +155,8 @@ Version history for the ShowTrackr application.
 - Database initialization and migration setup using Flask-Migrate.
 - Core application setup in `src/watchlist/__init__.py`.
 - Basic routes for main page (`/`), add/edit forms, saving, deleting.
-- Templates: `base.html`, `index.html`, `_watchlist_items.html`, `_add_edit_item_form.html`, `settings.html`, `_form_error.html`.
+- Templates: `base.html`, `index.html`, `_watchlist_items.html`, `_add_edit_item_form.html`, `settings.html`,
+  `_form_error.html`.
 - Functionality: Add, View (List), Edit, Delete items via HTMX modals.
 - Basic list view layout mimicking user-provided image.
 - Basic pagination controls (Prev/Next).
