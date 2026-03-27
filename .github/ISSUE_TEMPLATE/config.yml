@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: ❓ ShowTrackr-Web Q&A Discussions
-    url: https://github.com/Exonymos/ShowTrackr-Web/discussions/categories/q-a
-    about: Have a question about setting up or using ShowTrackr-Web? Ask the community first!
-  - name: 💡 ShowTrackr-Web Ideas & Feature Discussions
-    url: https://github.com/Exonymos/ShowTrackr-Web/discussions/categories/ideas
+  - name: ❓ SeriesScape Q&A Discussions
+    url: https://github.com/Exonymos/SeriesScape/discussions/categories/q-a
+    about: Have a question about setting up or using SeriesScape? Ask the community first!
+  - name: 💡 SeriesScape Ideas & Feature Discussions
+    url: https://github.com/Exonymos/SeriesScape/discussions/categories/ideas
     about: Share and discuss new feature ideas with the community.
-  - name: 💬 ShowTrackr-Web General Chat
-    url: https://github.com/Exonymos/ShowTrackr-Web/discussions/categories/general
-    about: For other general discussions related to ShowTrackr-Web.
+  - name: 💬 SeriesScape General Chat
+    url: https://github.com/Exonymos/SeriesScape/discussions/categories/general
+    about: For other general discussions related to SeriesScape.

@@ -1,6 +1,6 @@
-# Security Policy for ShowTrackr-Web
+# Security Policy for SeriesScape
 
-We appreciate your efforts to responsibly disclose any security vulnerabilities you might find in ShowTrackr-Web.
+We appreciate your efforts to responsibly disclose any security vulnerabilities you might find in SeriesScape.
 
 ## Reporting a Vulnerability
 
@@ -9,11 +9,10 @@ issue for security vulnerabilities.
 
 **GitHub Security Advisories**
 
-You can report a vulnerability privately directly within the ShowTrackr-Web repository. This allows for private
-discussion
+You can report a vulnerability privately directly within the SeriesScape repository. This allows for private discussion
 and coordinated disclosure if necessary.
 
-1. Go to the Security tab of the ShowTrackr-Web GitHub repository.
+1. Go to the Security tab of the SeriesScape GitHub repository.
 2. Click on Vulnerability reporting in the left sidebar.
 3. Click Report a vulnerability to create a private report.
 
@@ -27,12 +26,12 @@ and coordinated disclosure if necessary.
 
 ## Scope
 
-This security policy applies to the latest released version of ShowTrackr-Web and the main branch. Vulnerabilities in
+This security policy applies to the latest released version of SeriesScape and the main branch. Vulnerabilities in
 third-party dependencies should ideally be reported to the respective project maintainers first.
 
 ## Important Considerations for a Local Application
 
-ShowTrackr-Web is designed to be run locally on your own computer. As such:
+SeriesScape is designed to be run locally on your own computer. As such:
 
 - The primary security focus is on preventing vulnerabilities that could be exploited through web browser interactions
   if the application is run unsafely (e.g., exposing it to untrusted networks without proper precautions) or
@@ -41,4 +40,4 @@ ShowTrackr-Web is designed to be run locally on your own computer. As such:
   `apps/desktop/data/.env`. Physical security of your machine and these files is your responsibility.
 - Ensure your local Python environment and dependencies are kept up to date.
 
-Thank you for helping keep ShowTrackr-Web secure!
+Thank you for helping keep SeriesScape secure!

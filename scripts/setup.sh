@@ -1,11 +1,11 @@
 #!/bin/bash
-# Run from anywhere - resolve project root relative to this script's location
+# Run from anywhere — resolve project root relative to this script's location
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
 echo ""
-echo "--- ShowTrackr-Web Setup (Linux/macOS) ---"
+echo "--- SeriesScape Setup (Linux/macOS) ---"
 echo ""
 
 # --- 1. Check Python ---
@@ -38,7 +38,7 @@ else
 fi
 echo ""
 
-# ---3. Install all dependencies via uv sync─ ---
+# --- 3. Install all dependencies via uv sync ---
 echo "Installing dependencies with uv sync..."
 if ! uv sync; then
     echo -e "\033[1;31mERROR: uv sync failed. Check the output above.\033[0m" >&2
@@ -47,7 +47,7 @@ fi
 echo "Dependencies installed successfully."
 echo ""
 # --- 4. Run Python setup script inside the venv ---
-echo "Running ShowTrackr-Web setup script..."
+echo "Running SeriesScape setup script..."
 .venv/bin/python scripts/setup.py
 SETUP_EXIT_CODE=$?
 

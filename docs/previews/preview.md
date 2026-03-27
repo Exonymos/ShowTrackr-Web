@@ -1,4 +1,4 @@
-# ShowTrackr Web – Quick Visual Preview
+# SeriesScape – Quick Visual Preview
 
 ## Table of Contents
 
@@ -11,9 +11,9 @@
 
 ## 🏠 Home Page
 
-|                       Main                        |                                       Empty List                                       |
-| :-----------------------------------------------: | :------------------------------------------------------------------------------------: |
-| [![ShowTrackr Home Page](./home.png)](./home.png) | [![ShowTrackr Home Page - No Watchlist](./home_empty_list.png)](./home_empty_list.png) |
+|                        Main                        |                                       Empty List                                        |
+|:--------------------------------------------------:|:---------------------------------------------------------------------------------------:|
+| [![SeriesScape Home Page](./home.png)](./home.png) | [![SeriesScape Home Page - No Watchlist](./home_empty_list.png)](./home_empty_list.png) |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -22,7 +22,7 @@
 ## 🚫 Error Pages
 
 |                     404 Not Found                     |               500 Internal Server Error               |
-| :---------------------------------------------------: | :---------------------------------------------------: |
+|:-----------------------------------------------------:|:-----------------------------------------------------:|
 | [![404 Error Page](./error_404.png)](./error_404.png) | [![500 Error Page](./error_500.png)](./error_500.png) |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -40,7 +40,7 @@
 ## ℹ️ About Page
 
 |                 About Tab                 |                          Changelog Tab                           |                            Feedback Tab                            |
-| :---------------------------------------: | :--------------------------------------------------------------: | :----------------------------------------------------------------: |
+|:-----------------------------------------:|:----------------------------------------------------------------:|:------------------------------------------------------------------:|
 | [![About Page](./about.png)](./about.png) | [![Changelog Tab](./about_changelog.png)](./about_changelog.png) | [![Feedback Form Tab](./about_feedback.png)](./about_feedback.png) |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -50,7 +50,7 @@
 ## ⚙️ Settings Page
 
 |                                   Styling Tab                                    |                                    Database Tab                                     |
-| :------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: |
+|:--------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|
 | [![Settings Page - Styling Tab](./settings_styling.png)](./settings_styling.png) | [![Settings Page - Database Tab](./settings_database.png)](./settings_database.png) |
 
 <p align="right">(<a href="#top">back to top</a>)</p>

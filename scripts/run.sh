@@ -5,7 +5,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
 echo ""
-echo "--- ShowTrackr-Web Launcher (Linux/macOS) ---"
+echo "--- SeriesScape Launcher (Linux/macOS) ---"
 echo ""
 
 VENV_PYTHON=".venv/bin/python"
@@ -20,7 +20,7 @@ fi
 
 export FLASK_APP="apps/desktop/src/core"
 
-echo "Starting ShowTrackr-Web..."
+echo "Starting SeriesScape..."
 "$VENV_PYTHON" scripts/run.py
 
 echo ""

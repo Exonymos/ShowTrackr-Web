@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -23,7 +23,7 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           prompt: |
-            Analyze the following GitHub issue for the ShowTrackr-Web project.
+            Analyze the following GitHub issue for the SeriesScape project.
             The project helps users track movies and TV shows they've watched or plan to watch.
             Core features include manual item entry, filtering, sorting, theming, and data import/export.
 

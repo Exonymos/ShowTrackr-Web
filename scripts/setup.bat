@@ -1,12 +1,12 @@
 @echo off
 setlocal
-REM Run from anywhere - resolve project root relative to this script's location
+REM Run from anywhere — resolve project root relative to this script's location
 cd /d "%~dp0.."
 
 set SETUP_EXIT_CODE=1
 
 echo.
-echo --- ShowTrackr-Web Setup (Windows) ---
+echo --- SeriesScape Setup (Windows) ---
 echo.
 
 REM --- 1. Check Python ---
@@ -34,9 +34,7 @@ if errorlevel 1 (
     uv --version >nul 2>&1
     if errorlevel 1 (
         echo ERROR: uv still not found after install attempt.
-        echo Please try installing uv manually:
-        echo   https://docs.astral.sh/uv/getting-started/installation/
-        echo Once done, try restarting this terminal and running setup again.
+        echo Try restarting this terminal and running setup again.
         goto :finally
     )
     echo uv installed successfully.
@@ -56,7 +54,7 @@ echo Dependencies installed successfully.
 
 REM --- 4. Run the Python setup script inside the venv ---
 echo.
-echo Running ShowTrackr-Web setup script...
+echo Running SeriesScape setup script...
 .venv\Scripts\python.exe scripts\setup.py
 set SETUP_EXIT_CODE=%errorlevel%
 

@@ -4,40 +4,40 @@ import js from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 
 export default [
-  // Global ignores
-  {
-    ignores: [
-      '**/node_modules/',
-      '**/.venv/',
-      '**/migrations/',
-      '**/coverage_html_report/',
-      'src/watchlist/static/js/htmx.min.js',
-      'src/watchlist/static/js/bundle.js',
-    ],
-  },
-
-  // Configuration for JavaScript files
-  {
-    files: ['src/watchlist/static/js/app.js'],
-    ...js.configs.recommended,
-    languageOptions: {
-      ecmaVersion: 2023,
-      sourceType: 'module',
-      globals: {
-        ...globals.browser,
-        htmx: 'readonly',
-      },
+    // Global ignores
+    {
+        ignores: [
+            '**/node_modules/',
+            '**/.venv/',
+            '**/apps/desktop/migrations/',
+            '**/coverage_html_report/',
+            'apps/desktop/src/core/static/js/htmx.min.js',
+            'apps/desktop/src/core/static/js/bundle.js',
+        ],
     },
 
-    rules: {
-      // "no-console": "warn",
-      // "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-    },
-  },
+    // Configuration for JavaScript files
+    {
+        files: ['apps/desktop/src/core/static/js/app.js'],
+        ...js.configs.recommended,
+        languageOptions: {
+            ecmaVersion: 2023,
+            sourceType: 'module',
+            globals: {
+                ...globals.browser,
+                htmx: 'readonly',
+            },
+        },
 
-  // Prettier integration
-  {
-    files: ['src/watchlist/static/js/app.js'],
-    ...eslintPluginPrettierRecommended,
-  },
+        rules: {
+            // "no-console": "warn",
+            // "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+        },
+    },
+
+    // Prettier integration
+    {
+        files: ['apps/desktop/src/core/static/js/app.js'],
+        ...eslintPluginPrettierRecommended,
+    },
 ];
