@@ -66,25 +66,40 @@ jobs:
 
       - name: Extract Classification for Labeling
         id: extract_label
+        env:
+          AI_RESPONSE: ${{ steps.analysis.outputs.response }}
         run: |
-          # Extract the raw classification word for labeling
-          CLASSIFICATION_WORD=$(echo "${{ steps.analysis.outputs.response }}" | grep -oP 'Classification: \K\w+( \w+)*' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
-          # If no classification found or it's 'other', default to a general label or no specific label
-          if [ -z "$CLASSIFICATION_WORD" ] || [ "$CLASSIFICATION_WORD" = "other" ]; then
+          # Sanitize: strip non-printable characters (control chars, null bytes, ANSI escape codes)
+          # before any processing — guards against edge cases even when using env vars.
+          SAFE_RESPONSE=$(echo "$AI_RESPONSE" | tr -cd '[:print:]\n')
+
+          # Extract the raw classification word for labeling.
+          # Uses SAFE_RESPONSE (not AI_RESPONSE) to avoid variable-injection risks in shell.
+          CLASSIFICATION_WORD=$(echo "$SAFE_RESPONSE" | grep -oP 'Classification: \K\w+( \w+)*' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
+
+          # Emit the extracted value into the Actions debug log for traceability.
+          echo "::debug::Raw AI classification extracted: '${CLASSIFICATION_WORD:-<empty>}'"
+
+          # Separate branches with distinct log annotations so the reason for any
+          # fallback is immediately visible in the Actions UI without digging into logs.
+          if [ -z "$CLASSIFICATION_WORD" ]; then
+            echo "::warning::No classification keyword found in AI response. Falling back to 'needs-triage'."
+            echo "AI_LABEL=needs-triage" >> $GITHUB_OUTPUT
+          elif [ "$CLASSIFICATION_WORD" = "other" ]; then
+            echo "::notice::AI classified the issue as 'other' (no specific label applies). Falling back to 'needs-triage'."
             echo "AI_LABEL=needs-triage" >> $GITHUB_OUTPUT
           else
-            # Ensure the label exists in your repository or handle cases where it might not
-            # For simplicity, we assume labels like 'bug', 'feature-request', 'question', 'documentation' exist
+            echo "::notice::AI classification resolved to label: '${CLASSIFICATION_WORD}'"
             echo "AI_LABEL=$CLASSIFICATION_WORD" >> $GITHUB_OUTPUT
           fi
 
       - name: Add Label Based on AI Classification
-        if: steps.extract_label.outputs.AI_LABEL != '' && steps.extract_label.outputs.AI_LABEL != 'needs-triage' # Only label if a specific one is found
+        if: steps.extract_label.outputs.AI_LABEL != '' && steps.extract_label.outputs.AI_LABEL != 'needs-triage'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const label = "${{ steps.extract_label.outputs.AI_LABEL }}";
+            const label = process.env.AI_LABEL;
             // Check if label is one of the expected types to avoid adding arbitrary labels
             const allowedLabels = ['bug', 'feature-request', 'question', 'documentation'];
             if (allowedLabels.includes(label)) {
@@ -96,7 +111,6 @@ jobs:
               });
             } else {
               console.log(`AI suggested label "${label}" is not in the allowed list. Skipping auto-labeling.`);
-              // Optionally, add a default 'needs-triage' label here if no specific match
               github.rest.issues.addLabels({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
