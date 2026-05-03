@@ -50,7 +50,7 @@ jobs:
             - **Key Information:** [Your extracted key information]
             - **User Expectation:** [Your extracted user expectation or N/A]
             - **Reproducibility:** [Yes|No|Partial|N/A]
-          model: gpt-3.5-turbo
+          model: gpt-4.1
 
       - name: Post AI Analysis as Comment
         env:
