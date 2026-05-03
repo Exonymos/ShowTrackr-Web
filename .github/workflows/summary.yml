@@ -95,7 +95,7 @@ jobs:
 
       - name: Add Label Based on AI Classification
         if: steps.extract_label.outputs.AI_LABEL != '' && steps.extract_label.outputs.AI_LABEL != 'needs-triage'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
