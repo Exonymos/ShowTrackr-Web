@@ -50,7 +50,8 @@ jobs:
             - **Key Information:** [Your extracted key information]
             - **User Expectation:** [Your extracted user expectation or N/A]
             - **Reproducibility:** [Yes|No|Partial|N/A]
-          model: openai/gpt-4.1
+          model: openai/gpt-4o-mini
+          max-tokens: 800
 
       - name: Post AI Analysis as Comment
         env:
